@@ -86,7 +86,7 @@ export const DOCUMENT_POINTS: DocumentPoint[] = [
     layer: 'risk',
     label: 'Art. 6 · brecha digital',
     anchor: [45, 6.4, 87],
-    offset: [-10, 4.8, 1.8],
+    offset: [-10, 8.0, 1.8],
   },
   {
     id: 'a-risk-patrones',
@@ -249,8 +249,8 @@ export const DOCUMENT_POINTS: DocumentPoint[] = [
     zone: 'c',
     layer: 'infra',
     label: 'Sensores de agua',
-    anchor: [-152, 4.6, 126],
-    offset: [7, 4.7, 1.8],
+    anchor: [-152, 4.6, 117],
+    offset: [7, 11.0, 1.8],
   },
   {
     id: 'c-infra-telemetria',
@@ -274,7 +274,7 @@ export const DOCUMENT_POINTS: DocumentPoint[] = [
     layer: 'infra',
     label: 'Operadores de agua',
     anchor: [-198, 5.2, 70],
-    offset: [-10, 3.7, 1.8],
+    offset: [10, 3.7, 1.8],
   },
   {
     id: 'c-risk-domicilio',
@@ -322,6 +322,6 @@ export const DOCUMENT_POINTS: DocumentPoint[] = [
     layer: 'ip',
     label: 'LFPPI · válvula inteligente',
     anchor: [-152, 6, 117],
-    offset: [-11, 3.3, 1.8],
+    offset: [5, 10.5, 1.8],
   },
 ]

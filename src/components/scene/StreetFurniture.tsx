@@ -4,14 +4,15 @@ import * as THREE from 'three'
 interface Placement {
   x: number
   z: number
+  y?: number
   rotation: number
 }
 
 const HALF_PI = Math.PI / 2
 
-// Las piezas de mobiliario se mantienen sobre las aceras (z ≈ ±12.6), las
-// plazas de las tres zonas y los accesos peatonales. Ninguna coordenada cae
-// sobre la calzada ni sobre la acera de una parada de autobús.
+// Las piezas de mobiliario se mantienen sobre la franja peatonal de la avenida
+// (z ≈ ±12.6), las plazas de las tres zonas y los accesos peatonales. Ninguna
+// coordenada cae sobre la calzada ni sobre la acera de una parada de autobús.
 const BENCHES: Placement[] = [
   // Avenida principal · aceras norte y sur
   { x: -166, z: -12.6, rotation: 0 },
@@ -28,7 +29,7 @@ const BENCHES: Placement[] = [
   { x: 44, z: -61.5, rotation: Math.PI },
   { x: -55, z: 104, rotation: Math.PI },
   // Zona B · plaza este
-  { x: 92, z: 96, rotation: 0 },
+  { x: 92, z: 96, y: 0.45, rotation: 0 },
   // Zona C · plaza del parque oeste
   { x: -170, z: 93, rotation: HALF_PI },
 ]
@@ -44,7 +45,7 @@ const TRASH_BINS: Placement[] = [
   { x: 132, z: 12.7, rotation: 0 },
   { x: 166.5, z: -12.7, rotation: 0 },
   // Plazas
-  { x: 37, z: 60.5, rotation: 0 },
+  { x: 37, z: 60.5, y: 0.45, rotation: 0 },
   { x: 94, z: 90, rotation: 0 },
   { x: -112.5, z: 64, rotation: 0 },
 ]
@@ -59,39 +60,40 @@ const PLANTERS: Placement[] = [
   { x: 166, z: 12.6, rotation: 0 },
   // Plazas A, B y C
   { x: -58, z: 98, rotation: 0 },
-  { x: 43, z: 67, rotation: 0 },
+  { x: 94, z: 104, rotation: 0 },
+  { x: 43, z: 65.8, y: 0.45, rotation: 0 },
   { x: 94, z: 104, rotation: 0 },
   { x: 235, z: 106, rotation: 0 },
   { x: -152, z: 91, rotation: 0 },
 ]
 
 const BIKE_RACKS: Placement[] = [
-  { x: 36.5, z: 66.5, rotation: HALF_PI },
+  { x: 36.5, z: 66.5, y: 0.45, rotation: HALF_PI },
   { x: 154, z: -16, rotation: HALF_PI },
   { x: 53, z: -60, rotation: HALF_PI },
   { x: -92, z: 70, rotation: 0 },
 ]
 
 const KIOSKS: Placement[] = [
-  { x: 36, z: 53.5, rotation: -0.55 },
+  { x: 36, z: 53.5, y: 0.45, rotation: -0.55 },
   { x: 94, z: 84, rotation: -0.6 },
-  { x: -80, z: 68, rotation: -0.2 },
+  { x: -80, z: 68, y: 0.45, rotation: -0.2 },
 ]
 
 const PEDESTRIAN_SIGNS: Placement[] = [
   { x: -14.5, z: -12.85, rotation: 0 },
-  { x: 50, z: 55, rotation: -2.05 },
-  { x: 92, z: 104, rotation: -2.87 },
+  { x: 50, z: 55, y: 0.45, rotation: -2.05 },
+  { x: 92, z: 104, y: 0.45, rotation: -2.87 },
   { x: 235, z: 80, rotation: -2.65 },
   { x: -110, z: 56.5, rotation: -0.72 },
   { x: -168, z: 25, rotation: -0.38 },
-  { x: -93, z: -85.5, rotation: -2.74 },
+  { x: -96, z: -89.5, rotation: -2.74 },
 ]
 
 const BOLLARDS: Placement[] = [
   { x: 14.5, z: 13.1, rotation: 0 },
   { x: -14.8, z: -11.8, rotation: 0 },
-  { x: 43, z: 54, rotation: 0 },
+  { x: 43, z: 54, y: 0.45, rotation: 0 },
   { x: -220, z: 24, rotation: 0 },
   { x: -171, z: 102.5, rotation: 0 },
 ]
@@ -143,7 +145,7 @@ function Benches({ day }: { day: boolean }) {
     let cursor = 0
 
     BENCHES.forEach((bench, benchIndex) => {
-      root.makeRotationY(bench.rotation).setPosition(bench.x, 0, bench.z)
+      root.makeRotationY(bench.rotation).setPosition(bench.x, bench.y ?? 0, bench.z)
 
       for (let slat = 0; slat < 3; slat += 1) {
         writePart(woodMesh, cursor, root, 0, 0.47, -0.2 + slat * 0.2, 1.9, 0.06, 0.16)
@@ -209,7 +211,7 @@ function TrashBins({ day }: { day: boolean }) {
     const root = new THREE.Matrix4()
 
     TRASH_BINS.forEach((bin, index) => {
-      root.makeRotationY(bin.rotation).setPosition(bin.x, 0, bin.z)
+      root.makeRotationY(bin.rotation).setPosition(bin.x, bin.y ?? 0, bin.z)
       writePart(bodyMesh, index, root, 0, 0.38, 0, 1, 1, 1)
       writePart(lidMesh, index, root, 0, 0.79, 0, 1, 1, 1)
     })
@@ -266,7 +268,7 @@ function Planters({ day }: { day: boolean }) {
     const palette = day ? SHRUB_DAY : SHRUB_NIGHT
 
     PLANTERS.forEach((planter, index) => {
-      root.makeRotationY(planter.rotation).setPosition(planter.x, 0, planter.z)
+      root.makeRotationY(planter.rotation).setPosition(planter.x, planter.y ?? 0, planter.z)
 
       writePart(potMesh, index, root, 0, 0.275, 0, 1, 1, 1)
       writePart(soilMesh, index, root, 0, 0.56, 0, 1, 1, 1)
@@ -336,7 +338,7 @@ function BikeRacks({ day }: { day: boolean }) {
     const root = new THREE.Matrix4()
 
     BIKE_RACKS.forEach((rack, index) => {
-      root.makeRotationY(rack.rotation).setPosition(rack.x, 0, rack.z)
+      root.makeRotationY(rack.rotation).setPosition(rack.x, rack.y ?? 0, rack.z)
 
       for (let hoop = 0; hoop < 3; hoop += 1) {
         writePart(hoopMesh, index * 3 + hoop, root, 0, 0.06, -0.75 + hoop * 0.75, 1.05, 1.35, 1)
@@ -398,7 +400,7 @@ function Kiosks({ day }: { day: boolean }) {
     const root = new THREE.Matrix4()
 
     KIOSKS.forEach((kiosk, index) => {
-      root.makeRotationY(kiosk.rotation).setPosition(kiosk.x, 0, kiosk.z)
+      root.makeRotationY(kiosk.rotation).setPosition(kiosk.x, kiosk.y ?? 0, kiosk.z)
       writePart(bodyMesh, index, root, 0, 1.08, 0, 2.15, 2.16, 1.55)
       writePart(roofMesh, index, root, 0, 2.23, 0, 2.7, 0.16, 2.02)
       writePart(windowMesh, index, root, 0, 1.36, 0.795, 1.52, 0.92, 0.05)
@@ -488,7 +490,7 @@ function PedestrianSigns({ day }: { day: boolean }) {
     const root = new THREE.Matrix4()
 
     PEDESTRIAN_SIGNS.forEach((sign, index) => {
-      root.makeRotationY(sign.rotation).setPosition(sign.x, 0, sign.z)
+      root.makeRotationY(sign.rotation).setPosition(sign.x, sign.y ?? 0, sign.z)
       writePart(poleMesh, index, root, 0, 1.175, 0, 1, 1, 1)
       writePart(frameMesh, index, root, 0, 2, 0, 0.56, 0.68, 0.05)
       writePart(faceMesh, index, root, 0, 2, 0.035, 0.46, 0.58, 0.02)
@@ -559,7 +561,7 @@ function Bollards({ day }: { day: boolean }) {
     const root = new THREE.Matrix4()
 
     BOLLARDS.forEach((bollard, index) => {
-      root.makeRotationY(bollard.rotation).setPosition(bollard.x, 0, bollard.z)
+      root.makeRotationY(bollard.rotation).setPosition(bollard.x, bollard.y ?? 0, bollard.z)
       writePart(postMesh, index, root, 0, 0.425, 0, 1, 1, 1)
       writePart(bandMesh, index, root, 0, 0.67, 0, 1, 1, 1)
     })

@@ -30,7 +30,8 @@ Un recorrido 3D por una ciudad conectada: tres zonas geográficas, dos nubes int
 - **Hitos de datos**: ocho torres de datos con fachada de vidrio, ventanas encendidas y anillos de luz; un zigurat escalonado con cientos de ventanas; una cúpula de operaciones con ventanales y antenas; y una plaza central con fuente, pérgola solar, bancas y arbolado.
 - **Movilidad continua**: autos de varios modelos (sedán, compacto, taxi, pickup y patrulla), buses y bicicletas recorren rutas cerradas sin desapariciones; cuatro vehículos circulan por el anillo perimetral; los semáforos de la avenida detienen el tráfico en rojo/ámbar y lo liberan en verde. La avenida respeta carriles de ida y vuelta y las calles perimetrales tienen un solo sentido.
 - **Vida urbana**: más de 40 peatones caminando por la avenida, parques, barrios, la plaza central, el centro de movilidad y las tres zonas, con vestuario y animación de marcha; dos helicópteros futuristas sobrevuelan la ciudad de forma continua; iluminación de calle, árboles instanciados y parques.
-- **Equipamiento de barrio**: escuela, banco, clínica, mercado, biblioteca, estación de bomberos con camión, tres conjuntos residenciales, un bosque urbano, un centro de movilidad con autobuses eléctricos y pérgola solar, bancas, botes de basura, maceteros, racks de bicicletas, kioscos, pasos peatonales y autos estacionados.
+- **Equipamiento de barrio**: escuela, banco, clínica, mercado, biblioteca, estación de bomberos con camión, tres conjuntos residenciales, un bosque urbano, un centro de movilidad con autobuses eléctricos y pérgola solar, una estación de metro con acceso y elevador, bancas, botes de basura, maceteros, racks de bicicletas, kioscos, pasos peatonales y autos estacionados.
+- **Presentación limpia**: botones para ocultar la ficha del proyecto y la barra superior, con controles compactos para recuperarlas; botón **Portada** para regresar a la introducción.
 - **Agua y vegetación**: tres estanques decorativos con rocas, juncos, bancas y faroles; arbustos, maceteros y parterres distribuidos en lotes libres.
 - **Cielo y clima**: vista de día con sombras direccionales y gradiente de cielo; vista nocturna con ventanas encendidas, letreros, halos de alumbrado público y enlaces de datos.
 - **Puntos del documento**: capa de etiquetas 3D sobre semáforos, cámaras, drones, medidores, servidores y nubes, con filtros por color para infraestructura, riesgos, marco legal y propiedad intelectual; al tocar una etiqueta se abre la ficha de la zona en la capa correspondiente.
@@ -51,6 +52,8 @@ Un recorrido 3D por una ciudad conectada: tres zonas geográficas, dos nubes int
 - Usa el recorrido guiado para seguir el orden de la exposición.
 - Alterna **Día / Noche** con el botón del encabezado.
 - Usa **Puntos del documento** para activar o desactivar los puntos y filtrarlos por color: infraestructura, riesgos, marco legal o propiedad intelectual. Al abrir una zona, sus etiquetas se despliegan sobre el modelo.
+- Usa **Portada** para volver a la introducción y **×** en la ficha o en la barra superior para ocultarlas; los botones **Ficha del proyecto** y **Mostrar barra** las recuperan.
+- Si desarrollas el proyecto, ejecuta `npm run check:layout` para validar que las huellas principales no invadan calzadas, anillo ni se solapen.
 - La ficha académica permanece visible en la esquina superior izquierda.
 - La hora del encabezado corresponde a **Mexicali, B.C.**
 

@@ -947,6 +947,19 @@ export function Landmarks({ onSelect }: { onSelect: (selection: Selection) => vo
       {AVENUE_SIGNALS.map((x, index) => (
         <TrafficLight key={x} position={[x + (index % 2 === 0 ? 4.5 : -4.5), 0, index % 2 === 0 ? 6.9 : -6.9]} />
       ))}
+      {[
+        [-100, 48],
+        [100, 48],
+        [-100, -48],
+        [100, -48],
+        [-140, 78],
+        [140, 78],
+      ].map(([x, z], index) => (
+        <TrafficLight
+          key={`side-${x}-${z}`}
+          position={[x + (index % 2 === 0 ? 4.5 : -4.5), 0, z + (z > 0 ? -6.9 : 6.9)]}
+        />
+      ))}
 
       <SecurityHQ onSelect={onSelect} />
       <XWingEgg position={[157, 12.0, -28]} />

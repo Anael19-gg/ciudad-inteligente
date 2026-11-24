@@ -10,7 +10,7 @@ type PlanterSpec = { x: number; z: number }
 const PLAZA_X = 0
 const PLAZA_Z = 63
 const PLAZA_WIDTH = 46
-const PLAZA_DEPTH = 22
+const PLAZA_DEPTH = 20
 
 const TREES: TreeSpec[] = [
   { x: -20, z: -8.2, scale: 0.9 },
@@ -410,11 +410,11 @@ export function CentralPlaza({ day = false }: { day?: boolean }) {
       <Fountain day={day} />
       <SolarPergola day={day} />
 
-      <mesh position={[0, 0.2, 10.6]}>
+      <mesh position={[0, 0.2, 9.4]}>
         <boxGeometry args={[3.4, 0.28, 0.5]} />
         <meshStandardMaterial color={day ? '#899597' : '#2d3d43'} roughness={0.8} />
       </mesh>
-      <mesh position={[0, 1.05, 10.6]}>
+      <mesh position={[0, 1.05, 9.4]}>
         <boxGeometry args={[1.8, 1.15, 0.16]} />
         <meshStandardMaterial
           color={day ? '#2c4b5a' : '#0b2533'}
@@ -424,11 +424,11 @@ export function CentralPlaza({ day = false }: { day?: boolean }) {
           roughness={0.3}
         />
       </mesh>
-      <mesh position={[0, 1.05, 10.52]}>
+      <mesh position={[0, 1.05, 9.32]}>
         <boxGeometry args={[1.45, 0.8, 0.04]} />
         <meshBasicMaterial color={day ? '#8edbe2' : '#7ee8f4'} transparent opacity={day ? 0.35 : 0.65} toneMapped={false} />
       </mesh>
-      <mesh position={[0, 0.55, 10.6]}>
+      <mesh position={[0, 0.55, 9.4]}>
         <cylinderGeometry args={[0.08, 0.1, 1.1, 7]} />
         <meshStandardMaterial color={day ? '#6f7c82' : '#394850'} metalness={0.6} roughness={0.48} />
       </mesh>

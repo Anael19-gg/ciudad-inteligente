@@ -68,7 +68,7 @@ export const LAYERS: LayerMeta[] = [
     short: 'Infraestructura',
     tab: 'Infra',
     color: '#6FA8FF',
-    description: 'Hardware en el borde, procesamiento y operadores.',
+    description: 'Código negro/azul: hardware en el borde, procesamiento y operadores.',
   },
   {
     id: 'risk',
@@ -76,7 +76,7 @@ export const LAYERS: LayerMeta[] = [
     short: 'Riesgos',
     tab: 'Riesgo',
     color: '#FF6B6B',
-    description: 'Tensiones constitucionales y datos sensibles.',
+    description: 'Código rojo: tensiones constitucionales y datos sensibles.',
   },
   {
     id: 'legal',
@@ -84,7 +84,7 @@ export const LAYERS: LayerMeta[] = [
     short: 'Marco legal',
     tab: 'Legal',
     color: '#4FDD9E',
-    description: 'LFPDPPP, LGPDPPSO, T-MEC y GDPR.',
+    description: 'Código verde: LFPDPPP, LGPDPPSO, T-MEC y GDPR.',
   },
   {
     id: 'ip',
@@ -92,7 +92,7 @@ export const LAYERS: LayerMeta[] = [
     short: 'Propiedad intelectual',
     tab: 'PI',
     color: '#FFAE63',
-    description: 'LFDA, LFPPI, patentes y secreto industrial.',
+    description: 'Código naranja: LFDA, LFPPI, patentes y secreto industrial.',
   },
 ]
 
@@ -136,7 +136,7 @@ export const ZONES: Zone[] = [
     accent: '#79E3F2',
     center: [0, 0, 0],
     markerAnchor: [0, 12, 0],
-    camera: { pos: [0, 100, 160], target: [0, 3, 0] },
+    camera: { pos: [0, 112, 180], target: [0, 3, 0] },
     content: {
       infra: {
         intro: 'Del sensor de piso al servidor municipal, y de ahí a la nube.',
@@ -147,7 +147,7 @@ export const ZONES: Zone[] = [
           },
           {
             title: 'Procesamiento',
-            body: 'Servidores locales municipales (on-premise) para control semafórico en tiempo real y nube en EE. UU. para analítica de tráfico con motor de IA de predicción de rutas.',
+            body: 'Servidores locales municipales (on-premise) para control semafórico de baja latencia en tiempo real y nube en EE. UU. para analítica de tráfico con motor de IA de predicción de rutas.',
           },
           {
             title: 'Operadores',
@@ -177,7 +177,7 @@ export const ZONES: Zone[] = [
         entries: [
           {
             title: 'Ámbito nacional',
-            body: 'El Municipio aplica LGPDPPSO (deberes de seguridad, Documento de Seguridad y publicación de datos de tráfico anonimizados bajo el Art. 6° CPEUM garantizando neutralidad de red). La concesionaria aplica LFPDPPP (Art. 5 principios de licitud/finalidad; Arts. 14–16 Aviso de Privacidad mediante código QR en paradas y autobuses; Arts. 18–19 cifrado de conexión).',
+            body: 'El Municipio aplica LGPDPPSO (deberes de seguridad, Documento de Seguridad y publicación de datos de tráfico anonimizados bajo el Art. 6° CPEUM garantizando neutralidad de red). La concesionaria aplica LFPDPPP (Art. 5, 8 principios; Arts. 14–16 Aviso de Privacidad mediante QR en paradas y autobuses; Arts. 18–19 cifrado extremo a extremo; Art. 26 oposición a decisiones automatizadas sin revisión humana).',
           },
           {
             title: 'Flujo transfronterizo · EE. UU.',
@@ -220,7 +220,7 @@ export const ZONES: Zone[] = [
         entries: [
           {
             title: 'Hardware · Edge',
-            body: 'Cámaras PTZ de alta definición con reconocimiento facial, drones autónomos de patrullaje y arcos lectores de placas.',
+            body: 'Cámaras PTZ de ultra alta definición con reconocimiento facial, drones autónomos de patrullaje y arcos lectores de placas.',
           },
           {
             title: 'Procesamiento',
@@ -258,7 +258,7 @@ export const ZONES: Zone[] = [
           },
           {
             title: 'Flujo transfronterizo · EE. UU.',
-            body: 'T-MEC Art. 19.11 y 19.12 (alojar análisis de video en nube estadounidense sin localización forzada). Cumplimiento de leyes estatales de EE. UU. (CCPA/CPRA o TDPSA): limitación estricta del uso de Información Personal Sensible (biometría) y minimización de datos.',
+            body: 'T-MEC Art. 19.8, 19.11 y 19.12 (protección de datos, libre flujo y no localización forzada). Cumplimiento de leyes estatales de EE. UU. (CCPA/CPRA o TDPSA): limitación estricta del uso de Información Personal Sensible (biometría) y minimización de datos.',
           },
         ],
       },
@@ -290,7 +290,7 @@ export const ZONES: Zone[] = [
     accent: '#F2C97B',
     center: [-120, 0, 0],
     markerAnchor: [-140, 18, 28],
-    camera: { pos: [-86, 112, 192], target: [-120, 4, 0] },
+    camera: { pos: [-88, 126, 216], target: [-120, 4, 0] },
     content: {
       infra: {
         intro: 'La red de servicios se convierte en una red de datos domésticos.',
@@ -301,7 +301,7 @@ export const ZONES: Zone[] = [
           },
           {
             title: 'Procesamiento',
-            body: 'Red de telemetría que envía lecturas cada 15 minutos hacia servidores alojados en la Unión Europea (ej. Frankfurt/Dublín) con IA de balanceo de carga energética y detección de fugas.',
+            body: 'Red de telemetría que envía lecturas cada 15 minutos hacia servidores alojados en la Unión Europea (ej. Frankfurt/Berlín) con IA de balanceo de carga energética y detección de fugas.',
           },
           {
             title: 'Operadores',
@@ -327,7 +327,7 @@ export const ZONES: Zone[] = [
         entries: [
           {
             title: 'Ámbito nacional',
-            body: 'Empresa privada aplica LFPDPPP (Art. 5 proporcionalidad y calidad de datos; Arts. 14–16 Aviso de Privacidad diferenciando finalidades necesarias de facturación frente a secundarias; Arts. 18–19 notificación de brechas de seguridad). Municipio aplica LGPDPPSO (Documento de Seguridad e inventario de bases de datos).',
+            body: 'Empresa privada aplica LFPDPPP (Art. 5, 8 principios y proporcionalidad; Arts. 14–16 Aviso de Privacidad diferenciando finalidades necesarias de facturación frente a secundarias; Arts. 18–19 notificación de brechas de seguridad). Municipio aplica LGPDPPSO (Documento de Seguridad e inventario de bases de datos).',
           },
           {
             title: 'Flujo transfronterizo · Unión Europea',
@@ -387,7 +387,7 @@ export const CLOUDS: Cloud[] = [
     id: 'eu',
     index: 'C2',
     name: 'Nube Unión Europea',
-    region: 'Frankfurt / Dublín · Nube regional',
+    region: 'Frankfurt / Berlín · Nube regional',
     tagline: 'Telemetría energética · Detección de fugas',
     summary:
       'Telemetría energética e hídrica de la Zona C, procesada en servidores de la Unión Europea.',

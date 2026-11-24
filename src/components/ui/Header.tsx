@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { PROJECT, ZONES, type Selection } from '../../data/project'
-import { Moon, Sun } from './icons'
+import { Close, Compass, Menu, Moon, Sun } from './icons'
 
 interface HeaderProps {
   selection: Selection
   onSelect: (selection: Selection) => void
   onHome: () => void
+  onShowIntro: () => void
   day: boolean
   onToggleDay: () => void
 }
@@ -23,8 +24,9 @@ function clockLabel() {
   }
 }
 
-export function Header({ selection, onSelect, onHome, day, onToggleDay }: HeaderProps) {
+export function Header({ selection, onSelect, onHome, onShowIntro, day, onToggleDay }: HeaderProps) {
   const [time, setTime] = useState(clockLabel())
+  const [hidden, setHidden] = useState(false)
 
   useEffect(() => {
     const interval = window.setInterval(() => setTime(clockLabel()), 15000)
@@ -34,8 +36,22 @@ export function Header({ selection, onSelect, onHome, day, onToggleDay }: Header
   const activeZone = selection?.type === 'zone' ? selection.zone : null
   const cloudsActive = selection?.type === 'cloud' || selection?.type === 'clouds'
 
+  if (hidden) {
+    return (
+      <button
+        type="button"
+        className="topbar-reopen"
+        onClick={() => setHidden(false)}
+        title="Mostrar barra de navegación"
+      >
+        <Menu size={14} />
+        <span>Mostrar barra</span>
+      </button>
+    )
+  }
+
   return (
-    <header className="topbar">
+    <header className="topbar" id="topbar">
       <button type="button" className="brand" onClick={onHome} aria-label="Volver a la vista general">
         <span className="brand__mark" aria-hidden="true">
           <span className="brand__ring" />
@@ -85,6 +101,16 @@ export function Header({ selection, onSelect, onHome, day, onToggleDay }: Header
       <div className="topbar__end">
         <button
           type="button"
+          className="portada-btn"
+          onClick={onShowIntro}
+          title="Volver a la portada"
+        >
+          <Compass size={13} />
+          <span>Portada</span>
+        </button>
+
+        <button
+          type="button"
           className="day-toggle"
           onClick={onToggleDay}
           aria-pressed={day}
@@ -98,6 +124,16 @@ export function Header({ selection, onSelect, onHome, day, onToggleDay }: Header
           <span className="status__time">{time}</span>
           <span className="status__place">Mexicali, B.C.</span>
         </div>
+
+        <button
+          type="button"
+          className="topbar__hide"
+          onClick={() => setHidden(true)}
+          aria-controls="topbar"
+          title="Ocultar barra de navegación"
+        >
+          <Close size={13} />
+        </button>
       </div>
     </header>
   )

@@ -15,6 +15,7 @@ import { StreetFurniture } from './StreetFurniture'
 import { CentralPlaza } from './CentralPlaza'
 import { MobilityHub } from './MobilityHub'
 import { StreetLife } from './StreetLife'
+import { TransitStation } from './TransitStation'
 import type { Vec3 } from '../../data/project'
 
 function makeRng(seed: number) {
@@ -76,12 +77,12 @@ function isOnTransport(x: number, z: number) {
 const TREE_BLOCKERS = [
   { x: -156, z: 68, r: 8 },
   { x: -165, z: 100, r: 10 },
-  { x: -160, z: 35, r: 14 },
+  { x: -160, z: 33, r: 14 },
   { x: 45, z: 101, r: 8 },
   { x: 92, z: 30, r: 7 },
-  { x: -48, z: 67, r: 4.5 },
-  { x: 48, z: -67, r: 4.5 },
-  { x: -45, z: -95, r: 4.5 },
+  { x: -48, z: 67, r: 11.5 },
+  { x: 48, z: -67, r: 11.5 },
+  { x: -45, z: -95, r: 11.5 },
   { x: 200, z: 120, r: 4.5 },
   { x: -214, z: -60, r: 5 },
   { x: 0, z: 94, r: 18 },
@@ -107,15 +108,17 @@ const TREE_BLOCKERS = [
   { x: 160, z: -12.7, r: 3.5 },
   { x: -120, z: 60, r: 14 },
   { x: 35, z: 55, r: 11 },
+  { x: 43, z: 60, r: 14 },
   { x: 82, z: 88, r: 11 },
   { x: -40, z: -64, r: 11 },
-  { x: -45, z: 100, r: 11 },
+  { x: -43.5, z: -64, r: 15 },
+  { x: -45, z: 95, r: 14 },
   { x: -170, z: 30, r: 14 },
   { x: -225, z: 20, r: 18 },
   { x: -88, z: -90, r: 16 },
   { x: -45, z: 126, r: 15 },
   { x: 0, z: 126, r: 30 },
-  { x: 0, z: -93, r: 30 },
+  { x: 0, z: -94, r: 30 },
   { x: 0, z: 63, r: 29 },
   { x: 0, z: -63, r: 29 },
   { x: -88, z: 62, r: 15 },
@@ -124,7 +127,7 @@ const TREE_BLOCKERS = [
   { x: -86, z: 62, r: 15 },
   { x: -82, z: -27, r: 16 },
   { x: 160, z: 92, r: 16 },
-  { x: 226, z: 93, r: 20 },
+  { x: 228, z: 93, r: 20 },
   { x: 160, z: 34, r: 14 },
   { x: 226, z: 68, r: 14 },
   { x: -225, z: -62, r: 14 },
@@ -134,6 +137,7 @@ const TREE_BLOCKERS = [
   { x: -228, z: 118, r: 9 },
   { x: -190, z: -69, r: 9 },
   { x: -75, z: 89, r: 15 },
+  { x: -19, z: 88, r: 11 },
   { x: -191, z: -96, r: 9 },
   { x: -152, z: 117, r: 6 },
   { x: -132, z: 117, r: 5 },
@@ -149,7 +153,7 @@ const PLAZA_LIGHT_BLOCKERS = [
   { x: 87, z: 94, r: 11 },
   { x: -84, z: -27, r: 13 },
   { x: -82, z: -27, r: 13 },
-  { x: 226, z: 93, r: 16 },
+  { x: 228, z: 93, r: 16 },
   { x: 160, z: 92, r: 13 },
   { x: 226, z: 68, r: 12 },
   { x: -225, z: -62, r: 12 },
@@ -165,7 +169,8 @@ const PLAZA_LIGHT_BLOCKERS = [
   { x: -45, z: -95, r: 11 },
   { x: -165, z: 100, r: 11 },
   { x: -75, z: 89, r: 13 },
-  { x: 0, z: -93, r: 28 },
+  { x: -19, z: 88, r: 9 },
+  { x: 0, z: -94, r: 28 },
 ]
 
 const SPECIAL_TOWERS = [
@@ -225,7 +230,7 @@ const OUTER_CLEARINGS = [
   { x: 45, z: -95, r: 15 },
   { x: 158, z: 92, r: 15 },
   { x: 205, z: 93, r: 20 },
-  { x: -160, z: 35, r: 17 },
+  { x: -160, z: 33, r: 17 },
   { x: -156, z: 68, r: 11 },
   { x: 45, z: 101, r: 11 },
   { x: 92, z: 30, r: 10 },
@@ -251,15 +256,17 @@ const OUTER_CLEARINGS = [
   { x: -88, z: 30, r: 9 },
   { x: -120, z: 60, r: 14 },
   { x: 35, z: 55, r: 11 },
+  { x: 43, z: 60, r: 14 },
   { x: 82, z: 88, r: 11 },
   { x: -40, z: -64, r: 11 },
-  { x: -45, z: 100, r: 11 },
+  { x: -43.5, z: -64, r: 15 },
+  { x: -45, z: 95, r: 14 },
   { x: -170, z: 30, r: 14 },
   { x: -225, z: 20, r: 18 },
   { x: -88, z: -90, r: 16 },
   { x: -45, z: 126, r: 15 },
   { x: 0, z: 126, r: 30 },
-  { x: 0, z: -93, r: 30 },
+  { x: 0, z: -94, r: 30 },
   { x: 0, z: 63, r: 29 },
   { x: 0, z: -63, r: 29 },
   { x: -88, z: 62, r: 16 },
@@ -267,7 +274,7 @@ const OUTER_CLEARINGS = [
   { x: -84, z: -27, r: 17 },
   { x: -86, z: 62, r: 16 },
   { x: -82, z: -27, r: 17 },
-  { x: 226, z: 93, r: 18 },
+  { x: 228, z: 93, r: 18 },
   { x: 160, z: 92, r: 18 },
   { x: 160, z: 34, r: 14 },
   { x: 226, z: 68, r: 18 },
@@ -278,6 +285,7 @@ const OUTER_CLEARINGS = [
   { x: -228, z: 118, r: 11 },
   { x: -190, z: -69, r: 10 },
   { x: -75, z: 89, r: 16 },
+  { x: -19, z: 88, r: 12 },
   { x: -191, z: -96, r: 10 },
   { x: -152, z: 117, r: 7 },
   { x: -132, z: 117, r: 6 },
@@ -920,7 +928,7 @@ function IndustryAndResidential({ day = false }: { day?: boolean }) {
         <planeGeometry args={[18, 2.4]} />
         <meshStandardMaterial color="#11181d" roughness={0.9} />
       </mesh>
-      <mesh position={[-228, 0.04, 92]} rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh position={[-227, 0.04, 92]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[2.2, 20]} />
         <meshStandardMaterial color="#11181d" roughness={0.9} />
       </mesh>
@@ -1891,9 +1899,15 @@ export function City({ day = false }: { day?: boolean }) {
   const windowA = useMemo(() => createWindowTexture(12, 0.34), [])
   const windowB = useMemo(() => createWindowTexture(29, 0.38), [])
   const windowC = useMemo(() => createWindowTexture(47, 0.58), [])
+  const windowA2 = useMemo(() => createWindowTexture(64, 0.24), [])
+  const windowB2 = useMemo(() => createWindowTexture(76, 0.3), [])
+  const windowC2 = useMemo(() => createWindowTexture(83, 0.46), [])
   const facadeA = useMemo(() => createFacadeTexture(12, '#708a94'), [])
   const facadeB = useMemo(() => createFacadeTexture(29, '#776f8d'), [])
   const facadeC = useMemo(() => createFacadeTexture(47, '#8d7e66'), [])
+  const facadeA2 = useMemo(() => createFacadeTexture(61, '#647b86'), [])
+  const facadeB2 = useMemo(() => createFacadeTexture(73, '#81748c'), [])
+  const facadeC2 = useMemo(() => createFacadeTexture(89, '#8a7a62'), [])
   const asphalt = useMemo(() => createAsphaltTexture(), [])
   const glow = useMemo(() => createGlowTexture(), [])
   const aBuildings = useMemo(() => buildings.filter((b) => b.zone === 'a' && !b.outer), [buildings])
@@ -2193,9 +2207,9 @@ export function City({ day = false }: { day?: boolean }) {
 
       <InstancedBuildings buildings={aBuildings} emissive="#cddde3" texture={windowA} facade={facadeA} accent="#79E3F2" emissiveIntensity={day ? 0.16 : 1.0} day={day} dayTint="#b9d5df" />
       <InstancedBuildings buildings={bBuildings} emissive="#d4d1e6" texture={windowB} facade={facadeB} accent="#B0A0FF" emissiveIntensity={day ? 0.16 : 1.0} day={day} dayTint="#c8bce6" />
-      <InstancedBuildings buildings={aOuter} emissive="#cddde3" texture={windowA} facade={facadeA} accent="#79E3F2" emissiveIntensity={day ? 0.14 : 0.9} day={day} dayTint="#b9d5df" />
-      <InstancedBuildings buildings={bOuter} emissive="#bab5cf" texture={windowB} facade={facadeB} accent="#B0A0FF" emissiveIntensity={day ? 0.14 : 0.88} day={day} dayTint="#c8bce6" />
-      <InstancedBuildings buildings={cOuter} emissive="#d8b98c" texture={windowC} facade={facadeC} accent="#F2C97B" emissiveIntensity={day ? 0.14 : 0.84} day={day} dayTint="#d8c197" roofSolar />
+      <InstancedBuildings buildings={aOuter} emissive="#cddde3" texture={windowA2} facade={facadeA2} accent="#79E3F2" emissiveIntensity={day ? 0.14 : 0.9} day={day} dayTint="#b9d5df" />
+      <InstancedBuildings buildings={bOuter} emissive="#bab5cf" texture={windowB2} facade={facadeB2} accent="#B0A0FF" emissiveIntensity={day ? 0.14 : 0.88} day={day} dayTint="#c8bce6" />
+      <InstancedBuildings buildings={cOuter} emissive="#d8b98c" texture={windowC2} facade={facadeC2} accent="#F2C97B" emissiveIntensity={day ? 0.14 : 0.84} day={day} dayTint="#d8c197" roofSolar />
 
       <DataTowers day={day} />
       <SignatureBuildings day={day} />
@@ -2210,6 +2224,7 @@ export function City({ day = false }: { day?: boolean }) {
       <Neighborhoods day={day} />
       <CentralPlaza day={day} />
       <MobilityHub day={day} />
+      <TransitStation day={day} />
       <ForestPark day={day} />
       <StreetFurniture day={day} />
       <StreetLife day={day} />

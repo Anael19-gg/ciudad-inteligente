@@ -51,6 +51,11 @@ export function Intro({
             Tres zonas geográficas conectadas a dos nubes internacionales. Un recorrido por la infraestructura, los
             riesgos y el marco legal de cada sector de la ciudad.
           </p>
+          <p className="cover__conclusion">
+            <span>Conclusión</span>
+            La innovación urbana solo es válida si convive con los derechos humanos, la separación de regímenes
+            público/privado, la evaluación de impacto y las transferencias internacionales legales.
+          </p>
 
           <button type="button" className="cover__enter" onClick={enter}>
             <span>Entrar al recorrido</span>

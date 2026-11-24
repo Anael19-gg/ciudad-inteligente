@@ -133,20 +133,7 @@ function Atmosphere({ day }: { day: boolean }) {
         <fog attach="fog" args={['#c3d6dc', 720, 1750]} />
         <ambientLight intensity={0.42} color="#f6faf8" />
         <hemisphereLight args={['#eef5f6', '#6c7d81', 0.68]} />
-        <directionalLight
-          position={[110, 140, 90]}
-          intensity={3.1}
-          color="#fff2da"
-          castShadow
-          shadow-mapSize={[4096, 4096]}
-          shadow-camera-left={-300}
-          shadow-camera-right={300}
-          shadow-camera-top={260}
-          shadow-camera-bottom={-260}
-          shadow-camera-near={20}
-          shadow-camera-far={520}
-          shadow-bias={-0.0006}
-        />
+        <SunLight />
         <directionalLight position={[-90, 55, -70]} intensity={0.95} color="#cfe6ff" />
         <pointLight position={[-14, 12, -24]} intensity={16} distance={32} decay={2} color="#5fd8ff" />
         <pointLight position={[160, 15, -30]} intensity={14} distance={30} decay={2} color="#9080ff" />
@@ -172,6 +159,41 @@ function Atmosphere({ day }: { day: boolean }) {
         <pointLight key={x} position={[x, 5.6, x < 0 ? 9 : -9]} intensity={14} distance={22} decay={2} color="#ffd9a8" />
       ))}
     </>
+  )
+}
+
+function SunLight() {
+  const light = useRef<THREE.DirectionalLight>(null)
+  const last = useRef(-1)
+  useFrame(({ clock }) => {
+    const instance = light.current
+    if (!instance) return
+    if (clock.elapsedTime - last.current < 0.22) return
+    last.current = clock.elapsedTime
+    const angle = clock.elapsedTime * 0.018
+    instance.position.set(
+      Math.cos(angle) * 190,
+      128 + Math.sin(angle * 1.4) * 14,
+      90 + Math.sin(angle) * 58,
+    )
+  })
+
+  return (
+    <directionalLight
+      ref={light}
+      position={[110, 140, 90]}
+      intensity={3.1}
+      color="#fff2da"
+      castShadow
+      shadow-mapSize={[4096, 4096]}
+      shadow-camera-left={-300}
+      shadow-camera-right={300}
+      shadow-camera-top={260}
+      shadow-camera-bottom={-260}
+      shadow-camera-near={20}
+      shadow-camera-far={520}
+      shadow-bias={-0.0006}
+    />
   )
 }
 
@@ -203,7 +225,7 @@ export function AtlasCanvas({
       <Canvas
         camera={{ position: [0, 300, 560], fov: 36, near: 0.8, far: 4000 }}
         dpr={[1, 1.5]}
-        shadows="percentage"
+        shadows
         gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
         fallback={
           <div className="webgl-fallback">

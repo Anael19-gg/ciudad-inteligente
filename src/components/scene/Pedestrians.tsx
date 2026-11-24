@@ -55,10 +55,10 @@ const NORTH_WALK = makeWalkerRoute([
   [220, -9.7],
 ])
 const WEST_WALK = makeWalkerRoute([
-  [-174, 54],
-  [-106, 54],
-  [-106, 104],
-  [-174, 104],
+  [-170, 80],
+  [-152, 80],
+  [-152, 92],
+  [-170, 92],
 ])
 const EAST_WALK = makeWalkerRoute([
   [106, 54],
@@ -81,8 +81,8 @@ const C_WORKS_WALK = makeWalkerRoute([
 const B_TOWERS_WALK = makeWalkerRoute([
   [108, 10.5],
   [136, 10.5],
-  [136, 43],
-  [108, 43],
+  [136, 44],
+  [108, 44],
 ])
 const B_SOUTH_WALK = makeWalkerRoute([
   [134, -12],
@@ -104,21 +104,21 @@ const A_SOUTH_WALK = makeWalkerRoute([
 ])
 const C_LAKE_WALK = makeWalkerRoute([
   [-163, 61],
-  [-149, 61],
-  [-149, 73],
+  [-146.5, 61],
+  [-146.5, 73],
   [-163, 73],
 ])
 const A_POND_WALK = makeWalkerRoute([
-  [34, 96],
-  [54, 96],
-  [54, 104],
-  [34, 104],
+  [34, 94],
+  [54, 94],
+  [54, 105],
+  [34, 105],
 ])
 const B_POND_WALK = makeWalkerRoute([
-  [84, 25],
-  [95, 25],
-  [95, 36],
-  [84, 36],
+  [83, 23],
+  [87, 23],
+  [87, 37],
+  [83, 37],
 ])
 const SCHOOL_WALK = makeWalkerRoute([
   [-95, 55],

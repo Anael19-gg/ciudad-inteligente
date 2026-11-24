@@ -145,20 +145,20 @@ function GlassTower({ day }: { day: boolean }) {
   return (
     <group position={[0, 0, 94]}>
       <mesh position={[0, 0.07, 0]} receiveShadow>
-        <cylinderGeometry args={[12.5, 12.5, 0.14, 48]} />
+        <cylinderGeometry args={[11.2, 11.2, 0.14, 48]} />
         <meshStandardMaterial color={day ? '#455156' : '#090f13'} roughness={0.95} metalness={0.1} />
       </mesh>
       <mesh position={[0, 0.27, 0]} receiveShadow>
-        <cylinderGeometry args={[11, 11.4, 0.42, 48]} />
+        <cylinderGeometry args={[10.2, 10.6, 0.42, 48]} />
         <meshStandardMaterial color={day ? '#596468' : '#101a20'} roughness={0.85} metalness={0.24} />
       </mesh>
       <mesh position={[0, 0.49, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[9.8, 10.15, 64]} />
+        <ringGeometry args={[9.4, 9.75, 64]} />
         <meshBasicMaterial color={CYAN} toneMapped={false} transparent opacity={day ? 0.24 : 0.7} />
       </mesh>
       {[0, 1, 2, 3, 4, 5].map((index) => {
         const angle = (index / 6) * Math.PI * 2
-        return <Beacon key={index} day={day} position={[Math.cos(angle) * 11.5, 0.2, Math.sin(angle) * 11.5]} size={0.1} />
+        return <Beacon key={index} day={day} position={[Math.cos(angle) * 10.4, 0.2, Math.sin(angle) * 10.4]} size={0.1} />
       })}
 
       <group position={[0, 0.48, 0]}>
@@ -385,7 +385,7 @@ function SteppedZiggurat({ day }: { day: boolean }) {
 
   return (
     <group position={[45, 0, -95]}>
-      <Plaza day={day} accent={CYAN} width={25} depth={22} />
+      <Plaza day={day} accent={CYAN} width={23} depth={20} />
 
       <group position={[0, 0.48, 0]}>
         {ZIGGURAT_LEVELS.map((level) => (
@@ -664,8 +664,8 @@ function TwinTowers({ day }: { day: boolean }) {
   ]
 
   return (
-    <group position={[226, 0, 93]}>
-      <Plaza day={day} accent={VIOLET} width={22} depth={16} />
+    <group position={[228, 0, 93]}>
+      <Plaza day={day} accent={VIOLET} width={21} depth={16} />
 
       <group position={[0, 0.48, 0]}>
         {towers.map((tower) => (
@@ -786,7 +786,7 @@ function GreenTerraces({ day }: { day: boolean }) {
   ]
 
   return (
-    <group position={[-160, 0, 35]}>
+    <group position={[-160, 0, 33]}>
       <Plaza day={day} accent={AMBER} width={30} depth={18} />
 
       <group position={[0, 0.48, 0]}>

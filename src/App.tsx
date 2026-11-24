@@ -141,7 +141,7 @@ export default function App() {
       <div className="vignette" aria-hidden="true" />
 
       <div className="ui">
-        <Header selection={selection} onSelect={handleSelect} onHome={goHome} day={day} onToggleDay={() => setDay((value) => !value)} />
+        <Header selection={selection} onSelect={handleSelect} onHome={goHome} onShowIntro={() => { setSelection(null); setMode('free'); setIntroOpen(true) }} day={day} onToggleDay={() => setDay((value) => !value)} />
         <CreditsCard />
         {!introOpen && (
           <DocLegend
