@@ -549,6 +549,19 @@ ol {
   color: #5f7078;
 }
 
+@media (min-width: 641px) {
+  .credits__meta dd {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .credits__meta dd span + span::before {
+    content: none;
+    margin: 0;
+  }
+}
+
 .credits__foot {
   display: flex;
   justify-content: space-between;

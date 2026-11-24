@@ -81,13 +81,13 @@ La app es una sola página estática: no requiere rewrites, API ni backend.
 
 ## Personalización
 
-- **Créditos y equipo:** desde la tarjeta en pantalla o en `PROJECT` dentro de [`src/data/project.ts`](src/data/project.ts).
+- **Créditos y equipo:** la ficha ya incluye al docente y al equipo del proyecto. Se puede editar en pantalla o en `PROJECT` dentro de [`src/data/project.ts`](src/data/project.ts).
 - **Todo el contenido legal, zonas, nubes y guion:** [`src/data/project.ts`](src/data/project.ts).
 - **Ciudad, edificios y mobiliario:** [`src/components/scene`](src/components/scene).
 - **Interfaz, panel, recorrido y ficha:** [`src/components/ui`](src/components/ui).
 - **Sistema visual:** [`src/styles/global.css`](src/styles/global.css).
 
-> **Nota:** los nombres del equipo vienen como `Integrante 1`, `Integrante 2` e `Integrante 3`. Sustitúyelos con el botón **Editar** de la ficha del proyecto o directamente en `src/data/project.ts` antes de la entrega.
+> **Nota:** la ficha del proyecto incluye al docente y a los cinco integrantes del equipo. Si necesitas actualizarlos, usa el botón **Editar** o modifica `PROJECT.team` en `src/data/project.ts` y vuelve a desplegar para que el cambio sea permanente en Vercel.
 
 ## Stack
 
@@ -116,3 +116,5 @@ docs/
 ---
 
 Proyecto académico · **Dr. Ricardo Ching Wesman** · 24 de noviembre de 2026
+
+**Equipo:** Anael Ramos Morales · Pablo Alejandro Prado Pimentel · Melany Tapia Morales · Mónica Yuriskery Díaz Silva · Julia Rios Gutierrez
