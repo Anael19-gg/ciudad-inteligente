@@ -31,6 +31,8 @@ Un recorrido navegable por una ciudad conectada: tres distritos instrumentados, 
 
 Abre **Guion** dentro de la barra de recorrido para ver las notas de exposición.
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Anael19-gg/ciudad-inteligente)
+
 ## Cómo usarlo
 
 - Arrastra para orbitar, rueda o pinza para acercar y clic derecho o dos dedos para desplazar.
