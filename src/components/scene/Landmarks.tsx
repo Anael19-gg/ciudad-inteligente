@@ -1,6 +1,6 @@
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
-import { Line, RoundedBox } from '@react-three/drei'
+import { Html, Line, RoundedBox, useCursor } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import type { Selection } from '../../data/project'
 
@@ -382,10 +382,86 @@ function Drone({ center, radius, height, speed, phase }: { center: [number, numb
   )
 }
 
+function LightsaberEgg({ position }: { position: [number, number, number] }) {
+  const [active, setActive] = useState(false)
+  const [hovered, setHovered] = useState(false)
+  const blade = useRef<THREE.Group>(null)
+  const light = useRef<THREE.PointLight>(null)
+  useCursor(hovered)
+
+  useFrame((_, delta) => {
+    if (!blade.current) return
+    const target = active ? 1 : 0.001
+    const next = THREE.MathUtils.damp(blade.current.scale.y, target, 14, delta)
+    blade.current.scale.y = next
+    if (light.current) light.current.intensity = 16 * next
+  })
+
+  return (
+    <group position={position}>
+      <mesh position={[0, 0.03, 0]}>
+        <cylinderGeometry args={[0.3, 0.34, 0.06, 16]} />
+        <meshStandardMaterial color="#26343c" metalness={0.6} roughness={0.45} />
+      </mesh>
+      <mesh position={[0, 0.24, 0]}>
+        <cylinderGeometry args={[0.055, 0.065, 0.38, 8]} />
+        <meshStandardMaterial color="#9ba7ad" metalness={0.8} roughness={0.25} />
+      </mesh>
+      <mesh position={[0, 0.13, 0]}>
+        <cylinderGeometry args={[0.066, 0.066, 0.1, 8]} />
+        <meshStandardMaterial color="#10171c" roughness={0.7} />
+      </mesh>
+      <mesh position={[0, 0.26, 0]}>
+        <torusGeometry args={[0.07, 0.014, 6, 20]} />
+        <meshBasicMaterial color="#7ccdde" toneMapped={false} transparent opacity={0.6} />
+      </mesh>
+
+      <group ref={blade} position={[0, 0.43, 0]} scale={[1, 0.001, 1]}>
+        <mesh position={[0, 2.15, 0]}>
+          <cylinderGeometry args={[0.065, 0.075, 4.3, 10]} />
+          <meshBasicMaterial color="#74c8ff" toneMapped={false} />
+        </mesh>
+        <mesh position={[0, 2.15, 0]}>
+          <cylinderGeometry args={[0.024, 0.03, 4.3, 8]} />
+          <meshBasicMaterial color="#f4fdff" toneMapped={false} />
+        </mesh>
+        <mesh position={[0, 2.15, 0]}>
+          <cylinderGeometry args={[0.17, 0.17, 4.3, 10]} />
+          <meshBasicMaterial color="#5ab8e8" transparent opacity={0.12} toneMapped={false} depthWrite={false} />
+        </mesh>
+      </group>
+      <pointLight ref={light} position={[0, 2, 0]} color="#7ed6ff" intensity={0} distance={14} decay={2} />
+
+      <mesh
+        position={[0, 0.4, 0]}
+        onPointerOver={(event) => {
+          event.stopPropagation()
+          setHovered(true)
+        }}
+        onPointerOut={() => setHovered(false)}
+        onClick={(event) => {
+          event.stopPropagation()
+          setActive((value) => !value)
+        }}
+      >
+        <sphereGeometry args={[1.25, 12, 12]} />
+        <meshBasicMaterial transparent opacity={0.001} depthWrite={false} />
+      </mesh>
+
+      {active && (
+        <Html position={[0, 5.6, 0]} center zIndexRange={[18, 0]} style={{ pointerEvents: 'none' }}>
+          <div className="easter-tip">Que la Fuerza te acompañe.</div>
+        </Html>
+      )}
+    </group>
+  )
+}
+
 export function Landmarks({ onSelect }: { onSelect: (selection: Selection) => void }) {
   return (
     <group>
       <MunicipalBuilding onSelect={onSelect} />
+      <LightsaberEgg position={[-17.4, 9.13, -21.5]} />
       <LprArch x={-23.5} />
       <LprArch x={23.5} />
       <BusStop position={[7, 0, 8.6]} rotation={Math.PI} />

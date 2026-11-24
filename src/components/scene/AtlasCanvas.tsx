@@ -39,7 +39,7 @@ function CameraRig({ view, nonce }: { view: CameraView; nonce: number }) {
       ref={controls}
       makeDefault
       minDistance={14}
-      maxDistance={560}
+      maxDistance={900}
       minPolarAngle={0.12}
       maxPolarAngle={1.48}
       smoothTime={0.7}
@@ -55,9 +55,9 @@ function Motes() {
   const positions = useMemo(() => {
     const array = new Float32Array(260 * 3)
     for (let i = 0; i < 260; i += 1) {
-      array[i * 3] = (Math.random() - 0.5) * 280
+      array[i * 3] = (Math.random() - 0.5) * 470
       array[i * 3 + 1] = 2 + Math.random() * 46
-      array[i * 3 + 2] = (Math.random() - 0.5) * 180
+      array[i * 3 + 2] = (Math.random() - 0.5) * 290
     }
     return array
   }, [])
@@ -89,7 +89,7 @@ function Atmosphere() {
   return (
     <>
       <color attach="background" args={['#05070a']} />
-      <fog attach="fog" args={['#05070a', 220, 720]} />
+      <fog attach="fog" args={['#05070a', 360, 1200]} />
       <ambientLight intensity={0.46} color="#b4cbd9" />
       <hemisphereLight args={['#3c5d6c', '#04070a', 0.7]} />
       <directionalLight position={[38, 72, 52]} intensity={2.5} color="#d7e8f7" />
@@ -120,7 +120,7 @@ export function AtlasCanvas({
   return (
     <div className="canvas-host" aria-label="Modelo 3D interactivo de la ciudad inteligente">
       <Canvas
-        camera={{ position: [0, 190, 340], fov: 36, near: 0.8, far: 1100 }}
+        camera={{ position: [0, 300, 560], fov: 36, near: 0.8, far: 1800 }}
         dpr={[1, 1.35]}
         gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
         fallback={

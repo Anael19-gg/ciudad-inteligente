@@ -1465,6 +1465,12 @@ body {
 
 /* -------------------------------- Responsive ------------------------------- */
 
+@media (max-width: 1500px) {
+  .cloud-tag {
+    display: none;
+  }
+}
+
 @media (max-width: 1280px) {
   .topnav__label {
     display: none;
@@ -1913,3 +1919,16 @@ body {
     font-size: 8px;
   }
 }
+
+.easter-tip {
+  padding: 6px 9px;
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  background: #0b1014;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 9.5px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+

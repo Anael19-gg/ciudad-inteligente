@@ -14,7 +14,7 @@ import {
   type Selection,
 } from './data/project'
 
-const ARRIVAL_VIEW: CameraView = { pos: [0, 196, 346], target: [0, 6, -8] }
+const ARRIVAL_VIEW: CameraView = { pos: [0, 300, 560], target: [0, 6, -12] }
 
 export default function App() {
   const [ready, setReady] = useState(false)

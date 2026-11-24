@@ -24,12 +24,14 @@ Abre **Guion** en la barra de recorrido para consultar las notas de exposición.
 
 ## La ciudad
 
-- **Territorio continuo**: avenida principal, red vial conectada y manzanas alrededor de los tres sectores.
+- **Ciudad continua de gran formato**: más de 480 × 300 unidades de trama urbana, con tres macro sectores integrados (A, B y C), calles, avenidas y manzanas que conectan todo el territorio.
 - **Zona A**: semáforos con sensores, cámaras LPR, transporte autónomo y paradas con Wi-Fi 6 / 5G.
 - **Zona B**: cámaras PTZ con reconocimiento facial, drones de patrullaje, arcos lectores y centro de seguridad.
 - **Zona C**: vivienda, medidores inteligentes, red de agua, subestación eléctrica, paneles solares y aerogeneradores.
+- **Diseño urbano**: anillo perimetral con cuatro glorietas, torres de formas cónicas y fachadas luminosas diferenciadas por sector.
+- **Movilidad**: transporte autónomo, vehículos particulares y patrullaje aéreo en movimiento.
 - **Nubes internacionales**: enlaces visuales entre la infraestructura de borde y los centros de cómputo de EE. UU. y la Unión Europea.
-- **Rendimiento**: geometría instanciada, texturas procedurales y una interfaz sin efectos de postprocesado.
+- **Rendimiento**: geometría instanciada, texturas procedurales, vehículos ligeros y una interfaz sin efectos de postprocesado.
 
 ## Controles
 

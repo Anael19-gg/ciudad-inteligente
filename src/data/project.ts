@@ -135,8 +135,8 @@ export const ZONES: Zone[] = [
     cloud: 'us',
     accent: '#79E3F2',
     center: [0, 0, 0],
-    markerAnchor: [0, 16, 0],
-    camera: { pos: [0, 88, 126], target: [0, 3, 0] },
+    markerAnchor: [0, 12, 0],
+    camera: { pos: [0, 100, 160], target: [0, 3, 0] },
     content: {
       infra: {
         intro: 'Del sensor de piso al servidor municipal, y de ahí a la nube.',
@@ -212,8 +212,8 @@ export const ZONES: Zone[] = [
     cloud: 'us',
     accent: '#B0A0FF',
     center: [40, 0, 0],
-    markerAnchor: [58, 20, -6],
-    camera: { pos: [104, 72, 92], target: [42, 5, -8] },
+    markerAnchor: [140, 18, -30],
+    camera: { pos: [150, 100, 140], target: [42, 5, -6] },
     content: {
       infra: {
         intro: 'Sensores que no solo registran: clasifican, predicen y alertan.',
@@ -289,8 +289,8 @@ export const ZONES: Zone[] = [
     cloud: 'eu',
     accent: '#F2C97B',
     center: [-40, 0, 0],
-    markerAnchor: [-58, 20, 6],
-    camera: { pos: [-18, 78, 116], target: [-47, 4, -2] },
+    markerAnchor: [-140, 18, 28],
+    camera: { pos: [-60, 110, 180], target: [-47, 4, 0] },
     content: {
       infra: {
         intro: 'La red de servicios se convierte en una red de datos domésticos.',
@@ -419,7 +419,7 @@ export const CLOUDS: Cloud[] = [
 
 export const CLOUD_BY_ID = Object.fromEntries(CLOUDS.map((c) => [c.id, c])) as Record<CloudId, Cloud>
 
-export const CLOUDS_VIEW = { pos: [16, 112, 192] as Vec3, target: [16, 40, -14] as Vec3 }
+export const CLOUDS_VIEW = { pos: [16, 140, 250] as Vec3, target: [16, 40, -14] as Vec3 }
 
 export interface TourStep {
   id: string
@@ -440,7 +440,7 @@ export const TOUR: TourStep[] = [
     label: 'Vista general',
     title: 'Arquitectura híbrida',
     caption: 'Tres zonas geográficas conectadas a dos nubes internacionales.',
-    view: { pos: [0, 150, 272], target: [0, 5, -8] },
+    view: { pos: [0, 220, 440], target: [0, 6, -12] },
     selection: null,
     notes: [
       'Muestra las 3 zonas y explica la arquitectura híbrida (Edge en México + nube en EE. UU. y UE), destacando el rol dual de operadores (Municipio vs. privados).',
@@ -491,7 +491,7 @@ export const TOUR: TourStep[] = [
     label: 'Recordatorio final',
     title: 'Ficha del proyecto',
     caption: 'Título, docente e integrantes.',
-    view: { pos: [0, 142, 258], target: [0, 4, -6] },
+    view: { pos: [0, 210, 420], target: [0, 4, -8] },
     selection: null,
     notes: [
       'Recordatorio final: la ficha visible debe mostrar el título del proyecto, el nombre del docente y los nombres completos de todos los integrantes.',
