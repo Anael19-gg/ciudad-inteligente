@@ -1,3 +1,4 @@
+import { useLayoutEffect, useMemo, useRef } from 'react'
 import { Line } from '@react-three/drei'
 import * as THREE from 'three'
 
@@ -261,13 +262,116 @@ function GlassTower({ day }: { day: boolean }) {
 /* ------------------------------------------------------------------ */
 /* 2 · Zigurat escalonado · Zona A                                    */
 /* ------------------------------------------------------------------ */
+const ZIGGURAT_LEVELS = [
+  { width: 18, height: 7.6, base: 0 },
+  { width: 14, height: 6.0, base: 7.6 },
+  { width: 10.2, height: 4.8, base: 13.6 },
+  { width: 6.4, height: 3.6, base: 18.4 },
+]
+
+type WindowSpec = { position: Vec3; size: Vec3; tone: number }
+
+function buildZigguratWindows(): WindowSpec[] {
+  const windows: WindowSpec[] = []
+  ZIGGURAT_LEVELS.forEach((level, levelIndex) => {
+    const columns = 5 - levelIndex
+    const cell = level.width / (columns + 1)
+    const rowCount = level.height > 5 ? 2 : 1
+    const rowYs =
+      rowCount === 2
+        ? [level.base + 2.2, level.base + level.height - 1.35]
+        : [level.base + level.height / 2]
+    const offset = level.width / 2 + 0.07
+
+    for (let row = 0; row < rowYs.length; row += 1) {
+      for (let column = 0; column < columns; column += 1) {
+        const x = -level.width / 2 + cell * (column + 1)
+        const y = rowYs[row]
+        const tone = (column + row + levelIndex) % 4
+        const entrance = levelIndex === 0 && row === 0 && Math.abs(x) < 2.4
+        if (!entrance) {
+          windows.push({ position: [x, y, offset], size: [cell * 0.54, 0.92, 0.09], tone })
+          windows.push({ position: [x, y, -offset], size: [cell * 0.54, 0.92, 0.09], tone: (tone + 1) % 4 })
+        }
+        windows.push({ position: [offset, y, x], size: [0.09, 0.92, cell * 0.54], tone: (tone + 2) % 4 })
+        windows.push({ position: [-offset, y, x], size: [0.09, 0.92, cell * 0.54], tone: (tone + 2) % 4 })
+      }
+    }
+  })
+  return windows
+}
+
+const ZIGGURAT_WINDOWS = buildZigguratWindows()
+
+function ZigguratWindowGrid({ day }: { day: boolean }) {
+  const ref = useRef<THREE.InstancedMesh>(null)
+
+  useLayoutEffect(() => {
+    if (!ref.current) return
+    const matrix = new THREE.Matrix4()
+    const position = new THREE.Vector3()
+    const quaternion = new THREE.Quaternion()
+    const scale = new THREE.Vector3()
+    const color = new THREE.Color()
+    const nightTones = ['#f3ca86', '#ffddb0', '#a9e3ea', '#89b9c4']
+    const dayTones = ['#61767c', '#6c8186', '#587078', '#72878b']
+
+    ZIGGURAT_WINDOWS.forEach((window, index) => {
+      position.set(...window.position)
+      scale.set(...window.size)
+      matrix.compose(position, quaternion, scale)
+      ref.current!.setMatrixAt(index, matrix)
+      ref.current!.setColorAt(index, color.set(day ? dayTones[window.tone] : nightTones[window.tone]))
+    })
+    ref.current.instanceMatrix.needsUpdate = true
+    if (ref.current.instanceColor) ref.current.instanceColor.needsUpdate = true
+  }, [day])
+
+  return (
+    <instancedMesh ref={ref} args={[undefined, undefined, ZIGGURAT_WINDOWS.length]}>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshBasicMaterial color="#ffffff" toneMapped={false} transparent opacity={day ? 0.62 : 0.94} />
+    </instancedMesh>
+  )
+}
+
+function ZigguratTrims({ day }: { day: boolean }) {
+  const ref = useRef<THREE.InstancedMesh>(null)
+
+  useLayoutEffect(() => {
+    if (!ref.current) return
+    const matrix = new THREE.Matrix4()
+    const position = new THREE.Vector3()
+    const quaternion = new THREE.Quaternion()
+    const scale = new THREE.Vector3()
+    let index = 0
+    ZIGGURAT_LEVELS.forEach((level) => {
+      const edge = level.width / 2 - 0.1
+      ;[
+        [-edge, -edge],
+        [edge, -edge],
+        [edge, edge],
+        [-edge, edge],
+      ].forEach(([x, z]) => {
+        position.set(x, level.base + level.height / 2, z)
+        scale.set(0.09, level.height, 0.09)
+        matrix.compose(position, quaternion, scale)
+        ref.current!.setMatrixAt(index, matrix)
+        index += 1
+      })
+    })
+    ref.current.instanceMatrix.needsUpdate = true
+  }, [])
+
+  return (
+    <instancedMesh ref={ref} args={[undefined, undefined, ZIGGURAT_LEVELS.length * 4]}>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshBasicMaterial color={AMBER} toneMapped={false} transparent opacity={day ? 0.35 : 0.8} />
+    </instancedMesh>
+  )
+}
+
 function SteppedZiggurat({ day }: { day: boolean }) {
-  const levels = [
-    { width: 18, height: 7.6, base: 0 },
-    { width: 14, height: 6.0, base: 7.6 },
-    { width: 10.2, height: 4.8, base: 13.6 },
-    { width: 6.4, height: 3.6, base: 18.4 },
-  ]
   const frontWindows: { position: Vec3; size: Vec3 }[] = [
     { position: [-5.2, 4.8, 9.06], size: [2.2, 1.0, 0.09] },
     { position: [0, 4.8, 9.06], size: [2.2, 1.0, 0.09] },
@@ -284,7 +388,7 @@ function SteppedZiggurat({ day }: { day: boolean }) {
       <Plaza day={day} accent={CYAN} width={25} depth={22} />
 
       <group position={[0, 0.48, 0]}>
-        {levels.map((level) => (
+        {ZIGGURAT_LEVELS.map((level) => (
           <mesh
             key={level.width}
             position={[0, level.base + level.height / 2, 0]}
@@ -293,14 +397,19 @@ function SteppedZiggurat({ day }: { day: boolean }) {
           >
             <boxGeometry args={[level.width, level.height, level.width]} />
             <meshStandardMaterial
-              color={pick(day, '#141f25', '#9aa6aa')}
-              roughness={day ? 0.7 : 0.48}
-              metalness={day ? 0.2 : 0.45}
+              color={pick(day, '#1e3038', '#8f9b9e')}
+              roughness={day ? 0.66 : 0.42}
+              metalness={day ? 0.2 : 0.48}
+              emissive={day ? '#07161c' : '#12303a'}
+              emissiveIntensity={day ? 0.08 : 0.35}
             />
           </mesh>
         ))}
 
-        {levels.map((level) => (
+        <ZigguratWindowGrid day={day} />
+        <ZigguratTrims day={day} />
+
+        {ZIGGURAT_LEVELS.map((level) => (
           <GlowBar
             key={`band-${level.width}`}
             day
@@ -342,6 +451,23 @@ function SteppedZiggurat({ day }: { day: boolean }) {
           <boxGeometry args={[6.2, 0.3, 2.2]} />
           <meshStandardMaterial color={pick(day, '#6f7a7e', '#253238')} roughness={0.8} metalness={0.2} />
         </mesh>
+        {[
+          [-10.4, 0.3, -10.4],
+          [10.4, 0.3, -10.4],
+          [10.4, 0.3, 10.4],
+          [-10.4, 0.3, 10.4],
+        ].map(([x, y, z], index) => (
+          <group key={index} position={[x, y, z]}>
+            <mesh castShadow receiveShadow>
+              <boxGeometry args={[1.9, 0.55, 1.9]} />
+              <meshStandardMaterial color={pick(day, '#48554f', '#1d3330')} roughness={0.85} />
+            </mesh>
+            <mesh position={[0, 0.62, 0]} castShadow>
+              <icosahedronGeometry args={[0.9, 0]} />
+              <meshStandardMaterial color={pick(day, '#285c40', '#1d4937')} roughness={0.9} flatShading />
+            </mesh>
+          </group>
+        ))}
 
         <mesh position={[0, 22.1, 0]} castShadow>
           <boxGeometry args={[6.8, 0.25, 6.8]} />
@@ -385,7 +511,7 @@ function SteppedZiggurat({ day }: { day: boolean }) {
 /* ------------------------------------------------------------------ */
 function OperationsDome({ day }: { day: boolean }) {
   return (
-    <group position={[158, 0, 92]}>
+    <group position={[160, 0, 92]}>
       <Plaza day={day} accent={VIOLET} width={28} depth={12} />
 
       <group position={[0, 0.48, 0]}>
@@ -420,8 +546,19 @@ function OperationsDome({ day }: { day: boolean }) {
 
         <LitPanel day position={[-5.4, 4.3, -6.06]} size={[4.2, 1.3, 0.09]} accent={VIOLET} intensity={1.0} />
         <LitPanel day position={[5.4, 4.3, -6.06]} size={[4.2, 1.3, 0.09]} accent={VIOLET} intensity={1.0} />
-        <GlowBar day position={[-8.7, 3, -6.03]} size={[0.14, 5.4, 0.1]} color={VIOLET} dayOpacity={0.22} nightOpacity={0.85} />
-        <GlowBar day position={[8.7, 3, -6.03]} size={[0.14, 5.4, 0.1]} color={VIOLET} dayOpacity={0.22} nightOpacity={0.85} />
+        {[-5.4, -1.8, 1.8, 5.4].map((x) => (
+          <LitPanel key={`dome-back-${x}`} day position={[x, 4.3, 6.06]} size={[3.4, 1.3, 0.09]} accent={VIOLET} intensity={0.95} />
+        ))}
+        {[-9.06, 9.06].map((x) =>
+          [-3.6, -0.2, 3.2].map((z) => (
+            <LitPanel key={`dome-side-${x}-${z}`} day position={[x, 4.3, z]} size={[0.09, 1.3, 2.9]} accent={VIOLET} intensity={0.95} />
+          )),
+        )}
+        <LitPanel day position={[0, 4.35, -7.08]} size={[6.2, 0.78, 0.1]} accent={VIOLET} intensity={1.45} />
+        <GlowBar day position={[-8.72, 3.05, -6.03]} size={[0.14, 5.4, 0.1]} color={VIOLET} dayOpacity={0.22} nightOpacity={0.85} />
+        <GlowBar day position={[8.72, 3.05, -6.03]} size={[0.14, 5.4, 0.1]} color={VIOLET} dayOpacity={0.22} nightOpacity={0.85} />
+        <GlowBar day position={[-8.72, 3.05, 6.03]} size={[0.14, 5.4, 0.1]} color={VIOLET} dayOpacity={0.16} nightOpacity={0.6} />
+        <GlowBar day position={[8.72, 3.05, 6.03]} size={[0.14, 5.4, 0.1]} color={VIOLET} dayOpacity={0.16} nightOpacity={0.6} />
 
         <mesh position={[0, 6.6, 0]} castShadow>
           <cylinderGeometry args={[8.9, 9.25, 0.8, 32]} />
@@ -527,8 +664,8 @@ function TwinTowers({ day }: { day: boolean }) {
   ]
 
   return (
-    <group position={[205, 0, 93]}>
-      <Plaza day={day} accent={VIOLET} width={34} depth={20} />
+    <group position={[226, 0, 93]}>
+      <Plaza day={day} accent={VIOLET} width={22} depth={16} />
 
       <group position={[0, 0.48, 0]}>
         {towers.map((tower) => (

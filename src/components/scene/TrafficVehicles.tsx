@@ -142,6 +142,12 @@ const BIKE_LOOP = makeRoute([
   [220, 7.2],
   [-220, 7.2],
 ])
+const RING_LOOP = makeRoute([
+  [-204, -124],
+  [204, -124],
+  [204, 124],
+  [-204, 124],
+])
 
 type CarVariant = 'sedan' | 'compact' | 'taxi' | 'pickup' | 'security'
 type VehicleKind = 'car' | 'bus' | 'bike'
@@ -513,6 +519,12 @@ export function TrafficVehicles() {
       <RouteVehicle route={CENTER_SOUTH} start={280} speed={7.5} kind="car" variant="security" color="#596b74" />
       <RouteVehicle route={CENTER_SOUTH} start={180} speed={7.5} kind="car" variant="sedan" color="#b6c3c9" />
       <RouteVehicle route={CENTER_SOUTH} start={330} speed={7.5} kind="car" variant="pickup" color="#8e9ba1" />
+
+      {/* Anillo perimetral recto */}
+      <RouteVehicle route={RING_LOOP} start={50} speed={8.6} kind="car" variant="taxi" color="#b9a56f" />
+      <RouteVehicle route={RING_LOOP} start={390} speed={8.2} kind="car" variant="compact" color="#a6b6bd" />
+      <RouteVehicle route={RING_LOOP} start={720} speed={8.8} kind="car" variant="security" color="#596b74" />
+      <RouteVehicle route={RING_LOOP} start={1030} speed={8.4} kind="car" variant="sedan" color="#b6c3c9" />
 
       {/* Ciclovía continua sobre la avenida */}
       <RouteVehicle route={BIKE_LOOP} start={200} speed={3.1} kind="bike" color="#84969e" jacket="#b7a16d" />

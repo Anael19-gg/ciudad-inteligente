@@ -140,20 +140,20 @@ const C2_HOUSES = [
   }),
 ]
 
-// Barrio A1: pequeño conjunto junto al borde del bosque central.
+// Barrio A1: pequeño conjunto residencial al oeste del centro.
 const A1_HOUSES = [
   ...createHouseRow({
     alongX: false,
-    fixed: -49.775,
-    centers: [122.6, 126.0, 129.4],
+    fixed: -79.775,
+    centers: [85.6, 89.0, 92.4],
     rotation: Math.PI / 2,
     frontSetback: 1.65,
     toneOffset: 2,
   }),
   ...createHouseRow({
     alongX: false,
-    fixed: -41.225,
-    centers: [122.6, 126.0, 129.4],
+    fixed: -71.225,
+    centers: [85.6, 89.0, 92.4],
     rotation: -Math.PI / 2,
     frontSetback: 1.65,
     toneOffset: 5,
@@ -167,13 +167,13 @@ const CHIMNEY_COUNT = HOUSES.filter((house) => house.chimney).length
 const LOTS: LotSpec[] = [
   { x: -228, z: 20, width: 15.2, depth: 15.0, tone: 0 },
   { x: -88, z: -89.5, width: 14.6, depth: 14.0, tone: 1 },
-  { x: -45.5, z: 126, width: 14.4, depth: 13.0, tone: 2 },
+  { x: -75.5, z: 89, width: 14.4, depth: 13.0, tone: 2 },
 ]
 
 const LANES: LaneSpec[] = [
   { x: -228, z: 20, length: 15.2, width: 2.9, alongX: false },
   { x: -88, z: -89.6, length: 14.8, width: 2.6, alongX: true },
-  { x: -45.5, z: 126, length: 13.2, width: 2.8, alongX: false },
+  { x: -75.5, z: 89, length: 13.2, width: 2.8, alongX: false },
 ]
 
 const FENCE_SEGMENTS: FenceSegmentSpec[] = [
@@ -191,12 +191,12 @@ const FENCE_SEGMENTS: FenceSegmentSpec[] = [
   { x1: -80.6, z1: -96.8, x2: -80.6, z2: -91.7 },
   { x1: -80.6, z1: -87.5, x2: -80.6, z2: -82.2 },
   // A1
-  { x1: -52.8, z1: 119.4, x2: -52.8, z2: 132.6 },
-  { x1: -38.2, z1: 119.4, x2: -38.2, z2: 132.6 },
-  { x1: -52.8, z1: 119.4, x2: -47.6, z2: 119.4 },
-  { x1: -43.4, z1: 119.4, x2: -38.2, z2: 119.4 },
-  { x1: -52.8, z1: 132.6, x2: -47.6, z2: 132.6 },
-  { x1: -43.4, z1: 132.6, x2: -38.2, z2: 132.6 },
+  { x1: -82.8, z1: 82.4, x2: -82.8, z2: 95.6 },
+  { x1: -68.2, z1: 82.4, x2: -68.2, z2: 95.6 },
+  { x1: -82.8, z1: 82.4, x2: -77.6, z2: 82.4 },
+  { x1: -73.4, z1: 82.4, x2: -68.2, z2: 82.4 },
+  { x1: -82.8, z1: 95.6, x2: -77.6, z2: 95.6 },
+  { x1: -73.4, z1: 95.6, x2: -68.2, z2: 95.6 },
 ]
 
 const GATE_PILLARS: { x: number; z: number }[] = [
@@ -206,10 +206,10 @@ const GATE_PILLARS: { x: number; z: number }[] = [
   { x: -95.4, z: -87.5 },
   { x: -80.6, z: -91.7 },
   { x: -80.6, z: -87.5 },
-  { x: -47.6, z: 119.4 },
-  { x: -43.4, z: 119.4 },
-  { x: -47.6, z: 132.6 },
-  { x: -43.4, z: 132.6 },
+  { x: -77.6, z: 82.4 },
+  { x: -73.4, z: 82.4 },
+  { x: -77.6, z: 95.6 },
+  { x: -73.4, z: 95.6 },
 ]
 
 const TREES: TreeSpec[] = [
@@ -226,10 +226,10 @@ const TREES: TreeSpec[] = [
   { x: -92.9, z: -83.45, scale: 0.88, kind: 'conifer', tone: 1 },
   { x: -84.5, z: -83.45, scale: 1.02, kind: 'round', tone: 3 },
   // A1
-  { x: -51.75, z: 123.2, scale: 0.98, kind: 'round', tone: 2 },
-  { x: -51.75, z: 128.8, scale: 0.84, kind: 'conifer', tone: 1 },
-  { x: -39.25, z: 123.2, scale: 0.82, kind: 'conifer', tone: 0 },
-  { x: -39.25, z: 128.8, scale: 1.0, kind: 'round', tone: 1 },
+  { x: -81.75, z: 86.2, scale: 0.98, kind: 'round', tone: 2 },
+  { x: -81.75, z: 91.8, scale: 0.84, kind: 'conifer', tone: 1 },
+  { x: -69.25, z: 86.2, scale: 0.82, kind: 'conifer', tone: 0 },
+  { x: -69.25, z: 91.8, scale: 1.0, kind: 'round', tone: 1 },
 ]
 
 const LAMPS: LampSpec[] = [
@@ -244,10 +244,10 @@ const LAMPS: LampSpec[] = [
   { x: -84.7, z: -91.2 },
   { x: -81.95, z: -87.95 },
   // A1
-  { x: -47.3, z: 124.3 },
-  { x: -43.7, z: 127.7 },
-  { x: -47.3, z: 131.25 },
-  { x: -43.7, z: 121.15 },
+  { x: -77.3, z: 87.3 },
+  { x: -73.7, z: 90.7 },
+  { x: -77.3, z: 94.25 },
+  { x: -73.7, z: 84.15 },
 ]
 
 const BENCHES: BenchSpec[] = [
@@ -255,8 +255,8 @@ const BENCHES: BenchSpec[] = [
   { x: -226.05, z: 23.1, rotation: -Math.PI / 2 },
   { x: -94.85, z: -89.6, rotation: Math.PI / 2 },
   { x: -81.35, z: -89.6, rotation: -Math.PI / 2 },
-  { x: -45.5, z: 119.9, rotation: 0 },
-  { x: -45.5, z: 132.1, rotation: Math.PI },
+  { x: -75.5, z: 82.9, rotation: 0 },
+  { x: -75.5, z: 95.1, rotation: Math.PI },
 ]
 
 const ROUND_TREE_COUNT = TREES.filter((tree) => tree.kind === 'round').length

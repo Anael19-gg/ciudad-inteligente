@@ -62,8 +62,11 @@ export function Annotations({
   const hitRef = useRef<THREE.InstancedMesh>(null)
 
   const points = useMemo(
-    () => (activeZone ? DOCUMENT_POINTS.filter((point) => point.zone === activeZone) : DOCUMENT_POINTS),
-    [activeZone],
+    () =>
+      DOCUMENT_POINTS.filter((point) =>
+        activeZone ? point.zone === activeZone : layers[point.layer],
+      ),
+    [activeZone, layers],
   )
 
   const expandedPoints = useMemo(

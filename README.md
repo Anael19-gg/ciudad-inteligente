@@ -20,23 +20,22 @@ Un recorrido 3D por una ciudad conectada: tres zonas geográficas, dos nubes int
 | 03 | Movilidad y conectividad | Zona A: semáforos, Wi-Fi/5G, datos abiertos y obra por encargo |
 | 04 | Recordatorio final | Ficha del proyecto con docente e integrantes |
 
-Abre **Guion** en la barra de recorrido para consultar las notas de exposición.
-
 ## La ciudad
 
 - **Tres tercios completos**: la ciudad se divide en tres zonas de igual extensión. La Zona C ocupa todo el tercio oeste, la Zona A el centro y la Zona B el tercio este. La infraestructura de cada zona se distribuye por todo su territorio, no solo en el núcleo.
 - **Zona A · Movilidad y conectividad**: avenida instrumentada, semáforos sincronizados, cámaras LPR, paradas con Wi-Fi 6 / 5G, electrolineras, tótems de movilidad, parques y ciclovía.
 - **Zona B · Seguridad urbana predictiva**: centro de seguridad, cámaras PTZ, drones de patrullaje, arcos lectores, puestos de control, plataformas de drones y torres de iluminación.
 - **Zona C · Sostenibilidad y energía**: vivienda, medidores inteligentes, red de agua, subestación eléctrica, paneles solares, aerogeneradores, jardines comunitarios y torres de agua.
-- **Diseño urbano**: más de 480 × 300 unidades de trama urbana, anillo perimetral con cuatro glorietas y cinco edificios singulares (torre circular, zigurat, cúpula de operaciones, torres gemelas y terrazas verdes) que rompen la silueta repetitiva.
-- **Movilidad continua**: autos de varios modelos (sedán, compacto, taxi, pickup y patrulla), buses y bicicletas recorren rutas cerradas sin desapariciones; los semáforos de la avenida detienen el tráfico en rojo/ámbar y lo liberan en verde. La avenida respeta carriles de ida y vuelta y las calles perimetrales tienen un solo sentido.
-- **Vida urbana**: más de 35 peatones caminando por la avenida, parques, barrios y las tres zonas, con vestuario y animación de marcha; dos helicópteros futuristas sobrevuelan la ciudad de forma continua; iluminación de calle, árboles instanciados y parques.
-- **Equipamiento de barrio**: escuela, banco, clínica, mercado, biblioteca, estación de bomberos, tres conjuntos residenciales, un bosque urbano, bancas, botes de basura, maceteros, racks de bicicletas y kioscos.
+- **Diseño urbano**: más de 480 × 300 unidades de trama urbana, anillo perimetral recto con cuatro esquinas y cinco edificios singulares (torre circular, zigurat de datos, centro de operaciones con cúpula, torres gemelas y terrazas verdes) que rompen la silueta repetitiva.
+- **Hitos de datos**: ocho torres de datos con fachada de vidrio, ventanas encendidas y anillos de luz; un zigurat escalonado con cientos de ventanas; una cúpula de operaciones con ventanales y antenas; y una plaza central con fuente, pérgola solar, bancas y arbolado.
+- **Movilidad continua**: autos de varios modelos (sedán, compacto, taxi, pickup y patrulla), buses y bicicletas recorren rutas cerradas sin desapariciones; cuatro vehículos circulan por el anillo perimetral; los semáforos de la avenida detienen el tráfico en rojo/ámbar y lo liberan en verde. La avenida respeta carriles de ida y vuelta y las calles perimetrales tienen un solo sentido.
+- **Vida urbana**: más de 40 peatones caminando por la avenida, parques, barrios, la plaza central, el centro de movilidad y las tres zonas, con vestuario y animación de marcha; dos helicópteros futuristas sobrevuelan la ciudad de forma continua; iluminación de calle, árboles instanciados y parques.
+- **Equipamiento de barrio**: escuela, banco, clínica, mercado, biblioteca, estación de bomberos con camión, tres conjuntos residenciales, un bosque urbano, un centro de movilidad con autobuses eléctricos y pérgola solar, bancas, botes de basura, maceteros, racks de bicicletas, kioscos, pasos peatonales y autos estacionados.
 - **Agua y vegetación**: tres estanques decorativos con rocas, juncos, bancas y faroles; arbustos, maceteros y parterres distribuidos en lotes libres.
 - **Cielo y clima**: vista de día con sombras direccionales y gradiente de cielo; vista nocturna con ventanas encendidas, letreros, halos de alumbrado público y enlaces de datos.
 - **Puntos del documento**: capa de etiquetas 3D sobre semáforos, cámaras, drones, medidores, servidores y nubes, con filtros por color para infraestructura, riesgos, marco legal y propiedad intelectual; al tocar una etiqueta se abre la ficha de la zona en la capa correspondiente.
 - **Nubes internacionales**: múltiples enlaces animados desde la infraestructura de las tres zonas hacia los centros de cómputo de EE. UU. y la Unión Europea.
-- **Rendimiento**: geometría instanciada para edificios, árboles y alumbrado, texturas procedurales, vehículos ligeros, sombras solo en modo día y una interfaz sin postprocesado.
+- **Rendimiento**: geometría instanciada para edificios, árboles, alumbrado, mobiliario y vehículos estacionados; texturas procedurales; sombras direccionales de alta resolución en modo día; DPR adaptativo hasta 1.5 y una interfaz sin postprocesado.
 
 ## Easter eggs
 
@@ -51,7 +50,7 @@ Abre **Guion** en la barra de recorrido para consultar las notas de exposición.
 - Cambia entre **Infraestructura**, **Riesgos**, **Marco legal** y **Propiedad intelectual** desde la ficha de cada zona.
 - Usa el recorrido guiado para seguir el orden de la exposición.
 - Alterna **Día / Noche** con el botón del encabezado.
-- Usa **Puntos del documento** para activar o desactivar las etiquetas y filtrarlas por color: infraestructura, riesgos, marco legal o propiedad intelectual.
+- Usa **Puntos del documento** para activar o desactivar los puntos y filtrarlos por color: infraestructura, riesgos, marco legal o propiedad intelectual. Al abrir una zona, sus etiquetas se despliegan sobre el modelo.
 - La ficha académica permanece visible en la esquina superior izquierda.
 - La hora del encabezado corresponde a **Mexicali, B.C.**
 

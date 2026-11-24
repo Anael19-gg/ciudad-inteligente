@@ -60,30 +60,29 @@ const PLANTERS: Placement[] = [
   // Plazas A, B y C
   { x: -58, z: 98, rotation: 0 },
   { x: 43, z: 67, rotation: 0 },
-  { x: 80, z: 96.5, rotation: 0 },
-  { x: 204, z: 124, rotation: 0 },
+  { x: 94, z: 104, rotation: 0 },
+  { x: 235, z: 106, rotation: 0 },
   { x: -152, z: 91, rotation: 0 },
 ]
 
 const BIKE_RACKS: Placement[] = [
   { x: 36.5, z: 66.5, rotation: HALF_PI },
-  { x: 88, z: 94, rotation: 0 },
   { x: 154, z: -16, rotation: HALF_PI },
   { x: 53, z: -60, rotation: HALF_PI },
-  { x: -127, z: 66, rotation: 0 },
+  { x: -92, z: 70, rotation: 0 },
 ]
 
 const KIOSKS: Placement[] = [
-  { x: 44, z: 58, rotation: -0.55 },
+  { x: 36, z: 53.5, rotation: -0.55 },
   { x: 94, z: 84, rotation: -0.6 },
-  { x: -132, z: 62, rotation: -0.2 },
+  { x: -80, z: 68, rotation: -0.2 },
 ]
 
 const PEDESTRIAN_SIGNS: Placement[] = [
   { x: -14.5, z: -12.85, rotation: 0 },
-  { x: 39.5, z: 62.5, rotation: -2.05 },
-  { x: 84.5, z: 95.5, rotation: -2.87 },
-  { x: 204, z: 116.5, rotation: -2.65 },
+  { x: 50, z: 55, rotation: -2.05 },
+  { x: 92, z: 104, rotation: -2.87 },
+  { x: 235, z: 80, rotation: -2.65 },
   { x: -110, z: 56.5, rotation: -0.72 },
   { x: -168, z: 25, rotation: -0.38 },
   { x: -93, z: -85.5, rotation: -2.74 },

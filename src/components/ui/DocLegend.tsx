@@ -8,20 +8,17 @@ export function DocLegend({
   layers,
   onToggle,
   onToggleLayer,
-  onShowAll,
 }: {
   active: boolean
   activeZone: ZoneId | null
   layers: Record<LayerId, boolean>
   onToggle: () => void
   onToggleLayer: (layer: LayerId) => void
-  onShowAll: () => void
 }) {
   const [open, setOpen] = useState(false)
   const zonePoints = activeZone
     ? DOCUMENT_POINTS.filter((point) => point.zone === activeZone)
     : DOCUMENT_POINTS
-  const allLayers = LAYERS.every((layer) => layers[layer.id])
 
   return (
     <aside className={`doc-legend ${open ? 'is-open' : 'is-closed'} ${active ? 'is-active' : 'is-off'}`} aria-label="Puntos del documento">
@@ -80,13 +77,10 @@ export function DocLegend({
               )
             })}
           </div>
-          <button type="button" className="doc-legend__all" onClick={onShowAll} disabled={allLayers}>
-            {allLayers ? 'Todas las capas visibles' : 'Ver todas las capas'}
-          </button>
           <p className="doc-legend__hint">
             {active
               ? 'Elige una capa de color para ver sus etiquetas. Toca un punto para abrir su ficha.'
-              : 'Activa los puntos y las capas para leer el documento sobre el mapa.'}
+              : 'Las capas filtran los puntos del mapa. Selecciona una zona para leer sus etiquetas.'}
           </p>
         </div>
       )}

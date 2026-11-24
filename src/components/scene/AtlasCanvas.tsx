@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { CameraControls } from '@react-three/drei'
+import { AdaptiveDpr, CameraControls } from '@react-three/drei'
 import { City } from './City'
 import { Landmarks } from './Landmarks'
 import { Annotations } from './Annotations'
@@ -138,7 +138,7 @@ function Atmosphere({ day }: { day: boolean }) {
           intensity={3.1}
           color="#fff2da"
           castShadow
-          shadow-mapSize={[2048, 2048]}
+          shadow-mapSize={[4096, 4096]}
           shadow-camera-left={-300}
           shadow-camera-right={300}
           shadow-camera-top={260}
@@ -202,7 +202,7 @@ export function AtlasCanvas({
     <div className="canvas-host" aria-label="Modelo 3D interactivo de la ciudad inteligente">
       <Canvas
         camera={{ position: [0, 300, 560], fov: 36, near: 0.8, far: 4000 }}
-        dpr={[1, 1]}
+        dpr={[1, 1.5]}
         shadows
         gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
         fallback={
@@ -221,6 +221,7 @@ export function AtlasCanvas({
         <SkyDome day={day} />
         <Exposure day={day} />
         <CameraRig view={view} nonce={nonce} />
+        <AdaptiveDpr />
         <City day={day} />
         <Landmarks onSelect={onSelect} />
         <Clouds onSelect={onSelect} showAnnotations={showCloudLabels} />

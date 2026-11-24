@@ -297,7 +297,7 @@ const SCHOOL_BOLLARDS: Vec3[] = [
 
 function School({ day, mat }: { day: boolean; mat: CivicMaterials }) {
   return (
-    <group position={[-120, 0, 60]}>
+    <group position={[-86, 0, 62]}>
       <CivicPlaza day={day} mat={mat} width={17.2} depth={12.6} accent={CYAN} glow={mat.glowCyan} />
       <group position={[0, PLAZA_TOP, 0]}>
         <Block position={[0, 0.035, -0.8]} size={[6.5, 0.07, 4.4]} material={mat.plazaInset} receive />
@@ -438,6 +438,27 @@ function Bank({ day, mat }: { day: boolean; mat: CivicMaterials }) {
             />
           ))}
 
+          {[-2.45, 0, 2.45].map((x) =>
+            [3.2, 6.2].map((y) => (
+              <Block
+                key={`back-${x}-${y}`}
+                position={[x, y, 4.72]}
+                size={[1.55, 1.15, 0.09]}
+                material={mat.winCyan}
+              />
+            )),
+          )}
+          {[-3.91, 3.91].map((x) =>
+            [0.4, 2.9].map((z) => (
+              <Block
+                key={`side-${x}-${z}`}
+                position={[x, 4.7, z]}
+                size={[0.09, 3.0, 1.55]}
+                material={mat.winCyan}
+              />
+            )),
+          )}
+
           {BANK_STEPS.map((step) => (
             <Block key={step.z} position={[0, step.y, step.z]} size={[step.width, 0.14, 0.55]} material={mat.path} receive />
           ))}
@@ -517,7 +538,7 @@ const CLINIC_BOLLARDS: Vec3[] = [
 
 function Clinic({ day, mat }: { day: boolean; mat: CivicMaterials }) {
   return (
-    <group position={[82, 0, 88]}>
+    <group position={[87, 0, 94]}>
       <group position={[-1, 0, 4]}>
         <CivicPlaza day={day} mat={mat} width={15} depth={14} accent={GREEN} glow={mat.glowGreen} />
         <group position={[0, PLAZA_TOP, 0]}>
@@ -617,7 +638,7 @@ function Market({ day, mat }: { day: boolean; mat: CivicMaterials }) {
   const produce = [mat.green, mat.red, mat.winAmber, mat.greenSoft]
 
   return (
-    <group position={[-40, 0, -64]}>
+    <group position={[-38.5, 0, -64]}>
       <group position={[-5, 0, 0]}>
         <CivicPlaza day={day} mat={mat} width={18} depth={13} accent={AMBER} glow={mat.glowAmber} />
         <group position={[0, PLAZA_TOP, 0]}>
@@ -834,7 +855,7 @@ const FIRE_LAMPS: Vec3[] = [
 
 function FireStation({ day, mat }: { day: boolean; mat: CivicMaterials }) {
   return (
-    <group position={[-169, 0, 30]}>
+    <group position={[-84, 0, -27]}>
       <group position={[8, 0, -1]}>
         <CivicPlaza day={day} mat={mat} width={18} depth={16} accent={RED} glow={mat.glowRed} />
         <group position={[0, PLAZA_TOP, 0]}>
@@ -887,6 +908,27 @@ function FireStation({ day, mat }: { day: boolean; mat: CivicMaterials }) {
           {FIRE_LAMPS.map((position) => (
             <PlazaLamp key={position[0]} position={position} mat={mat} glow={mat.glowAmber} />
           ))}
+
+          <group position={[0, 0, -5.4]}>
+            <Block position={[0, 1.05, 0]} size={[5.5, 1.65, 2.05]} material={mat.red} cast receive />
+            <Block position={[-2.3, 1.15, 0]} size={[1.5, 1.25, 2.0]} material={mat.red} cast />
+            <Block position={[-2.3, 1.55, 0]} size={[1.2, 0.55, 1.9]} material={mat.glass} />
+            <Block position={[0.2, 1.15, 1.04]} size={[2.8, 0.55, 0.05]} material={mat.glowWhite} />
+            <Block position={[0.2, 1.15, -1.04]} size={[2.8, 0.55, 0.05]} material={mat.winAmber} />
+            <Block position={[1.2, 1.94, 0]} size={[2.8, 0.16, 1.3]} material={mat.metalDark} cast />
+            <Block position={[1.3, 2.06, 0]} size={[1.8, 0.08, 0.4]} material={mat.metal} />
+            <Block position={[2.4, 1.9, 0]} size={[0.55, 0.18, 0.85]} material={mat.glowRed} />
+            {[-1.75, 1.75].map((x) =>
+              [-1.05, 1.05].map((z) => (
+                <mesh key={`${x}-${z}`} position={[x, 0.42, z]} rotation={[Math.PI / 2, 0, 0]}>
+                  <cylinderGeometry args={[0.42, 0.42, 0.26, 12]} />
+                  <meshStandardMaterial color="#0a1014" roughness={0.8} />
+                </mesh>
+              )),
+            )}
+            <Block position={[0, 0.38, 0]} size={[5.2, 0.18, 2.2]} material={mat.metalDark} />
+            <Block position={[0.8, 2.18, 0]} size={[3.4, 0.08, 0.08]} material={mat.metal} />
+          </group>
           <Block position={[-4.85, 2.5, -2.94]} size={[0.08, 3.6, 0.1]} material={mat.glowRed} />
           <Block position={[4.85, 2.5, -2.94]} size={[0.08, 3.6, 0.1]} material={mat.glowRed} />
 

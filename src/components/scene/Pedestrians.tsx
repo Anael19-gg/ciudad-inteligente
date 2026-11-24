@@ -121,28 +121,40 @@ const B_POND_WALK = makeWalkerRoute([
   [84, 36],
 ])
 const SCHOOL_WALK = makeWalkerRoute([
-  [-132, 52],
-  [-108, 52],
-  [-108, 68],
-  [-132, 68],
+  [-95, 55],
+  [-77, 55],
+  [-77, 69],
+  [-95, 69],
 ])
 const CLINIC_WALK = makeWalkerRoute([
-  [74, 82],
-  [92, 82],
-  [92, 95],
-  [74, 95],
+  [78, 88],
+  [94, 88],
+  [94, 104],
+  [78, 104],
 ])
 const MARKET_WALK = makeWalkerRoute([
-  [-50, -58],
-  [-30, -58],
-  [-30, -73],
-  [-50, -73],
+  [-52, -57],
+  [-35, -57],
+  [-35, -71],
+  [-52, -71],
 ])
 const FOREST_WALK = makeWalkerRoute([
-  [-18, 120],
-  [18, 120],
-  [18, 134],
-  [-18, 134],
+  [-18, -86],
+  [18, -86],
+  [18, -98],
+  [-18, -98],
+])
+const PLAZA_WALK = makeWalkerRoute([
+  [-20, 54],
+  [20, 54],
+  [20, 72],
+  [-20, 72],
+])
+const HUB_WALK = makeWalkerRoute([
+  [-20, -54],
+  [20, -54],
+  [20, -72],
+  [-20, -72],
 ])
 
 interface PersonColors {
@@ -878,6 +890,30 @@ const PEOPLE: { route: WalkRoute; start: number; speed: number; colors: PersonCo
     start: 78,
     speed: 1.25,
     colors: { coat: '#9b836b', trousers: '#202b31', skin: '#a87e64', hair: '#211c18' },
+  },
+  {
+    route: PLAZA_WALK,
+    start: 12,
+    speed: 1.3,
+    colors: { coat: '#8ea2a8', trousers: '#243037', skin: '#c7a084', hair: '#1d2529' },
+  },
+  {
+    route: PLAZA_WALK,
+    start: 58,
+    speed: 1.2,
+    colors: { coat: '#b39c7a', trousers: '#263238', skin: '#b58d73', hair: '#29221d' },
+  },
+  {
+    route: HUB_WALK,
+    start: 22,
+    speed: 1.28,
+    colors: { coat: '#7f979d', trousers: '#202b31', skin: '#c49b7d', hair: '#1f2428' },
+  },
+  {
+    route: HUB_WALK,
+    start: 74,
+    speed: 1.18,
+    colors: { coat: '#a88f6e', trousers: '#2a3439', skin: '#b2876d', hair: '#26201b' },
   },
 ]
 

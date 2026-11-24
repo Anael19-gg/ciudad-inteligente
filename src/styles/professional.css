@@ -877,7 +877,7 @@ body {
   gap: 6px;
 }
 
-.guion-btn {
+.resume-btn {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -891,15 +891,9 @@ body {
   letter-spacing: 0.01em;
 }
 
-.guion-btn:hover {
+.resume-btn:hover {
   color: var(--ink);
   background: var(--surface-raised);
-}
-
-.guion-btn.is-active {
-  background: #e8edef;
-  color: #080b0e;
-  border-color: #e8edef;
 }
 
 .stepper {
@@ -972,66 +966,6 @@ body {
   font-size: 7px;
   letter-spacing: 0.01em;
   color: inherit;
-}
-
-.notes {
-  margin-bottom: 6px;
-  padding: 5px;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  background: var(--surface);
-  box-shadow: none;
-  backdrop-filter: none;
-}
-
-.notes__head {
-  padding: 9px 11px 0 13px;
-}
-
-.notes__kicker {
-  font-size: 7.5px;
-  letter-spacing: 0.04em;
-  text-transform: none;
-  color: var(--faint);
-}
-
-.notes__title {
-  padding: 3px 13px 0;
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-}
-
-.notes__list {
-  padding: 6px 11px 9px;
-  gap: 0;
-}
-
-.notes__list li {
-  grid-template-columns: 18px 1fr;
-  gap: 6px;
-  padding: 7px 2px;
-  border-top: 1px solid var(--line-soft);
-}
-
-.notes__list li:first-child {
-  border-top: 0;
-}
-
-.notes__num {
-  font-family: var(--sans);
-  font-style: normal;
-  font-size: 8.5px;
-  color: var(--faint);
-  line-height: 1.55;
-}
-
-.notes__list p {
-  font-size: 9.5px;
-  line-height: 1.55;
-  color: #aeb9bd;
 }
 
 .icon-plain {
@@ -1784,13 +1718,13 @@ body {
     font-size: 11px;
   }
 
-  .guion-btn {
+  .resume-btn {
     width: 27px;
     padding: 0;
     justify-content: center;
   }
 
-  .guion-btn span {
+  .resume-btn span {
     display: none;
   }
 
@@ -1805,10 +1739,6 @@ body {
 
   .tour__steps {
     padding: 0 6px 6px;
-  }
-
-  .notes__list p {
-    font-size: 9px;
   }
 
   .panel__tabs {
@@ -2229,30 +2159,6 @@ body {
   .doc-legend {
     display: none;
   }
-}
-
-.doc-legend__all {
-  width: 100%;
-  margin-top: 6px;
-  padding: 5px 6px;
-  border: 1px solid var(--line);
-  background: transparent;
-  color: var(--ink-soft);
-  font: inherit;
-  font-size: 8px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.doc-legend__all:hover:not(:disabled) {
-  background: var(--surface-raised);
-  color: var(--ink);
-}
-
-.doc-legend__all:disabled {
-  color: var(--faint);
-  cursor: default;
 }
 
 .doc-tag > * {

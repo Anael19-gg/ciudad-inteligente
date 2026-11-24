@@ -270,9 +270,9 @@ export function Clouds({
       <DataLink from={[-115, 5.4, -15.5]} to={[eu.position[0] + 2, eu.position[1] - 1.5, eu.position[2]]} color="#f2c97b" count={4} />
       <DataLink from={[-118, 3, 21]} to={[eu.position[0], eu.position[1] - 1.5, eu.position[2] + 2]} color="#f2c97b" count={3} />
       <DataLink from={[-160, 4, 57]} to={[eu.position[0] - 3, eu.position[1] - 1.5, eu.position[2] + 2]} color="#ffcf8f" count={3} />
-      <DataLink from={[-205, 3, 118]} to={[eu.position[0] - 4, eu.position[1] - 1.5, eu.position[2] - 2]} color="#f2c97b" count={2} />
-      <DataLink from={[-152, 5, 126]} to={[eu.position[0] + 4, eu.position[1] - 1.5, eu.position[2] + 1]} color="#ffd8a2" count={2} />
-      <DataLink from={[-208, 18, -125]} to={[eu.position[0] - 2, eu.position[1] - 1.5, eu.position[2] + 3]} color="#c9d8ff" count={2} />
+      <DataLink from={[-228, 3, 118]} to={[eu.position[0] - 4, eu.position[1] - 1.5, eu.position[2] - 2]} color="#f2c97b" count={2} />
+      <DataLink from={[-152, 5, 117]} to={[eu.position[0] + 4, eu.position[1] - 1.5, eu.position[2] + 1]} color="#ffd8a2" count={2} />
+      <DataLink from={[-225, 18, -105]} to={[eu.position[0] - 2, eu.position[1] - 1.5, eu.position[2] + 3]} color="#c9d8ff" count={2} />
 
       <CloudCore cloud={us} onSelect={onSelect} showAnnotations={showAnnotations} />
       <CloudCore cloud={eu} onSelect={onSelect} showAnnotations={showAnnotations} />

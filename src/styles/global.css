@@ -853,7 +853,7 @@ ol {
   flex-shrink: 0;
 }
 
-.guion-btn {
+.resume-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -871,15 +871,9 @@ ol {
     border-color 0.5s var(--ease);
 }
 
-.guion-btn:hover {
+.resume-btn:hover {
   color: var(--ink);
   background: rgba(255, 255, 255, 0.06);
-}
-
-.guion-btn.is-active {
-  color: #07110f;
-  background: #dcece7;
-  border-color: transparent;
 }
 
 .stepper {
@@ -977,78 +971,6 @@ ol {
 
 /* ---------------------------------- Notes ---------------------------------- */
 
-.notes {
-  margin-bottom: 8px;
-  padding: 5px;
-  border-radius: 22px;
-  border: 1px solid var(--line);
-  background: rgba(6, 10, 14, 0.92);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(26px) saturate(1.1);
-  animation: notesIn 0.7s var(--ease-out) both;
-  pointer-events: auto;
-}
-
-.notes > * {
-  pointer-events: auto;
-}
-
-.notes__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 9px 12px 0 14px;
-}
-
-.notes__kicker {
-  font-size: 8px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #7f959d;
-}
-
-.notes__title {
-  padding: 4px 14px 0;
-  font-size: 14px;
-  font-weight: 450;
-  letter-spacing: -0.015em;
-}
-
-.notes__list {
-  list-style: none;
-  padding: 8px 12px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.notes__list li {
-  display: grid;
-  grid-template-columns: 24px 1fr;
-  gap: 8px;
-  padding: 7px 2px;
-  border-top: 1px solid var(--line-soft);
-}
-
-.notes__list li:first-child {
-  border-top: 0;
-}
-
-.notes__num {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 12px;
-  color: #7f969d;
-  line-height: 1.5;
-}
-
-.notes__list p {
-  font-size: 9.5px;
-  line-height: 1.55;
-  color: #aebdc1;
-}
-
 .icon-plain {
   display: grid;
   place-items: center;
@@ -1063,19 +985,6 @@ ol {
 .icon-plain:hover {
   color: var(--ink);
   background: rgba(255, 255, 255, 0.06);
-}
-
-@keyframes notesIn {
-  from {
-    opacity: 0;
-    transform: translateY(16px) scale(0.985);
-    filter: blur(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
 }
 
 /* ---------------------------------- Panel ---------------------------------- */
@@ -2676,10 +2585,6 @@ ol {
     width: 182px;
   }
 
-  .notes__list p {
-    font-size: 9px;
-  }
-
   .intro {
     padding: 22px 20px 18px;
     overflow-y: auto;
@@ -2779,13 +2684,13 @@ ol {
     font-size: 7px;
   }
 
-  .guion-btn {
+  .resume-btn {
     width: 30px;
     padding: 0;
     justify-content: center;
   }
 
-  .guion-btn span {
+  .resume-btn span {
     display: none;
   }
 
@@ -2801,18 +2706,6 @@ ol {
 
   .tour__step-label {
     display: none;
-  }
-
-  .notes {
-    border-radius: 18px;
-  }
-
-  .notes__title {
-    font-size: 13px;
-  }
-
-  .notes__list p {
-    font-size: 8.5px;
   }
 
   .panel {
@@ -2915,10 +2808,6 @@ ol {
 
   .intro__footer-block strong {
     font-size: 8.5px;
-  }
-
-  .notes__num {
-    font-size: 11px;
   }
 }
 

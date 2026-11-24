@@ -26,7 +26,6 @@ export default function App() {
   const [nonce, setNonce] = useState(0)
   const [tourIndex, setTourIndex] = useState(0)
   const [mode, setMode] = useState<'tour' | 'free'>('tour')
-  const [notesOpen, setNotesOpen] = useState(false)
   const [day, setDay] = useState(false)
   const [docVisible, setDocVisible] = useState(true)
   const [docLayers, setDocLayers] = useState<Record<LayerId, boolean>>({
@@ -70,7 +69,6 @@ export default function App() {
   const goHome = useCallback(() => {
     setSelection(null)
     setMode('free')
-    setNotesOpen(false)
     flyTo(OVERVIEW_VIEW)
   }, [flyTo])
 
@@ -160,26 +158,16 @@ export default function App() {
                 [layer]: true,
               })
             }
-            onShowAll={() =>
-              setDocLayers({
-                infra: true,
-                risk: true,
-                legal: true,
-                ip: true,
-              })
-            }
           />
         )}
         <TourBar
           step={step}
           stepIndex={tourIndex}
           mode={mode}
-          notesOpen={notesOpen}
           selection={selection}
           onPrev={handlePrev}
           onNext={handleNext}
           onGoStep={goToStep}
-          onToggleNotes={() => setNotesOpen((open) => !open)}
           onResume={handleResume}
         />
         {selection && (

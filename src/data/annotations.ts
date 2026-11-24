@@ -160,7 +160,7 @@ export const DOCUMENT_POINTS: DocumentPoint[] = [
     layer: 'infra',
     label: '5G cifrado',
     anchor: [160, 14, -30],
-    offset: [12, 5.2, 1.8],
+    offset: [17, 8.6, 1.8],
   },
   {
     id: 'b-infra-nube',
@@ -321,7 +321,7 @@ export const DOCUMENT_POINTS: DocumentPoint[] = [
     zone: 'c',
     layer: 'ip',
     label: 'LFPPI · válvula inteligente',
-    anchor: [-152, 6, 126],
+    anchor: [-152, 6, 117],
     offset: [-11, 3.3, 1.8],
   },
 ]

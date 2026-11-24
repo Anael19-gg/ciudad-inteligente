@@ -5,7 +5,7 @@ import {
   type Selection,
   type TourStep,
 } from '../../data/project'
-import { Book, ChevronLeft, ChevronRight, Close, Play } from './icons'
+import { ChevronLeft, ChevronRight, Play } from './icons'
 
 function freeCopy(selection: Selection) {
   if (!selection) {
@@ -42,23 +42,19 @@ export function TourBar({
   step,
   stepIndex,
   mode,
-  notesOpen,
   selection,
   onPrev,
   onNext,
   onGoStep,
-  onToggleNotes,
   onResume,
 }: {
   step: TourStep
   stepIndex: number
   mode: 'tour' | 'free'
-  notesOpen: boolean
   selection: Selection
   onPrev: () => void
   onNext: () => void
   onGoStep: (index: number) => void
-  onToggleNotes: () => void
   onResume: () => void
 }) {
   const free = freeCopy(selection)
@@ -69,29 +65,7 @@ export function TourBar({
   const isLast = stepIndex === TOUR.length - 1
 
   return (
-    <section className={`tour ${notesOpen && mode === 'tour' ? 'has-notes' : ''}`} aria-label="Recorrido guiado">
-      {notesOpen && mode === 'tour' && (
-        <div className="notes" role="region" aria-label="Guion de exposición">
-          <div className="notes__head">
-            <span className="notes__kicker">
-              Guion de exposición · Paso {step.index}
-            </span>
-            <button type="button" className="icon-plain" onClick={onToggleNotes} aria-label="Cerrar guion">
-              <Close size={14} />
-            </button>
-          </div>
-          <h3 className="notes__title">{step.title}</h3>
-          <ol className="notes__list">
-            {step.notes.map((note, i) => (
-              <li key={i}>
-                <span className="notes__num">{String(i + 1).padStart(2, '0')}</span>
-                <p>{note}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      )}
-
+    <section className="tour" aria-label="Recorrido guiado">
       <div className="tour__shell">
         <div className="tour__core">
           <div className="tour__main">
@@ -115,18 +89,8 @@ export function TourBar({
           </div>
 
           <div className="tour__actions">
-            {mode === 'tour' ? (
-              <button
-                type="button"
-                className={`guion-btn ${notesOpen ? 'is-active' : ''}`}
-                onClick={onToggleNotes}
-                aria-expanded={notesOpen}
-              >
-                <Book size={14} />
-                <span>Guion</span>
-              </button>
-            ) : (
-              <button type="button" className="guion-btn" onClick={onResume}>
+            {mode === 'free' && (
+              <button type="button" className="resume-btn" onClick={onResume}>
                 <Play size={13} />
                 <span>Reanudar</span>
               </button>

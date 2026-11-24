@@ -430,7 +430,6 @@ export interface TourStep {
   view: { pos: Vec3; target: Vec3 }
   selection: Selection
   layer?: LayerId
-  notes: string[]
 }
 
 export const TOUR: TourStep[] = [
@@ -442,9 +441,6 @@ export const TOUR: TourStep[] = [
     caption: 'Tres zonas geográficas conectadas a dos nubes internacionales.',
     view: { pos: [0, 220, 440], target: [0, 6, -12] },
     selection: null,
-    notes: [
-      'Muestra las 3 zonas y explica la arquitectura híbrida (Edge en México + nube en EE. UU. y UE), destacando el rol dual de operadores (Municipio vs. privados).',
-    ],
   },
   {
     id: 'security',
@@ -455,9 +451,6 @@ export const TOUR: TourStep[] = [
     view: ZONE_BY_ID.b.camera,
     selection: { type: 'zone', zone: 'b', layer: 'risk' },
     layer: 'risk',
-    notes: [
-      'Explica el choque entre el Art. 16° CPEUM (biometría/drones) y cómo se legaliza mediante EIPD (LGPDPPSO), Art. 26 (revisión humana) y T-MEC Cap. 19 + CCPA. Destaca el Secreto Industrial sobre los pesos de la IA.',
-    ],
   },
   {
     id: 'energy',
@@ -468,9 +461,6 @@ export const TOUR: TourStep[] = [
     view: ZONE_BY_ID.c.camera,
     selection: { type: 'zone', zone: 'c', layer: 'legal' },
     layer: 'legal',
-    notes: [
-      'Explica cómo el consumo domiciliario revela hábitos íntimos y cómo el GDPR (Arts. 25 y 46, SCCs) protege los datos al viajar a Europa.',
-    ],
   },
   {
     id: 'mobility',
@@ -481,9 +471,6 @@ export const TOUR: TourStep[] = [
     view: ZONE_BY_ID.a.camera,
     selection: { type: 'zone', zone: 'a', layer: 'infra' },
     layer: 'infra',
-    notes: [
-      'Cierra explicando el Art. 6° CPEUM (acceso universal a telecomunicaciones y datos abiertos anonimizados) y la titularidad de obra por encargo bajo la LFDA.',
-    ],
   },
   {
     id: 'closing',
@@ -493,9 +480,6 @@ export const TOUR: TourStep[] = [
     caption: 'Título, docente e integrantes.',
     view: { pos: [0, 210, 420], target: [0, 4, -8] },
     selection: null,
-    notes: [
-      'Recordatorio final: la ficha visible debe mostrar el título del proyecto, el nombre del docente y los nombres completos de todos los integrantes.',
-    ],
   },
 ]
 

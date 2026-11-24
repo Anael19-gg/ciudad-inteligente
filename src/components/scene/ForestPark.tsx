@@ -2,7 +2,7 @@ import { useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { createGlowTexture } from '../../lib/textures'
 
-const PARK_Z = 126
+const PARK_Z = -93
 const GROUND_Y = 0.055
 const PATH_Y = 0.07
 const PLAZA_RADIUS = 4.2

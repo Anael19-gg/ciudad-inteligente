@@ -12,6 +12,9 @@ import { CivicBuildings } from './CivicBuildings'
 import { Neighborhoods } from './Neighborhoods'
 import { ForestPark } from './ForestPark'
 import { StreetFurniture } from './StreetFurniture'
+import { CentralPlaza } from './CentralPlaza'
+import { MobilityHub } from './MobilityHub'
+import { StreetLife } from './StreetLife'
 import type { Vec3 } from '../../data/project'
 
 function makeRng(seed: number) {
@@ -47,30 +50,26 @@ export const CITY_DEPTH = 300
 const VERTICAL_ROADS = [-180, -140, -100, -62, -28, 28, 62, 100, 140, 180]
 const HORIZONTAL_ROADS = [-144, -110, -78, -48, 0, 48, 78, 110, 144]
 
-const RING_RX = 208
-const RING_RZ = 128
+const RING_HALF_X = 208
+const RING_HALF_Z = 128
 const RING_WIDTH = 14
+const RING_INNER_X = RING_HALF_X - RING_WIDTH / 2
+const RING_INNER_Z = RING_HALF_Z - RING_WIDTH / 2
+const RING_OUTER_X = RING_HALF_X + RING_WIDTH / 2
+const RING_OUTER_Z = RING_HALF_Z + RING_WIDTH / 2
 
-const ROUNDABOUTS = [
-  { x: RING_RX, z: 0 },
-  { x: -RING_RX, z: 0 },
-  { x: 0, z: RING_RZ },
-  { x: 0, z: -RING_RZ },
-]
-
-const RING_INNER_X = 196.6
-const RING_INNER_Z = 121
-const RING_OUTER_X = 219.4
-const RING_OUTER_Z = 135
+function isOnRing(x: number, z: number, margin = 0) {
+  const band = RING_WIDTH / 2 + margin
+  const vertical = Math.abs(x) <= RING_HALF_X + band && Math.abs(Math.abs(z) - RING_HALF_Z) <= band
+  const horizontal = Math.abs(z) <= RING_HALF_Z + band && Math.abs(Math.abs(x) - RING_HALF_X) <= band
+  return vertical || horizontal
+}
 
 function isOnTransport(x: number, z: number) {
   if (Math.abs(z) < 7.8) return true
   if (VERTICAL_ROADS.some((road) => Math.abs(x - road) < 5.2)) return true
   if (HORIZONTAL_ROADS.some((road) => road !== 0 && Math.abs(z - road) < 5)) return true
-  const inner = (x / RING_INNER_X) ** 2 + (z / RING_INNER_Z) ** 2
-  const outer = (x / RING_OUTER_X) ** 2 + (z / RING_OUTER_Z) ** 2
-  if (inner >= 1 && outer <= 1) return true
-  if (ROUNDABOUTS.some((roundabout) => Math.hypot(x - roundabout.x, z - roundabout.z) < 24)) return true
+  if (isOnRing(x, z, 1.6)) return true
   return false
 }
 
@@ -116,16 +115,67 @@ const TREE_BLOCKERS = [
   { x: -88, z: -90, r: 16 },
   { x: -45, z: 126, r: 15 },
   { x: 0, z: 126, r: 30 },
+  { x: 0, z: -93, r: 30 },
+  { x: 0, z: 63, r: 29 },
+  { x: 0, z: -63, r: 29 },
+  { x: -88, z: 62, r: 15 },
+  { x: 87, z: 94, r: 15 },
+  { x: -84, z: -27, r: 16 },
+  { x: -86, z: 62, r: 15 },
+  { x: -82, z: -27, r: 16 },
+  { x: 160, z: 92, r: 16 },
+  { x: 226, z: 93, r: 20 },
+  { x: 160, z: 34, r: 14 },
+  { x: 226, z: 68, r: 14 },
+  { x: -225, z: -62, r: 14 },
+  { x: -112, z: 60, r: 7 },
+  { x: -120, z: 117, r: 7 },
+  { x: -194, z: 60, r: 8 },
+  { x: -228, z: 118, r: 9 },
+  { x: -190, z: -69, r: 9 },
+  { x: -75, z: 89, r: 15 },
+  { x: -191, z: -96, r: 9 },
+  { x: -152, z: 117, r: 6 },
+  { x: -132, z: 117, r: 5 },
+  { x: -175, z: 115, r: 4 },
+  { x: -225, z: -100, r: 9 },
+]
+
+const PLAZA_LIGHT_BLOCKERS = [
+  { x: 0, z: 63, r: 24 },
+  { x: 0, z: -63, r: 24 },
+  { x: -88, z: 62, r: 11 },
+  { x: -86, z: 62, r: 11 },
+  { x: 87, z: 94, r: 11 },
+  { x: -84, z: -27, r: 13 },
+  { x: -82, z: -27, r: 13 },
+  { x: 226, z: 93, r: 16 },
+  { x: 160, z: 92, r: 13 },
+  { x: 226, z: 68, r: 12 },
+  { x: -225, z: -62, r: 12 },
+  { x: -112, z: 60, r: 7 },
+  { x: -120, z: 117, r: 7 },
+  { x: -194, z: 60, r: 8 },
+  { x: -228, z: 118, r: 8 },
+  { x: -190, z: -69, r: 8 },
+  { x: 45, z: -95, r: 14 },
+  { x: 0, z: 94, r: 13 },
+  { x: -48, z: 67, r: 11 },
+  { x: 48, z: -67, r: 11 },
+  { x: -45, z: -95, r: 11 },
+  { x: -165, z: 100, r: 11 },
+  { x: -75, z: 89, r: 13 },
+  { x: 0, z: -93, r: 28 },
 ]
 
 const SPECIAL_TOWERS = [
-  { x: 128, z: 66, h: 44, r: 4.4 },
+  { x: 127, z: 66, h: 44, r: 4.4 },
   { x: -128, z: 66, h: 38, r: 4.1 },
   { x: 128, z: -66, h: 40, r: 3.9 },
-  { x: -128, z: -66, h: 34, r: 4.3 },
-  { x: 70, z: 100, h: 30, r: 3.5 },
-  { x: -70, z: -100, h: 32, r: 3.7 },
-  { x: 160, z: 20, h: 36, r: 3.6 },
+  { x: -127, z: -66, h: 34, r: 4.3 },
+  { x: 88, z: 67, h: 30, r: 3.5 },
+  { x: -73, z: -99, h: 32, r: 3.7 },
+  { x: 160, z: 34, h: 36, r: 3.6 },
   { x: -160, z: -20, h: 28, r: 3.4 },
 ]
 
@@ -209,21 +259,43 @@ const OUTER_CLEARINGS = [
   { x: -88, z: -90, r: 16 },
   { x: -45, z: 126, r: 15 },
   { x: 0, z: 126, r: 30 },
+  { x: 0, z: -93, r: 30 },
+  { x: 0, z: 63, r: 29 },
+  { x: 0, z: -63, r: 29 },
+  { x: -88, z: 62, r: 16 },
+  { x: 87, z: 94, r: 16 },
+  { x: -84, z: -27, r: 17 },
+  { x: -86, z: 62, r: 16 },
+  { x: -82, z: -27, r: 17 },
+  { x: 226, z: 93, r: 18 },
+  { x: 160, z: 92, r: 18 },
+  { x: 160, z: 34, r: 14 },
+  { x: 226, z: 68, r: 18 },
+  { x: -225, z: -62, r: 18 },
+  { x: -112, z: 60, r: 9 },
+  { x: -120, z: 117, r: 9 },
+  { x: -194, z: 60, r: 10 },
+  { x: -228, z: 118, r: 11 },
+  { x: -190, z: -69, r: 10 },
+  { x: -75, z: 89, r: 16 },
+  { x: -191, z: -96, r: 10 },
+  { x: -152, z: 117, r: 7 },
+  { x: -132, z: 117, r: 6 },
+  { x: -175, z: 115, r: 5 },
+  { x: -225, z: -100, r: 10 },
 ]
 
 const OUTER_HOUSE_POSITIONS: Vec3[] = [
+  [-236, 0, 88],
+  [-230, 0, 88],
   [-224, 0, 88],
-  [-216, 0, 88],
-  [-208, 0, 88],
-  [-200, 0, 88],
+  [-236, 0, 96],
+  [-230, 0, 96],
   [-224, 0, 96],
-  [-216, 0, 96],
-  [-208, 0, 96],
-  [-200, 0, 96],
-  [-226, 0, 30],
-  [-218, 0, 30],
-  [-226, 0, 38],
-  [-218, 0, 38],
+  [-230, 0, 34],
+  [-224, 0, 34],
+  [-230, 0, 42],
+  [-224, 0, 42],
 ]
 
 function buildOuterBlocks(): BuildingSpec[] {
@@ -237,8 +309,7 @@ function buildOuterBlocks(): BuildingSpec[] {
       if (Math.abs(z) < 12) continue
       if (VERTICAL_ROADS.some((road) => Math.abs(x - road) < 8)) continue
       if (HORIZONTAL_ROADS.some((road) => Math.abs(z - road) < 7.5)) continue
-      if (Math.hypot(x / RING_RX, z / RING_RZ) > 0.9 && Math.hypot(x / RING_RX, z / RING_RZ) < 1.1) continue
-      if (ROUNDABOUTS.some((roundabout) => Math.hypot(x - roundabout.x, z - roundabout.z) < 24)) continue
+      if (isOnRing(x, z, 9)) continue
       if (SPECIAL_TOWERS.some((tower) => Math.hypot(x - tower.x, z - tower.z) < 13)) continue
       if (OUTER_CLEARINGS.some((clearing) => Math.hypot(x - clearing.x, z - clearing.z) < clearing.r)) continue
       if (rng() > 0.84) continue
@@ -845,8 +916,8 @@ function IndustryAndResidential({ day = false }: { day?: boolean }) {
       <InstancedHouses positions={allHouses} day={day} />
 
       {/* Residential extension in Zona C */}
-      <mesh position={[-212, 0.04, 92]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[36, 2.4]} />
+      <mesh position={[-231, 0.04, 92]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[18, 2.4]} />
         <meshStandardMaterial color="#11181d" roughness={0.9} />
       </mesh>
       <mesh position={[-228, 0.04, 92]} rotation={[-Math.PI / 2, 0, 0]}>
@@ -855,10 +926,10 @@ function IndustryAndResidential({ day = false }: { day?: boolean }) {
       </mesh>
 
       {/* Outer wind and solar in Zona C */}
-      <WindTurbine position={[-208, 0, -125]} speed={0.28} />
-      <WindTurbine position={[-190, 0, -126]} speed={0.36} />
+      <WindTurbine position={[-225, 0, -105]} speed={0.28} />
+      <WindTurbine position={[-225, 0, -96]} speed={0.36} />
       <WindTurbine position={[-132, 0, -16]} speed={0.33} />
-      <group position={[-206, 0, -96]}>
+      <group position={[-191, 0, -96]}>
         <mesh position={[0, 0.04, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <planeGeometry args={[13, 9]} />
           <meshStandardMaterial color="#161e23" roughness={0.9} />
@@ -918,7 +989,7 @@ function IndustryAndResidential({ day = false }: { day?: boolean }) {
       </group>
 
       {/* Outer water facility in Zona C */}
-      <group position={[-152, 0, 126]}>
+      <group position={[-152, 0, 117]}>
         {[-2.1, 2.1].map((x) => (
           <group key={x} position={[x, 0, 0]}>
             <mesh position={[0, 1.9, 0]}>
@@ -977,7 +1048,7 @@ function IndustryAndResidential({ day = false }: { day?: boolean }) {
         </mesh>
       </group>
 
-      <group position={[-107.6, 0, -27.5]}>
+      <group position={[-109, 0, -27.5]}>
         <mesh position={[0, 3.2, 0]}>
           <boxGeometry args={[8.6, 6.4, 9.4]} />
           <meshStandardMaterial color="#2b2e30" roughness={0.7} metalness={0.3} />
@@ -1192,33 +1263,6 @@ function WifiPylon({ position }: { position: Vec3 }) {
       <mesh position={[0, 0.6, 0.55]}>
         <boxGeometry args={[0.75, 0.8, 0.2]} />
         <meshStandardMaterial color="#1d2b33" emissive="#2f8fae" emissiveIntensity={0.4} />
-      </mesh>
-    </group>
-  )
-}
-
-function MobilityKiosk({ position }: { position: Vec3 }) {
-  return (
-    <group position={position}>
-      <mesh position={[0, 1.15, 0]}>
-        <boxGeometry args={[1.45, 2.3, 0.7]} />
-        <meshStandardMaterial color="#24343d" roughness={0.5} metalness={0.45} />
-      </mesh>
-      <mesh position={[0, 1.35, 0.37]}>
-        <boxGeometry args={[1.05, 1.15, 0.04]} />
-        <meshBasicMaterial color="#85edff" toneMapped={false} transparent opacity={0.85} />
-      </mesh>
-      <mesh position={[0, 2.38, 0]}>
-        <boxGeometry args={[1.75, 0.16, 0.95]} />
-        <meshStandardMaterial color="#101920" roughness={0.6} metalness={0.4} />
-      </mesh>
-      <mesh position={[0, 2.29, 0]}>
-        <boxGeometry args={[1.5, 0.04, 0.75]} />
-        <meshBasicMaterial color="#79e3f2" toneMapped={false} />
-      </mesh>
-      <mesh position={[0, 0.08, 0]}>
-        <boxGeometry args={[1.7, 0.16, 1]} />
-        <meshStandardMaterial color="#121b20" roughness={0.9} />
       </mesh>
     </group>
   )
@@ -1492,18 +1536,14 @@ function ZoneDistricts({ day = false }: { day?: boolean }) {
   return (
     <group>
       {/* Zona A · movilidad en todo el tercio central */}
-      <EvHub position={[-70, 0, 62]} rotation={0.2} />
-      <EvHub position={[70, 0, -62]} rotation={Math.PI + 0.2} />
-      <EvHub position={[75, 0, 42]} rotation={Math.PI} />
-      <MobilityKiosk position={[-20, 0, 56]} />
-      <MobilityKiosk position={[20, 0, -56]} />
-      <MobilityKiosk position={[-8, 0, 52]} />
-      <WifiPylon position={[-45, 0, 87]} />
+      <EvHub position={[-72, 0, 62]} rotation={0.2} />
+      <EvHub position={[72, 0, -62]} rotation={Math.PI + 0.2} />
+      <EvHub position={[75, 0, 38.5]} rotation={Math.PI} />
+      <WifiPylon position={[-45, 0, 84]} />
       <WifiPylon position={[45, 0, 87]} />
       <WifiPylon position={[-45, 0, -87]} />
       <WifiPylon position={[45, 0, -87]} />
-      <WifiPylon position={[10, 0, 68]} />
-      <WifiPylon position={[-18, 0, -68]} />
+      <WifiPylon position={[-35, 0, -85]} />
       <PocketPark position={[-48, 0, 67]} />
       <PocketPark position={[48, 0, -67]} />
       <PocketPark position={[-45, 0, -95]} />
@@ -1516,30 +1556,30 @@ function ZoneDistricts({ day = false }: { day?: boolean }) {
       <SecurityCheckpoint position={[150, 0, -60]} rotation={Math.PI} />
       <SecurityCheckpoint position={[165, 0, -60]} rotation={Math.PI} />
       <DronePad position={[112, 0, -72]} />
-      <DronePad position={[210, 0, 68]} />
-      <DronePad position={[205, 0, -68]} />
+      <DronePad position={[196, 0, 68]} />
+      <DronePad position={[196, 0, -68]} />
       <DronePad position={[225, 0, 22]} />
       <SpotlightTower position={[220, 0, 25]} rotation={2.2} />
-      <SpotlightTower position={[98, 0, 92]} rotation={0.8} />
-      <SpotlightTower position={[106, 0, -100]} rotation={4.2} />
+      <SpotlightTower position={[105, 0, 92]} rotation={0.8} />
+      <SpotlightTower position={[112, 0, -100]} rotation={4.2} />
       <SpotlightTower position={[228, 0, -32]} rotation={3.3} />
-      <PocketPark position={[200, 0, 120]} />
+      <PocketPark position={[226, 0, 68]} />
 
       {/* Zona C · energía, agua y comunidad en todo el tercio oeste */}
       <SolarFarm position={[-160, 0, 57]} solar={solar} cols={4} rows={3} />
       <SolarFarm position={[-154, 0, -64]} solar={solar} cols={3} rows={4} spacingX={3.2} spacingZ={2.4} />
-      <SolarFarm position={[-205, 0, 118]} solar={solar} cols={3} rows={3} />
+      <SolarFarm position={[-228, 0, 118]} solar={solar} cols={3} rows={3} />
       <SolarFarm position={[-112, 0, 92]} solar={solar} cols={4} rows={3} spacingX={3} spacingZ={2.4} />
-      <SolarFarm position={[-198, 0, -69]} solar={solar} cols={3} rows={3} spacingX={3.1} spacingZ={2.5} />
-      <WindTurbine position={[-222, 0, 42]} speed={0.3} />
-      <WindTurbine position={[-175, 0, 120]} speed={0.24} />
+      <SolarFarm position={[-190, 0, -69]} solar={solar} cols={3} rows={3} spacingX={3.1} spacingZ={2.5} />
+      <WindTurbine position={[-234, 0, 54]} speed={0.3} />
+      <WindTurbine position={[-175, 0, 115]} speed={0.24} />
       <WindTurbine position={[-155, 0, 15]} speed={0.34} />
       <WindTurbine position={[-225, 0, 60]} speed={0.28} />
-      <BiogasDome position={[-88, 0, 55]} />
+      <BiogasDome position={[-194, 0, 60]} />
       <VerticalFarm position={[-88, 0, 30]} />
-      <PocketPark position={[-214, 0, -60]} />
-      <CommunityGarden position={[-150, 0, 40]} />
-      <CommunityGarden position={[-120, 0, 126]} />
+      <PocketPark position={[-225, 0, -62]} />
+      <CommunityGarden position={[-112, 0, 60]} />
+      <CommunityGarden position={[-120, 0, 117]} />
       <PocketPark position={[-165, 0, 100]} />
       <group position={[-198, 0, 70]}>
         {[-1.5, 1.5].map((x) =>
@@ -1563,7 +1603,7 @@ function ZoneDistricts({ day = false }: { day?: boolean }) {
           <meshBasicMaterial color="#ff9a82" toneMapped={false} />
         </mesh>
       </group>
-      <group position={[-132, 0, 124]}>
+      <group position={[-132, 0, 117]}>
         <mesh position={[0, 0.02, 0]}>
           <cylinderGeometry args={[2.4, 2.6, 0.1, 18]} />
           <meshStandardMaterial color="#263238" roughness={0.8} />
@@ -1587,128 +1627,261 @@ function ZoneDistricts({ day = false }: { day?: boolean }) {
   )
 }
 
-function RingRoad() {
-  const center = useMemo<Vec3[]>(() => {
-    const points: Vec3[] = []
-    for (let i = 0; i <= 180; i += 1) {
-      const angle = (i / 180) * Math.PI * 2
-      points.push([Math.cos(angle) * RING_RX, 0.065, Math.sin(angle) * RING_RZ])
-    }
-    return points
-  }, [])
-  const inner = useMemo<Vec3[]>(() => center.map(([x, , z]) => [x * 0.952, 0.06, z * 0.93]), [center])
-  const outer = useMemo<Vec3[]>(() => center.map(([x, , z]) => [x * 1.045, 0.06, z * 1.075]), [center])
+function ringRectPoints(halfX: number, halfZ: number, y: number): Vec3[] {
+  return [
+    [-halfX, y, -halfZ],
+    [halfX, y, -halfZ],
+    [halfX, y, halfZ],
+    [-halfX, y, halfZ],
+    [-halfX, y, -halfZ],
+  ]
+}
+
+function RingRoad({ asphalt }: { asphalt: THREE.CanvasTexture }) {
+  const roadMaterial = useMemo(
+    () => (
+      <meshStandardMaterial
+        map={asphalt}
+        color="#ffffff"
+        roughness={0.84}
+        metalness={0.16}
+        side={THREE.DoubleSide}
+      />
+    ),
+    [asphalt],
+  )
 
   return (
     <group>
-      <mesh position={[0, 0.034, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={[RING_RX / RING_RZ, 1, 1]}>
-        <ringGeometry args={[RING_RZ - RING_WIDTH / 2, RING_RZ + RING_WIDTH / 2, 192]} />
-        <meshStandardMaterial color="#303b42" roughness={0.8} metalness={0.2} side={THREE.DoubleSide} />
+      {/* Anillo perimetral recto: cuatro tramos y esquinas a 90° */}
+      <mesh position={[0, 0.034, -RING_HALF_Z]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[RING_HALF_X * 2 + RING_WIDTH, RING_WIDTH]} />
+        {roadMaterial}
       </mesh>
-      <Line points={center} color="#d6e1e5" transparent opacity={0.42} lineWidth={1} dashed dashSize={2.8} gapSize={3.4} />
-      <Line points={inner} color="#81949c" transparent opacity={0.36} lineWidth={0.6} />
-      <Line points={outer} color="#6d7f87" transparent opacity={0.28} lineWidth={0.6} />
+      <mesh position={[0, 0.034, RING_HALF_Z]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[RING_HALF_X * 2 + RING_WIDTH, RING_WIDTH]} />
+        {roadMaterial}
+      </mesh>
+      <mesh position={[-RING_HALF_X, 0.034, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[RING_WIDTH, RING_HALF_Z * 2 + RING_WIDTH]} />
+        {roadMaterial}
+      </mesh>
+      <mesh position={[RING_HALF_X, 0.034, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[RING_WIDTH, RING_HALF_Z * 2 + RING_WIDTH]} />
+        {roadMaterial}
+      </mesh>
+
+      <Line
+        points={ringRectPoints(RING_HALF_X, RING_HALF_Z, 0.066)}
+        color="#d6e1e5"
+        transparent
+        opacity={0.52}
+        lineWidth={1}
+        dashed
+        dashSize={2.8}
+        gapSize={3.4}
+      />
+      <Line
+        points={ringRectPoints(RING_HALF_X - 3.4, RING_HALF_Z - 3.4, 0.06)}
+        color="#aebdc2"
+        transparent
+        opacity={0.28}
+        lineWidth={0.7}
+      />
+      <Line
+        points={ringRectPoints(RING_HALF_X + 3.4, RING_HALF_Z + 3.4, 0.06)}
+        color="#aebdc2"
+        transparent
+        opacity={0.28}
+        lineWidth={0.7}
+      />
+      <Line
+        points={ringRectPoints(RING_INNER_X, RING_INNER_Z, 0.06)}
+        color="#96a9b0"
+        transparent
+        opacity={0.48}
+        lineWidth={0.8}
+      />
+      <Line
+        points={ringRectPoints(RING_OUTER_X, RING_OUTER_Z, 0.06)}
+        color="#7f9299"
+        transparent
+        opacity={0.38}
+        lineWidth={0.8}
+      />
     </group>
   )
 }
 
-function Roundabout({ x, z }: { x: number; z: number }) {
-  return (
-    <group position={[x, 0, z]}>
-      <mesh position={[0, 0.04, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[21, 48]} />
-        <meshStandardMaterial color="#253036" roughness={0.82} metalness={0.18} />
-      </mesh>
-      <mesh position={[0, 0.055, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[9.2, 40]} />
-        <meshStandardMaterial color="#1b2326" roughness={0.94} />
-      </mesh>
-      <mesh position={[0, 0.14, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[8.7, 9.2, 40]} />
-        <meshBasicMaterial color="#9aabb1" transparent opacity={0.35} />
-      </mesh>
-      <mesh position={[0, 1.75, 0]}>
-        <cylinderGeometry args={[0.14, 0.28, 3.4, 6]} />
-        <meshStandardMaterial color="#536771" metalness={0.5} roughness={0.4} />
-      </mesh>
-      <mesh position={[0, 3.48, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[1.1, 0.045, 4, 32]} />
-        <meshBasicMaterial color="#a6b8be" transparent opacity={0.6} />
-      </mesh>
-    </group>
-  )
+const TOWER_BANDS = 13
+const TOWER_FINS = 6
+
+function towerAccent(x: number) {
+  if (x < -80) return '#F2C97B'
+  if (x > 80) return '#B0A0FF'
+  return '#79E3F2'
 }
 
-function FuturisticTower({
-  x,
-  z,
-  h,
-  r,
-  index,
-  accent = '#79E3F2',
-  day = false,
-}: {
-  x: number
-  z: number
-  h: number
-  r: number
-  index: number
-  accent?: string
-  day?: boolean
-}) {
+function DataTowers({ day = false }: { day?: boolean }) {
+  const bodyRef = useRef<THREE.InstancedMesh>(null)
+  const baseRef = useRef<THREE.InstancedMesh>(null)
+  const bandRef = useRef<THREE.InstancedMesh>(null)
+  const finRef = useRef<THREE.InstancedMesh>(null)
+  const crownRef = useRef<THREE.InstancedMesh>(null)
+  const lobbyRef = useRef<THREE.InstancedMesh>(null)
+  const antennaRef = useRef<THREE.InstancedMesh>(null)
+  const beaconRef = useRef<THREE.InstancedMesh>(null)
+  const towerWindows = useMemo(() => {
+    const texture = createWindowTexture(71, 0.2)
+    texture.repeat.set(2, 1)
+    return texture
+  }, [])
+
+  useLayoutEffect(() => {
+    if (
+      !bodyRef.current ||
+      !baseRef.current ||
+      !bandRef.current ||
+      !finRef.current ||
+      !crownRef.current ||
+      !lobbyRef.current ||
+      !antennaRef.current ||
+      !beaconRef.current
+    ) {
+      return
+    }
+
+    const matrix = new THREE.Matrix4()
+    const position = new THREE.Vector3()
+    const quaternion = new THREE.Quaternion()
+    const flat = new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI / 2, 0, 0))
+    const scale = new THREE.Vector3()
+    const color = new THREE.Color()
+
+    SPECIAL_TOWERS.forEach((tower, index) => {
+      const accent = towerAccent(tower.x)
+
+      position.set(tower.x, 0.3 + tower.h / 2, tower.z)
+      scale.set(tower.r, tower.h, tower.r)
+      matrix.compose(position, quaternion, scale)
+      bodyRef.current!.setMatrixAt(index, matrix)
+
+      position.set(tower.x, 0.55, tower.z)
+      scale.set(tower.r * 1.72, 1.1, tower.r * 1.72)
+      matrix.compose(position, quaternion, scale)
+      baseRef.current!.setMatrixAt(index, matrix)
+
+      position.set(tower.x, 1.14, tower.z)
+      scale.set(tower.r * 1.5, tower.r * 1.5, 1)
+      matrix.compose(position, flat, scale)
+      lobbyRef.current!.setMatrixAt(index, matrix)
+      lobbyRef.current!.setColorAt(index, color.set(accent))
+
+      for (let band = 0; band < TOWER_BANDS; band += 1) {
+        const t = (band + 1) / (TOWER_BANDS + 1)
+        const radius = tower.r * (1 - 0.36 * t) + 0.075
+        position.set(tower.x, 0.3 + tower.h * t, tower.z)
+        scale.set(radius, radius, 1)
+        matrix.compose(position, flat, scale)
+        const bandIndex = index * TOWER_BANDS + band
+        bandRef.current!.setMatrixAt(bandIndex, matrix)
+        bandRef.current!.setColorAt(bandIndex, color.set(band % 4 === 0 ? '#f5e3b8' : accent))
+      }
+
+      for (let fin = 0; fin < TOWER_FINS; fin += 1) {
+        const angle = (fin / TOWER_FINS) * Math.PI * 2 + index * 0.34
+        const radius = tower.r * 0.8 + 0.06
+        position.set(
+          tower.x + Math.cos(angle) * radius,
+          0.3 + tower.h * 0.47,
+          tower.z + Math.sin(angle) * radius,
+        )
+        quaternion.setFromEuler(new THREE.Euler(0, -angle, 0))
+        scale.set(0.07, tower.h * 0.92, 0.15)
+        matrix.compose(position, quaternion, scale)
+        finRef.current!.setMatrixAt(index * TOWER_FINS + fin, matrix)
+      }
+      quaternion.identity()
+
+      position.set(tower.x, 0.3 + tower.h + 0.55, tower.z)
+      scale.set(tower.r * 0.68, 1.1, tower.r * 0.68)
+      matrix.compose(position, quaternion, scale)
+      crownRef.current!.setMatrixAt(index, matrix)
+
+      position.set(tower.x, 0.3 + tower.h + 2.15, tower.z)
+      scale.set(1, 2.1, 1)
+      matrix.compose(position, quaternion, scale)
+      antennaRef.current!.setMatrixAt(index, matrix)
+
+      position.set(tower.x, 0.3 + tower.h + 3.32, tower.z)
+      scale.set(1, 1, 1)
+      matrix.compose(position, quaternion, scale)
+      beaconRef.current!.setMatrixAt(index, matrix)
+      beaconRef.current!.setColorAt(index, color.set(accent))
+    })
+
+    bodyRef.current.instanceMatrix.needsUpdate = true
+    baseRef.current.instanceMatrix.needsUpdate = true
+    bandRef.current.instanceMatrix.needsUpdate = true
+    finRef.current.instanceMatrix.needsUpdate = true
+    crownRef.current.instanceMatrix.needsUpdate = true
+    lobbyRef.current.instanceMatrix.needsUpdate = true
+    antennaRef.current.instanceMatrix.needsUpdate = true
+    beaconRef.current.instanceMatrix.needsUpdate = true
+    if (bandRef.current.instanceColor) bandRef.current.instanceColor.needsUpdate = true
+    if (lobbyRef.current.instanceColor) lobbyRef.current.instanceColor.needsUpdate = true
+    if (beaconRef.current.instanceColor) beaconRef.current.instanceColor.needsUpdate = true
+  }, [day])
+
   return (
-    <group position={[x, 0, z]} rotation={[0, index * 0.52, 0]}>
-      <mesh position={[0, 0.18, 0]}>
-        <cylinderGeometry args={[r * 1.7, r * 1.9, 0.36, 12]} />
-        <meshStandardMaterial color={day ? '#7c8a91' : '#141e25'} roughness={0.6} metalness={0.4} />
-      </mesh>
-      <mesh position={[0, 0.38, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[r * 1.5, r * 1.72, 32]} />
-        <meshBasicMaterial color={accent} transparent opacity={0.55} toneMapped={false} />
-      </mesh>
-      <mesh position={[0, h / 2 + 0.35, 0]} castShadow>
-        <cylinderGeometry args={[r * 0.62, r, h, 10, 1]} />
-        <meshStandardMaterial color={day ? '#9aabb3' : '#263943'} roughness={day ? 0.72 : 0.36} metalness={day ? 0.18 : 0.62} />
-      </mesh>
-      {[0, Math.PI / 2, Math.PI, (Math.PI * 3) / 2].map((angle) => (
-        <Line
-          key={angle}
-          points={[
-            [Math.cos(angle) * r * 0.99, 0.4, Math.sin(angle) * r * 0.99],
-            [Math.cos(angle) * r * 0.615, h + 0.3, Math.sin(angle) * r * 0.615],
-          ]}
-          color={accent}
-          transparent
-          opacity={day ? 0.35 : 0.7}
-          lineWidth={1.1}
+    <group>
+      <instancedMesh ref={bodyRef} args={[undefined, undefined, SPECIAL_TOWERS.length]} castShadow receiveShadow>
+        <cylinderGeometry args={[0.64, 1, 1, 14, 1]} />
+        <meshStandardMaterial
+          color={day ? '#c9d9df' : '#4f6a76'}
+          map={towerWindows}
+          emissive="#cbeff6"
+          emissiveMap={towerWindows}
+          emissiveIntensity={day ? 0.14 : 1.0}
+          roughness={day ? 0.55 : 0.32}
+          metalness={day ? 0.16 : 0.5}
         />
-      ))}
-      {[0.22, 0.44, 0.66, 0.86].map((level, i) => (
-        <mesh key={level} position={[0, h * level + 0.35, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[r * (1 - level * 0.3) + 0.1, 0.055, 5, 32]} />
-          <meshBasicMaterial color={i % 2 === 0 ? accent : '#d9c39a'} transparent opacity={0.66} toneMapped={false} />
-        </mesh>
-      ))}
-      <mesh position={[0, h + 0.65, 0]}>
-        <cylinderGeometry args={[r * 0.52, r * 0.66, 0.55, 10]} />
-        <meshStandardMaterial color={day ? '#b4c0c5' : '#31434d'} roughness={0.3} metalness={0.7} />
-      </mesh>
-      <mesh position={[0, h + 0.94, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[r * 0.54, 24]} />
-        <meshBasicMaterial color={accent} transparent opacity={day ? 0.3 : 0.5} toneMapped={false} />
-      </mesh>
-      <mesh position={[0, h + 1.15, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[r * 0.46, 0.045, 4, 28]} />
-        <meshBasicMaterial color={accent} transparent opacity={0.75} toneMapped={false} />
-      </mesh>
-      <mesh position={[0, h + 2.2, 0]}>
-        <cylinderGeometry args={[0.035, 0.06, 2.2, 5]} />
-        <meshStandardMaterial color="#6f818a" metalness={0.6} roughness={0.4} />
-      </mesh>
-      <mesh position={[0, h + 3.35, 0]}>
-        <sphereGeometry args={[0.1, 8, 8]} />
-        <meshBasicMaterial color="#eef9ff" toneMapped={false} />
-      </mesh>
+      </instancedMesh>
+
+      <instancedMesh ref={baseRef} args={[undefined, undefined, SPECIAL_TOWERS.length]} castShadow receiveShadow>
+        <cylinderGeometry args={[1, 1.08, 1, 14]} />
+        <meshStandardMaterial color={day ? '#8c9ca3' : '#20343d'} roughness={0.5} metalness={0.45} />
+      </instancedMesh>
+
+      <instancedMesh ref={lobbyRef} args={[undefined, undefined, SPECIAL_TOWERS.length]}>
+        <torusGeometry args={[1, 0.024, 4, 40]} />
+        <meshBasicMaterial color="#ffffff" toneMapped={false} transparent opacity={0.85} />
+      </instancedMesh>
+
+      <instancedMesh ref={bandRef} args={[undefined, undefined, SPECIAL_TOWERS.length * TOWER_BANDS]}>
+        <torusGeometry args={[1, 0.018, 4, 40]} />
+        <meshBasicMaterial color="#ffffff" toneMapped={false} transparent opacity={day ? 0.58 : 0.92} />
+      </instancedMesh>
+
+      <instancedMesh ref={finRef} args={[undefined, undefined, SPECIAL_TOWERS.length * TOWER_FINS]}>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial color={day ? '#b4c4ca' : '#5d7682'} roughness={0.3} metalness={0.72} />
+      </instancedMesh>
+
+      <instancedMesh ref={crownRef} args={[undefined, undefined, SPECIAL_TOWERS.length]} castShadow>
+        <cylinderGeometry args={[0.52, 0.68, 1, 12]} />
+        <meshStandardMaterial color={day ? '#aebfc6' : '#2f4752'} roughness={0.28} metalness={0.7} />
+      </instancedMesh>
+
+      <instancedMesh ref={antennaRef} args={[undefined, undefined, SPECIAL_TOWERS.length]}>
+        <cylinderGeometry args={[0.016, 0.024, 1, 6]} />
+        <meshStandardMaterial color={day ? '#7d8c92' : '#8fa3aa'} roughness={0.4} metalness={0.75} />
+      </instancedMesh>
+
+      <instancedMesh ref={beaconRef} args={[undefined, undefined, SPECIAL_TOWERS.length]}>
+        <sphereGeometry args={[0.11, 8, 8]} />
+        <meshBasicMaterial color="#ffffff" toneMapped={false} />
+      </instancedMesh>
     </group>
   )
 }
@@ -1783,9 +1956,11 @@ export function City({ day = false }: { day?: boolean }) {
       positions.push([x + 6, 0, 87], [x + 6, 0, -87])
       positions.push([x, 0, 101], [x, 0, -101])
     }
-    for (let index = 0; index < 18; index += 1) {
-      const angle = (index / 18) * Math.PI * 2
-      positions.push([Math.cos(angle) * (RING_RX + 14), 0, Math.sin(angle) * (RING_RZ + 13)])
+    for (const z of [-100, -50, 0, 50, 100]) {
+      positions.push([-221, 0, z], [221, 0, z])
+    }
+    for (const x of [-160, -80, 0, 80, 160]) {
+      positions.push([x, 0, -140], [x, 0, 140])
     }
     ;[-132, -125, -118, -111, -104].forEach((x) => positions.push([x, 0, 45]))
     ;[104, 112, 120, 128, 136].forEach((x) => positions.push([x, 0, 47], [x, 0, -47]))
@@ -1806,18 +1981,21 @@ export function City({ day = false }: { day?: boolean }) {
       if (isOnTransport(x, z)) return false
       if (buildings.some((building) => Math.abs(x - building.x) < building.w / 2 + 0.9 && Math.abs(z - building.z) < building.d / 2 + 0.9)) return false
       if (TREE_BLOCKERS.some((blocker) => Math.hypot(x - blocker.x, z - blocker.z) < blocker.r)) return false
+      if (SPECIAL_TOWERS.some((tower) => Math.hypot(x - tower.x, z - tower.z) < tower.r * 2 + 2.2)) return false
       return true
     })
   }, [buildings])
 
-  const ringLamps = useMemo<Vec3[]>(
-    () =>
-      Array.from({ length: 12 }, (_, index) => {
-        const angle = (index / 12) * Math.PI * 2
-        return [Math.cos(angle) * (RING_RX + 18), 0, Math.sin(angle) * (RING_RZ + 18)]
-      }),
-    [],
-  )
+  const ringLamps = useMemo<Vec3[]>(() => {
+    const lamps: Vec3[] = []
+    ;[-90, 0, 60].forEach((z) => {
+      lamps.push([-221, 0, z], [221, 0, z])
+    })
+    ;[-150, 0, 150].forEach((x) => {
+      lamps.push([x, 0, -139], [x, 0, 139])
+    })
+    return lamps
+  }, [])
 
   const streetLights = useMemo(() => {
     const lights: { position: Vec3; facing?: number }[] = []
@@ -1850,7 +2028,11 @@ export function City({ day = false }: { day?: boolean }) {
       add(x, -105, -1)
     })
 
-    return lights.filter((light) => !isOnTransport(light.position[0], light.position[2]))
+    return lights.filter((light) => {
+      if (isOnTransport(light.position[0], light.position[2])) return false
+      if (PLAZA_LIGHT_BLOCKERS.some((blocker) => Math.hypot(light.position[0] - blocker.x, light.position[2] - blocker.z) < blocker.r)) return false
+      return true
+    })
   }, [ringLamps])
 
   return (
@@ -1941,10 +2123,7 @@ export function City({ day = false }: { day?: boolean }) {
         </mesh>
       ))}
 
-      <RingRoad />
-      {ROUNDABOUTS.map((roundabout) => (
-        <Roundabout key={`${roundabout.x}-${roundabout.z}`} x={roundabout.x} z={roundabout.z} />
-      ))}
+      <RingRoad asphalt={asphalt} />
 
       {/* Cordones discretos */}
       {[6.35, -6.35].map((z) => (
@@ -2018,15 +2197,7 @@ export function City({ day = false }: { day?: boolean }) {
       <InstancedBuildings buildings={bOuter} emissive="#bab5cf" texture={windowB} facade={facadeB} accent="#B0A0FF" emissiveIntensity={day ? 0.14 : 0.88} day={day} dayTint="#c8bce6" />
       <InstancedBuildings buildings={cOuter} emissive="#d8b98c" texture={windowC} facade={facadeC} accent="#F2C97B" emissiveIntensity={day ? 0.14 : 0.84} day={day} dayTint="#d8c197" roofSolar />
 
-      {SPECIAL_TOWERS.map((tower, index) => (
-        <FuturisticTower
-          key={`${tower.x}-${tower.z}`}
-          {...tower}
-          index={index}
-          day={day}
-          accent={tower.x < -80 ? '#F2C97B' : tower.x > 80 ? '#B0A0FF' : '#79E3F2'}
-        />
-      ))}
+      <DataTowers day={day} />
       <SignatureBuildings day={day} />
 
       <TrafficVehicles />
@@ -2037,8 +2208,11 @@ export function City({ day = false }: { day?: boolean }) {
       <Decorations day={day} />
       <CivicBuildings day={day} />
       <Neighborhoods day={day} />
+      <CentralPlaza day={day} />
+      <MobilityHub day={day} />
       <ForestPark day={day} />
       <StreetFurniture day={day} />
+      <StreetLife day={day} />
     </group>
   )
 }
