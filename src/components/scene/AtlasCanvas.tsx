@@ -203,7 +203,7 @@ export function AtlasCanvas({
       <Canvas
         camera={{ position: [0, 300, 560], fov: 36, near: 0.8, far: 4000 }}
         dpr={[1, 1.5]}
-        shadows
+        shadows="percentage"
         gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
         fallback={
           <div className="webgl-fallback">
