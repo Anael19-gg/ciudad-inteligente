@@ -152,10 +152,13 @@ export default function App() {
             layers={docLayers}
             onToggle={() => setDocVisible((value) => !value)}
             onToggleLayer={(layer) =>
-              setDocLayers((current) => ({
-                ...current,
-                [layer]: !current[layer],
-              }))
+              setDocLayers({
+                infra: false,
+                risk: false,
+                legal: false,
+                ip: false,
+                [layer]: true,
+              })
             }
             onShowAll={() =>
               setDocLayers({
