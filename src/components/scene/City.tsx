@@ -3,6 +3,8 @@ import * as THREE from 'three'
 import { Edges, Line, RoundedBox } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { createAsphaltTexture, createGlowTexture, createSolarTexture, createWindowTexture } from '../../lib/textures'
+import { TrafficVehicles } from './TrafficVehicles'
+import { Pedestrians } from './Pedestrians'
 import type { Vec3 } from '../../data/project'
 
 function makeRng(seed: number) {
@@ -60,6 +62,23 @@ const SPECIAL_TOWERS = [
   { x: -160, z: -20, h: 28, r: 3.4 },
 ]
 
+const OUTER_CLEARINGS = [
+  { x: -215, z: 92, r: 34 },
+  { x: -200, z: -112, r: 28 },
+  { x: -140, z: 126, r: 22 },
+]
+
+const OUTER_HOUSE_POSITIONS: Vec3[] = [
+  [-224, 0, 88],
+  [-216, 0, 88],
+  [-208, 0, 88],
+  [-200, 0, 88],
+  [-224, 0, 96],
+  [-216, 0, 96],
+  [-208, 0, 96],
+  [-200, 0, 96],
+]
+
 function buildOuterBlocks(): BuildingSpec[] {
   const rng = makeRng(118)
   const outer: BuildingSpec[] = []
@@ -73,6 +92,7 @@ function buildOuterBlocks(): BuildingSpec[] {
       if (Math.hypot(x / RING_RX, z / RING_RZ) > 0.9 && Math.hypot(x / RING_RX, z / RING_RZ) < 1.1) continue
       if (ROUNDABOUTS.some((roundabout) => Math.hypot(x - roundabout.x, z - roundabout.z) < 24)) continue
       if (SPECIAL_TOWERS.some((tower) => Math.hypot(x - tower.x, z - tower.z) < 13)) continue
+      if (OUTER_CLEARINGS.some((clearing) => Math.hypot(x - clearing.x, z - clearing.z) < clearing.r)) continue
       if (rng() > 0.78) continue
 
       const east = x > 0
@@ -170,11 +190,13 @@ function InstancedBuildings({
   emissive,
   texture,
   emissiveIntensity = 0.5,
+  day = false,
 }: {
   buildings: BuildingSpec[]
   emissive: string
   texture: THREE.CanvasTexture
   emissiveIntensity?: number
+  day?: boolean
 }) {
   const meshRef = useRef<THREE.InstancedMesh>(null)
   const roofRef = useRef<THREE.InstancedMesh>(null)
@@ -186,13 +208,14 @@ function InstancedBuildings({
     const quaternion = new THREE.Quaternion()
     const scale = new THREE.Vector3()
     const color = new THREE.Color()
+    const dayTint = new THREE.Color('#91a1a7')
 
     buildings.forEach((b, i) => {
       position.set(b.x, b.h / 2, b.z)
       scale.set(b.w, b.h, b.d)
       matrix.compose(position, quaternion, scale)
       meshRef.current!.setMatrixAt(i, matrix)
-      meshRef.current!.setColorAt(i, color.set(b.tint))
+      meshRef.current!.setColorAt(i, day ? color.set(b.tint).lerp(dayTint, 0.56) : color.set(b.tint))
 
       position.set(b.x, b.h + 0.12, b.z)
       scale.set(b.w + 0.18, 0.28, b.d + 0.18)
@@ -202,15 +225,15 @@ function InstancedBuildings({
     meshRef.current.instanceMatrix.needsUpdate = true
     roofRef.current.instanceMatrix.needsUpdate = true
     if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true
-  }, [buildings])
+  }, [buildings, day])
 
   return (
     <group>
       <instancedMesh ref={meshRef} args={[undefined, undefined, buildings.length]}>
         <boxGeometry args={[1, 1, 1]} />
         <meshStandardMaterial
-          roughness={0.5}
-          metalness={0.45}
+          roughness={day ? 0.72 : 0.5}
+          metalness={day ? 0.16 : 0.45}
           emissive={emissive}
           emissiveIntensity={emissiveIntensity}
           emissiveMap={texture}
@@ -219,7 +242,7 @@ function InstancedBuildings({
       </instancedMesh>
       <instancedMesh ref={roofRef} args={[undefined, undefined, buildings.length]}>
         <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="#0a1015" roughness={0.75} metalness={0.3} />
+        <meshStandardMaterial color={day ? '#394349' : '#0a1015'} roughness={0.75} metalness={0.3} />
       </instancedMesh>
     </group>
   )
@@ -362,6 +385,64 @@ function IndustryAndResidential() {
       {housePositions.map((position, index) => (
         <House key={index} position={position} lit={index % 3 === 0 ? 0.9 : 0.55} />
       ))}
+
+      {/* Residential extension in Zona C */}
+      {OUTER_HOUSE_POSITIONS.map((position, index) => (
+        <House key={`outer-${index}`} position={position} lit={index % 4 === 0 ? 1 : 0.6} />
+      ))}
+      <mesh position={[-212, 0.04, 92]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[36, 2.4]} />
+        <meshStandardMaterial color="#11181d" roughness={0.9} />
+      </mesh>
+      <mesh position={[-228, 0.04, 92]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[2.2, 20]} />
+        <meshStandardMaterial color="#11181d" roughness={0.9} />
+      </mesh>
+
+      {/* Outer wind and solar in Zona C */}
+      <WindTurbine position={[-208, 0, -112]} speed={0.28} />
+      <WindTurbine position={[-190, 0, -126]} speed={0.36} />
+      <group position={[-206, 0, -96]}>
+        <mesh position={[0, 0.04, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[13, 9]} />
+          <meshStandardMaterial color="#161e23" roughness={0.9} />
+        </mesh>
+        {[-3.6, 0, 3.6].map((x) => (
+          <group key={x} position={[x, 0, 0]}>
+            {[-2.6, 0, 2.6].map((z) => (
+              <mesh key={z} position={[0, 0.55, z]} rotation={[-0.42, 0, 0]}>
+                <planeGeometry args={[2.4, 1.5]} />
+                <meshStandardMaterial map={solar} emissive="#255472" emissiveIntensity={0.25} roughness={0.55} side={THREE.DoubleSide} />
+              </mesh>
+            ))}
+          </group>
+        ))}
+      </group>
+
+      {/* Outer water facility in Zona C */}
+      <group position={[-140, 0, 126]}>
+        {[-2.1, 2.1].map((x) => (
+          <group key={x} position={[x, 0, 0]}>
+            <mesh position={[0, 1.9, 0]}>
+              <cylinderGeometry args={[1.8, 1.9, 3.8, 16]} />
+              <meshStandardMaterial color="#8fa4ac" roughness={0.45} metalness={0.5} />
+            </mesh>
+            <mesh position={[0, 3.8, 0]}>
+              <sphereGeometry args={[1.8, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2]} />
+              <meshStandardMaterial color="#a9bcc2" roughness={0.4} metalness={0.55} />
+            </mesh>
+            <mesh position={[0, 1.1, 0]}>
+              <torusGeometry args={[1.9, 0.03, 5, 28]} />
+              <meshBasicMaterial color="#6bcddd" toneMapped={false} transparent opacity={0.6} />
+            </mesh>
+          </group>
+        ))}
+        <mesh position={[0, 0.55, 0]}>
+          <boxGeometry args={[1.9, 1.0, 2.2]} />
+          <meshStandardMaterial color="#1a252b" roughness={0.6} metalness={0.3} />
+        </mesh>
+      </group>
+
 
       {/* Residential streets */}
       {[17.5, 25.5, 33.5].map((z) => (
@@ -646,7 +727,7 @@ function CityCar({
   )
 }
 
-export function City() {
+export function City({ day = false }: { day?: boolean }) {
   const buildings = useMemo(() => buildCityBlocks(), [])
   const windowA = useMemo(() => createWindowTexture(12, 0.34), [])
   const windowB = useMemo(() => createWindowTexture(29, 0.38), [])
@@ -710,7 +791,7 @@ export function City() {
     <group>
       {/* Flota la ciudad sobre una base continua */}
       <RoundedBox args={[CITY_WIDTH + 4, 1.8, CITY_DEPTH + 4]} radius={0.9} smoothness={3} position={[0, -1.02, 0]}>
-        <meshStandardMaterial color="#0a1015" roughness={0.42} metalness={0.55} />
+        <meshStandardMaterial color={day ? '#27343a' : '#0a1015'} roughness={0.42} metalness={0.55} />
       </RoundedBox>
       <Line
         points={[
@@ -727,17 +808,17 @@ export function City() {
       />
       <mesh position={[0, -0.2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[CITY_WIDTH + 70, CITY_DEPTH + 60]} />
-        <meshBasicMaterial map={glow} color="#2f7d99" transparent opacity={0.08} depthWrite={false} blending={THREE.AdditiveBlending} />
+        <meshBasicMaterial map={glow} color="#2f7d99" transparent opacity={day ? 0.02 : 0.08} depthWrite={false} blending={THREE.AdditiveBlending} />
       </mesh>
 
       {/* Terreno */}
       <mesh position={[0, -0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[CITY_WIDTH - 3, CITY_DEPTH - 3]} />
-        <meshStandardMaterial color="#070c10" roughness={0.94} metalness={0.12} />
+        <meshStandardMaterial color={day ? '#3b494f' : '#070c10'} roughness={0.94} metalness={0.12} />
       </mesh>
       <mesh position={[0, 0.012, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[CITY_WIDTH, CITY_DEPTH]} />
-        <meshBasicMaterial map={glow} color="#1c637c" transparent opacity={0.12} depthWrite={false} blending={THREE.AdditiveBlending} />
+        <meshBasicMaterial map={glow} color="#1c637c" transparent opacity={day ? 0.03 : 0.12} depthWrite={false} blending={THREE.AdditiveBlending} />
       </mesh>
       <gridHelper args={[CITY_DEPTH, 150, '#16232c', '#0b1319']} position={[0, 0.02, 0]} scale={[CITY_WIDTH / CITY_DEPTH, 1, 1]}>
         <lineBasicMaterial attach="material" transparent opacity={0.2} />
@@ -861,26 +942,17 @@ export function City() {
         <StreetLight key={`ring-${index}`} position={position} facing={index % 2 === 0 ? 1 : -1} />
       ))}
 
-      <InstancedBuildings buildings={aBuildings} emissive="#cddde3" texture={windowA} emissiveIntensity={0.65} />
-      <InstancedBuildings buildings={bBuildings} emissive="#d4d1e6" texture={windowB} emissiveIntensity={0.65} />
-      <InstancedBuildings buildings={bOuter} emissive="#bab5cf" texture={windowB} emissiveIntensity={0.36} />
-      <InstancedBuildings buildings={cOuter} emissive="#d8b98c" texture={windowC} emissiveIntensity={0.3} />
+      <InstancedBuildings buildings={aBuildings} emissive="#cddde3" texture={windowA} emissiveIntensity={day ? 0.08 : 0.65} day={day} />
+      <InstancedBuildings buildings={bBuildings} emissive="#d4d1e6" texture={windowB} emissiveIntensity={day ? 0.08 : 0.65} day={day} />
+      <InstancedBuildings buildings={bOuter} emissive="#bab5cf" texture={windowB} emissiveIntensity={day ? 0.04 : 0.36} day={day} />
+      <InstancedBuildings buildings={cOuter} emissive="#d8b98c" texture={windowC} emissiveIntensity={day ? 0.04 : 0.3} day={day} />
 
       {SPECIAL_TOWERS.map((tower, index) => (
         <FuturisticTower key={`${tower.x}-${tower.z}`} {...tower} index={index} />
       ))}
 
-      <CityCar lane={-4.4} direction={1} offset={20} speed={10.8} color="#b7c5cb" />
-      <CityCar lane={-4.4} direction={1} offset={170} speed={9.6} color="#8fa3ac" />
-      <CityCar lane={-4.4} direction={1} offset={330} speed={11.4} color="#c8d0d4" />
-      <CityCar lane={4.4} direction={-1} offset={60} speed={10.2} color="#9eb0b8" />
-      <CityCar lane={4.4} direction={-1} offset={220} speed={9.1} color="#c3ccd0" />
-      <CityCar lane={4.4} direction={-1} offset={380} speed={11.9} color="#8da0a9" />
-      <CityCar lane={49.5} direction={1} offset={80} speed={9.7} color="#a8b7bd" />
-      <CityCar lane={49.5} direction={1} offset={280} speed={11.1} color="#c1ccd0" />
-      <CityCar lane={-49.5} direction={-1} offset={140} speed={10.4} color="#96a8b0" />
-      <CityCar lane={-49.5} direction={-1} offset={360} speed={9.3} color="#b9c5ca" />
-
+      <TrafficVehicles />
+      <Pedestrians />
       <IndustryAndResidential />
     </group>
   )

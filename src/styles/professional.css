@@ -1932,3 +1932,51 @@ body {
   white-space: nowrap;
 }
 
+
+.topbar__end {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.day-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: transparent;
+  color: #aebbc0;
+  font-size: 8px;
+  letter-spacing: 0.01em;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.day-toggle:hover {
+  color: var(--ink);
+  background: var(--surface-raised);
+  border-color: var(--line-strong);
+}
+
+.day-toggle[aria-pressed='true'] {
+  color: #10181c;
+  background: #dce6e8;
+  border-color: #dce6e8;
+}
+
+@media (max-width: 640px) {
+  .topbar__end {
+    gap: 8px;
+  }
+  .day-toggle span {
+    display: none;
+  }
+  .day-toggle {
+    width: 28px;
+    padding: 0;
+    justify-content: center;
+  }
+}
+

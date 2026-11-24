@@ -29,7 +29,8 @@ Abre **Guion** en la barra de recorrido para consultar las notas de exposición.
 - **Zona B**: cámaras PTZ con reconocimiento facial, drones de patrullaje, arcos lectores y centro de seguridad.
 - **Zona C**: vivienda, medidores inteligentes, red de agua, subestación eléctrica, paneles solares y aerogeneradores.
 - **Diseño urbano**: anillo perimetral con cuatro glorietas, torres de formas cónicas y fachadas luminosas diferenciadas por sector.
-- **Movilidad**: transporte autónomo, vehículos particulares y patrullaje aéreo en movimiento.
+- **Movilidad continua**: autos, buses y bicicletas recorren rutas cerradas sin desapariciones; los semáforos de la avenida detienen el tráfico en rojo y lo liberan en verde.
+- **Vida urbana**: personas caminando por la avenida y los sectores; vista de día y de noche con un botón en el encabezado.
 - **Nubes internacionales**: enlaces visuales entre la infraestructura de borde y los centros de cómputo de EE. UU. y la Unión Europea.
 - **Rendimiento**: geometría instanciada, texturas procedurales, vehículos ligeros y una interfaz sin efectos de postprocesado.
 

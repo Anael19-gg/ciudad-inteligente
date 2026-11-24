@@ -25,6 +25,7 @@ export default function App() {
   const [tourIndex, setTourIndex] = useState(0)
   const [mode, setMode] = useState<'tour' | 'free'>('tour')
   const [notesOpen, setNotesOpen] = useState(false)
+  const [day, setDay] = useState(false)
 
   const flyTo = useCallback((view: CameraView) => {
     setCamera(view)
@@ -114,13 +115,14 @@ export default function App() {
         onReady={() => setReady(true)}
         showZoneLabels={showZoneLabels}
         showCloudLabels={showCloudLabels}
+        day={day}
       />
 
       <div className="grain" aria-hidden="true" />
       <div className="vignette" aria-hidden="true" />
 
       <div className="ui">
-        <Header selection={selection} onSelect={handleSelect} onHome={goHome} />
+        <Header selection={selection} onSelect={handleSelect} onHome={goHome} day={day} onToggleDay={() => setDay((value) => !value)} />
         <CreditsCard />
         <TourBar
           step={step}

@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
 import { PROJECT, ZONES, type Selection } from '../../data/project'
+import { Moon, Sun } from './icons'
 
 interface HeaderProps {
   selection: Selection
   onSelect: (selection: Selection) => void
   onHome: () => void
+  day: boolean
+  onToggleDay: () => void
 }
 
 function clockLabel() {
@@ -20,7 +23,7 @@ function clockLabel() {
   }
 }
 
-export function Header({ selection, onSelect, onHome }: HeaderProps) {
+export function Header({ selection, onSelect, onHome, day, onToggleDay }: HeaderProps) {
   const [time, setTime] = useState(clockLabel())
 
   useEffect(() => {
@@ -79,9 +82,22 @@ export function Header({ selection, onSelect, onHome }: HeaderProps) {
         </button>
       </nav>
 
-      <div className="status" aria-label="Hora local">
-        <span className="status__time">{time}</span>
-        <span className="status__place">Mexicali, B.C.</span>
+      <div className="topbar__end">
+        <button
+          type="button"
+          className="day-toggle"
+          onClick={onToggleDay}
+          aria-pressed={day}
+          aria-label={day ? 'Cambiar a vista nocturna' : 'Cambiar a vista diurna'}
+        >
+          {day ? <Moon size={13} /> : <Sun size={13} />}
+          <span>{day ? 'Noche' : 'Día'}</span>
+        </button>
+
+        <div className="status" aria-label="Hora local">
+          <span className="status__time">{time}</span>
+          <span className="status__place">Mexicali, B.C.</span>
+        </div>
       </div>
     </header>
   )

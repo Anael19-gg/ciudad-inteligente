@@ -3,18 +3,21 @@ import * as THREE from 'three'
 import { Html, Line, RoundedBox, useCursor } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import type { Selection } from '../../data/project'
+import { AVENUE_SIGNALS, getMainSignal } from './signals'
 
-function TrafficLight({ position, offset = 0 }: { position: [number, number, number]; offset?: number }) {
+function TrafficLight({ position }: { position: [number, number, number] }) {
   const materials = useRef<THREE.MeshBasicMaterial[]>([])
   const side = position[2] > 0 ? -1 : 1
   useFrame(({ clock }) => {
-    const cycle = (clock.elapsedTime + offset) % 9
-    const active = cycle < 4.5 ? 0 : cycle < 5.6 ? 1 : 2
-    const values = [active === 0 ? 1 : 0.08, active === 1 ? 1 : 0.08, active === 2 ? 1 : 0.08]
+    const signal = getMainSignal(clock.elapsedTime)
+    const values = [
+      signal === 'red' ? 1 : 0.08,
+      signal === 'amber' ? 1 : 0.08,
+      signal === 'green' ? 1 : 0.08,
+    ]
     materials.current.forEach((material, index) => {
       if (!material) return
-      const colorIndex = Math.floor(index / 2)
-      material.opacity = values[colorIndex]
+      material.opacity = values[Math.floor(index / 2)]
     })
   })
 
@@ -229,10 +232,6 @@ function MunicipalBuilding({ onSelect }: { onSelect: (selection: Selection) => v
         <sphereGeometry args={[0.1, 8, 8]} />
         <meshBasicMaterial color="#ff9a82" toneMapped={false} />
       </mesh>
-      <mesh position={[-3.1, 9.25, 1.2]} rotation={[-0.4, 0.4, 0]}>
-        <cylinderGeometry args={[0.75, 0.18, 0.22, 16]} />
-        <meshStandardMaterial color="#66757c" metalness={0.6} roughness={0.4} side={THREE.DoubleSide} />
-      </mesh>
       <mesh position={[0, 9.06, 0]}>
         <boxGeometry args={[11.8, 0.12, 8.3]} />
         <meshStandardMaterial color="#0c171d" roughness={0.7} />
@@ -392,48 +391,74 @@ function LightsaberEgg({ position }: { position: [number, number, number] }) {
   useFrame((_, delta) => {
     if (!blade.current) return
     const target = active ? 1 : 0.001
-    const next = THREE.MathUtils.damp(blade.current.scale.y, target, 14, delta)
+    const next = THREE.MathUtils.damp(blade.current.scale.y, target, 18, delta)
     blade.current.scale.y = next
-    if (light.current) light.current.intensity = 16 * next
+    if (light.current) light.current.intensity = 20 * next
   })
 
   return (
     <group position={position}>
-      <mesh position={[0, 0.03, 0]}>
-        <cylinderGeometry args={[0.3, 0.34, 0.06, 16]} />
-        <meshStandardMaterial color="#26343c" metalness={0.6} roughness={0.45} />
+      {/* Peana pequeña de exhibición */}
+      <mesh position={[0, 0.035, 0]}>
+        <boxGeometry args={[0.52, 0.07, 0.4]} />
+        <meshStandardMaterial color="#1b262c" metalness={0.6} roughness={0.45} />
       </mesh>
-      <mesh position={[0, 0.24, 0]}>
-        <cylinderGeometry args={[0.055, 0.065, 0.38, 8]} />
-        <meshStandardMaterial color="#9ba7ad" metalness={0.8} roughness={0.25} />
-      </mesh>
-      <mesh position={[0, 0.13, 0]}>
-        <cylinderGeometry args={[0.066, 0.066, 0.1, 8]} />
-        <meshStandardMaterial color="#10171c" roughness={0.7} />
-      </mesh>
-      <mesh position={[0, 0.26, 0]}>
-        <torusGeometry args={[0.07, 0.014, 6, 20]} />
-        <meshBasicMaterial color="#7ccdde" toneMapped={false} transparent opacity={0.6} />
+      <mesh position={[0, 0.075, 0.145]}>
+        <boxGeometry args={[0.34, 0.018, 0.05]} />
+        <meshBasicMaterial color="#77d7e7" transparent opacity={0.6} />
       </mesh>
 
-      <group ref={blade} position={[0, 0.43, 0]} scale={[1, 0.001, 1]}>
-        <mesh position={[0, 2.15, 0]}>
-          <cylinderGeometry args={[0.065, 0.075, 4.3, 10]} />
-          <meshBasicMaterial color="#74c8ff" toneMapped={false} />
+      {/* Empuñadura */}
+      <mesh position={[0, 0.37, 0]}>
+        <cylinderGeometry args={[0.062, 0.075, 0.54, 12]} />
+        <meshStandardMaterial color="#b7c2c7" metalness={0.85} roughness={0.22} />
+      </mesh>
+      <mesh position={[0, 0.2, 0]}>
+        <cylinderGeometry args={[0.077, 0.077, 0.2, 12]} />
+        <meshStandardMaterial color="#10161a" roughness={0.65} metalness={0.35} />
+      </mesh>
+      {[0.14, 0.19, 0.24].map((y) => (
+        <mesh key={y} position={[0, y, 0]} rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[0.078, 0.012, 6, 20]} />
+          <meshStandardMaterial color="#8e9da3" metalness={0.7} roughness={0.35} />
         </mesh>
-        <mesh position={[0, 2.15, 0]}>
-          <cylinderGeometry args={[0.024, 0.03, 4.3, 8]} />
-          <meshBasicMaterial color="#f4fdff" toneMapped={false} />
+      ))}
+      <mesh position={[0, 0.64, 0]}>
+        <cylinderGeometry args={[0.11, 0.075, 0.13, 12]} />
+        <meshStandardMaterial color="#26333a" metalness={0.75} roughness={0.3} />
+      </mesh>
+      <mesh position={[0, 0.71, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.105, 0.018, 6, 24]} />
+        <meshStandardMaterial color="#a9b5ba" metalness={0.8} roughness={0.22} />
+      </mesh>
+      <mesh position={[0.075, 0.47, 0.045]}>
+        <boxGeometry args={[0.045, 0.08, 0.03]} />
+        <meshBasicMaterial color={active ? '#ff5c52' : '#7c3530'} toneMapped={false} />
+      </mesh>
+
+      {/* Hoja */}
+      <group ref={blade} position={[0, 0.72, 0]} scale={[1, 0.001, 1]}>
+        <mesh position={[0, 2.2, 0]}>
+          <cylinderGeometry args={[0.022, 0.024, 4.3, 8]} />
+          <meshBasicMaterial color="#f6fdff" toneMapped={false} />
         </mesh>
-        <mesh position={[0, 2.15, 0]}>
-          <cylinderGeometry args={[0.17, 0.17, 4.3, 10]} />
-          <meshBasicMaterial color="#5ab8e8" transparent opacity={0.12} toneMapped={false} depthWrite={false} />
+        <mesh position={[0, 2.2, 0]}>
+          <cylinderGeometry args={[0.055, 0.06, 4.3, 10]} />
+          <meshBasicMaterial color="#7bcfff" toneMapped={false} transparent opacity={0.8} />
+        </mesh>
+        <mesh position={[0, 2.2, 0]}>
+          <cylinderGeometry args={[0.16, 0.16, 4.3, 10]} />
+          <meshBasicMaterial color="#5cb9ef" toneMapped={false} transparent opacity={0.1} depthWrite={false} />
+        </mesh>
+        <mesh position={[0, 4.37, 0]}>
+          <coneGeometry args={[0.06, 0.22, 10]} />
+          <meshBasicMaterial color="#c8f4ff" toneMapped={false} />
         </mesh>
       </group>
-      <pointLight ref={light} position={[0, 2, 0]} color="#7ed6ff" intensity={0} distance={14} decay={2} />
+      <pointLight ref={light} position={[0, 2.2, 0]} color="#7ed6ff" intensity={0} distance={16} decay={2} />
 
       <mesh
-        position={[0, 0.4, 0]}
+        position={[0, 0.9, 0]}
         onPointerOver={(event) => {
           event.stopPropagation()
           setHovered(true)
@@ -444,15 +469,134 @@ function LightsaberEgg({ position }: { position: [number, number, number] }) {
           setActive((value) => !value)
         }}
       >
-        <sphereGeometry args={[1.25, 12, 12]} />
+        <sphereGeometry args={[1.15, 12, 12]} />
         <meshBasicMaterial transparent opacity={0.001} depthWrite={false} />
       </mesh>
 
       {active && (
-        <Html position={[0, 5.6, 0]} center zIndexRange={[18, 0]} style={{ pointerEvents: 'none' }}>
+        <Html position={[0, 5.9, 0]} center zIndexRange={[18, 0]} style={{ pointerEvents: 'none' }}>
           <div className="easter-tip">Que la Fuerza te acompañe.</div>
         </Html>
       )}
+    </group>
+  )
+}
+
+function XWingModel() {
+  return (
+    <group>
+      <mesh position={[0.2, 0.72, 0]}>
+        <boxGeometry args={[3.1, 0.4, 0.58]} />
+        <meshStandardMaterial color="#c8d1d4" roughness={0.42} metalness={0.5} />
+      </mesh>
+      <mesh position={[2.0, 0.72, 0]} rotation={[0, 0, -Math.PI / 2]}>
+        <coneGeometry args={[0.32, 0.95, 8]} />
+        <meshStandardMaterial color="#d6dee0" roughness={0.4} metalness={0.45} />
+      </mesh>
+      <mesh position={[0.65, 0.98, 0]}>
+        <boxGeometry args={[0.85, 0.34, 0.62]} />
+        <meshStandardMaterial color="#101b23" roughness={0.15} metalness={0.55} emissive="#284654" emissiveIntensity={0.35} />
+      </mesh>
+      <mesh position={[-0.85, 0.98, 0.16]}>
+        <sphereGeometry args={[0.18, 10, 10]} />
+        <meshStandardMaterial color="#9fb1b8" roughness={0.4} metalness={0.4} />
+      </mesh>
+
+      {[-1, 1].map((zSign) =>
+        [-1, 1].map((ySign) => (
+          <group key={`${zSign}-${ySign}`} position={[-0.55, 0.72 + ySign * 0.12, zSign * 0.85]} rotation={[0, zSign * 0.72, ySign * 0.08]}>
+            <mesh>
+              <boxGeometry args={[2.15, 0.055, 0.55]} />
+              <meshStandardMaterial color="#cbd4d6" roughness={0.45} metalness={0.4} />
+            </mesh>
+            <mesh position={[0.35, 0.035, 0]}>
+              <boxGeometry args={[0.65, 0.02, 0.4]} />
+              <meshStandardMaterial color="#a84f3d" roughness={0.5} metalness={0.3} />
+            </mesh>
+            <mesh position={[1.1, 0.035, 0]}>
+              <boxGeometry args={[0.06, 0.06, 0.06]} />
+              <meshBasicMaterial color="#d9e5e8" toneMapped={false} />
+            </mesh>
+            <mesh position={[-0.2, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+              <cylinderGeometry args={[0.16, 0.18, 0.62, 10]} />
+              <meshStandardMaterial color="#26343b" roughness={0.4} metalness={0.6} />
+            </mesh>
+            <mesh position={[-0.52, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
+              <circleGeometry args={[0.12, 10]} />
+              <meshBasicMaterial color="#e59359" toneMapped={false} />
+            </mesh>
+          </group>
+        )),
+      )}
+    </group>
+  )
+}
+
+function XWingEgg({ position }: { position: [number, number, number] }) {
+  const [flying, setFlying] = useState(false)
+  const [hovered, setHovered] = useState(false)
+  const group = useRef<THREE.Group>(null)
+  const started = useRef(0)
+  useCursor(hovered)
+
+  useFrame(({ clock }, delta) => {
+    if (!group.current) return
+    if (!flying) {
+      group.current.position.x = THREE.MathUtils.damp(group.current.position.x, 0, 5, delta)
+      group.current.position.z = THREE.MathUtils.damp(group.current.position.z, 0, 5, delta)
+      group.current.position.y = THREE.MathUtils.damp(group.current.position.y, 0, 5, delta)
+      group.current.rotation.y = THREE.MathUtils.damp(group.current.rotation.y, 0.35, 5, delta)
+      started.current = 0
+      return
+    }
+
+    if (started.current === 0) started.current = clock.elapsedTime
+    const t = clock.elapsedTime - started.current
+    if (t > 11) {
+      setFlying(false)
+      return
+    }
+    const height = Math.min(2 + t * 4.8, 30)
+    const orbit = Math.min(t * 0.8, 8)
+    group.current.position.set(Math.sin(t * 0.65) * (4 + orbit), height, Math.cos(t * 0.65) * (4 + orbit) - 4)
+    group.current.rotation.y = t * 0.85
+    group.current.rotation.z = Math.sin(t * 0.8) * 0.22
+  })
+
+  return (
+    <group position={position}>
+      <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[3.6, 40]} />
+        <meshStandardMaterial color="#202b31" roughness={0.8} metalness={0.2} />
+      </mesh>
+      <mesh position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[3.35, 3.6, 40]} />
+        <meshBasicMaterial color="#7fb2c0" transparent opacity={0.5} />
+      </mesh>
+
+      <group
+        ref={group}
+        rotation={[0, 0.35, 0]}
+        scale={1.45}
+        onPointerOver={(event) => {
+          event.stopPropagation()
+          setHovered(true)
+        }}
+        onPointerOut={() => setHovered(false)}
+        onClick={(event) => {
+          event.stopPropagation()
+          if (!flying) {
+            started.current = 0
+            setFlying(true)
+          }
+        }}
+      >
+        <XWingModel />
+        <mesh position={[0, 0.7, 0]}>
+          <sphereGeometry args={[2.7, 12, 12]} />
+          <meshBasicMaterial transparent opacity={0.001} depthWrite={false} />
+        </mesh>
+      </group>
     </group>
   )
 }
@@ -466,22 +610,32 @@ export function Landmarks({ onSelect }: { onSelect: (selection: Selection) => vo
       <LprArch x={23.5} />
       <BusStop position={[7, 0, 8.6]} rotation={Math.PI} />
       <BusStop position={[-8, 0, -8.6]} rotation={0} />
-      <TrafficLight position={[-20, 0, 6.9]} offset={1.2} />
-      <TrafficLight position={[-6, 0, -6.9]} offset={4.4} />
-      <TrafficLight position={[6, 0, 6.9]} offset={2.8} />
-      <TrafficLight position={[20, 0, -6.9]} offset={6.2} />
-      <AutonomousShuttle lane={-2.7} direction={1} offset={33} speed={5.4} />
-      <AutonomousShuttle lane={-2.7} direction={1} offset={92} speed={4.7} />
-      <AutonomousShuttle lane={2.7} direction={-1} offset={64} speed={5.9} />
+      <BusStop position={[-160, 0, 8.6]} rotation={Math.PI} />
+      <BusStop position={[-80, 0, -8.6]} rotation={0} />
+      <BusStop position={[80, 0, 8.6]} rotation={Math.PI} />
+      <BusStop position={[160, 0, -8.6]} rotation={0} />
+      <LprArch x={-100} />
+      <LprArch x={100} />
+      {AVENUE_SIGNALS.map((x, index) => (
+        <TrafficLight key={x} position={[x, 0, index % 2 === 0 ? 6.9 : -6.9]} />
+      ))}
 
       <SecurityHQ onSelect={onSelect} />
+      <XWingEgg position={[42, 9.2, -20]} />
       <LprArch x={33.5} color="#b0a0ff" />
       <PtzCamera position={[31, 0, -31]} rotation={2.1} beam />
       <PtzCamera position={[59, 0, -30]} rotation={2.8} />
       <PtzCamera position={[59.5, 0, 19]} rotation={4.1} />
       <PtzCamera position={[31, 0, 28]} rotation={0.8} beam />
+      <PtzCamera position={[200, 0, 40]} rotation={3.1} beam />
+      <PtzCamera position={[160, 0, 90]} rotation={4.4} />
+      <PtzCamera position={[200, 0, -80]} rotation={2.3} />
+      <PtzCamera position={[110, 0, -90]} rotation={1.1} beam />
       <Drone center={[46, -4]} radius={12} height={15} speed={0.18} phase={0} />
       <Drone center={[44, 8]} radius={8} height={19} speed={-0.13} phase={2.4} />
+      <Drone center={[150, 60]} radius={14} height={18} speed={0.11} phase={1.2} />
+      <Drone center={[110, -70]} radius={10} height={22} speed={-0.12} phase={4.1} />
+      <LprArch x={200} color="#b0a0ff" />
     </group>
   )
 }

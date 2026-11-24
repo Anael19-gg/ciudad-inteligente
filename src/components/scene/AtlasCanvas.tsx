@@ -85,7 +85,24 @@ function Motes() {
   )
 }
 
-function Atmosphere() {
+function Atmosphere({ day }: { day: boolean }) {
+  if (day) {
+    return (
+      <>
+        <color attach="background" args={['#aebfc7']} />
+        <fog attach="fog" args={['#aebfc7', 500, 1500]} />
+        <ambientLight intensity={0.95} color="#f4f8f6" />
+        <hemisphereLight args={['#e8f0f2', '#7b898d', 1.05]} />
+        <directionalLight position={[90, 120, 80]} intensity={3.2} color="#fff0d7" />
+        <directionalLight position={[-80, 50, -60]} intensity={0.75} color="#d6e8ff" />
+        <pointLight position={[-14, 12, -24]} intensity={16} distance={32} decay={2} color="#5fd8ff" />
+        <pointLight position={[45, 11, -22]} intensity={14} distance={30} decay={2} color="#9080ff" />
+        <pointLight position={[-42, 9, -15]} intensity={10} distance={24} decay={2} color="#ffd394" />
+        <pointLight position={[-45, 10, 22]} intensity={14} distance={36} decay={2} color="#ffc98f" />
+      </>
+    )
+  }
+
   return (
     <>
       <color attach="background" args={['#05070a']} />
@@ -109,6 +126,7 @@ export function AtlasCanvas({
   onReady,
   showZoneLabels,
   showCloudLabels,
+  day,
 }: {
   view: CameraView
   nonce: number
@@ -116,6 +134,7 @@ export function AtlasCanvas({
   onReady: () => void
   showZoneLabels: boolean
   showCloudLabels: boolean
+  day: boolean
 }) {
   return (
     <div className="canvas-host" aria-label="Modelo 3D interactivo de la ciudad inteligente">
@@ -135,13 +154,13 @@ export function AtlasCanvas({
           onReady()
         }}
       >
-        <Atmosphere />
+        <Atmosphere day={day} />
         <CameraRig view={view} nonce={nonce} />
-        <City />
+        <City day={day} />
         <Landmarks onSelect={onSelect} />
         <Clouds onSelect={onSelect} showAnnotations={showCloudLabels} />
         <Overlays onSelect={onSelect} showAnnotations={showZoneLabels} />
-        <Motes />
+        {!day && <Motes />}
       </Canvas>
     </div>
   )
