@@ -211,9 +211,9 @@ export const ZONES: Zone[] = [
       'El perímetro es el punto de mayor tensión constitucional: cámaras biométricas y drones observan sin que exista, en la práctica, una forma de ejercer derechos ARCO frente a un lente pasivo.',
     cloud: 'us',
     accent: '#B0A0FF',
-    center: [40, 0, 0],
-    markerAnchor: [140, 18, -30],
-    camera: { pos: [150, 100, 140], target: [42, 5, -6] },
+    center: [130, 0, 0],
+    markerAnchor: [160, 18, -30],
+    camera: { pos: [248, 108, 168], target: [146, 6, -14] },
     content: {
       infra: {
         intro: 'Sensores que no solo registran: clasifican, predicen y alertan.',
@@ -288,9 +288,9 @@ export const ZONES: Zone[] = [
       'Cada quince minutos, los medidores cuentan cómo vive una casa. La telemetría viaja a Europa protegida por seudonimización y cláusulas contractuales tipo, no por una decisión de adecuación.',
     cloud: 'eu',
     accent: '#F2C97B',
-    center: [-40, 0, 0],
+    center: [-120, 0, 0],
     markerAnchor: [-140, 18, 28],
-    camera: { pos: [-60, 110, 180], target: [-47, 4, 0] },
+    camera: { pos: [-86, 112, 192], target: [-120, 4, 0] },
     content: {
       infra: {
         intro: 'La red de servicios se convierte en una red de datos domésticos.',
@@ -391,8 +391,8 @@ export const CLOUDS: Cloud[] = [
     tagline: 'Telemetría energética · Detección de fugas',
     summary:
       'Telemetría energética e hídrica de la Zona C, procesada en servidores de la Unión Europea.',
-    position: [-38, 50, -27],
-    camera: { pos: [-54, 78, 84], target: [-38, 43, -20] },
+    position: [-110, 50, -24],
+    camera: { pos: [-126, 78, 86], target: [-110, 43, -18] },
     zones: ['c'],
     accent: '#C3A6FF',
     entries: [

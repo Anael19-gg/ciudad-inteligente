@@ -372,22 +372,30 @@ export function TrafficVehicles() {
       {/* Anillo exterior: tráfico continuo en los cuatro cuadrantes */}
       <RouteVehicle route={WEST_NORTH} start={40} speed={7.4} kind="car" variant="compact" color="#a6b6bd" />
       <RouteVehicle route={WEST_NORTH} start={220} speed={7.4} kind="car" variant="pickup" color="#8e9ba1" />
+      <RouteVehicle route={WEST_NORTH} start={120} speed={7.2} kind="car" variant="sedan" color="#b6c3c9" />
       <RouteVehicle route={EAST_NORTH} start={60} speed={7.8} kind="car" variant="security" color="#596b74" />
       <RouteVehicle route={EAST_NORTH} start={250} speed={7.8} kind="car" variant="taxi" color="#b9a56f" />
+      <RouteVehicle route={EAST_NORTH} start={140} speed={7.6} kind="car" variant="compact" color="#a6b6bd" />
       <RouteVehicle route={WEST_SOUTH} start={80} speed={7.1} kind="car" variant="taxi" color="#b9a56f" />
       <RouteVehicle route={WEST_SOUTH} start={260} speed={7.1} kind="car" variant="sedan" color="#a6b6bd" />
+      <RouteVehicle route={WEST_SOUTH} start={160} speed={6.9} kind="car" variant="pickup" color="#8e9ba1" />
       <RouteVehicle route={EAST_SOUTH} start={30} speed={7.6} kind="bus" color="#c1d0d5" />
       <RouteVehicle route={EAST_SOUTH} start={230} speed={7.6} kind="car" variant="compact" color="#a6b6bd" />
+      <RouteVehicle route={EAST_SOUTH} start={140} speed={7.4} kind="car" variant="taxi" color="#b9a56f" />
       <RouteVehicle route={CENTER_NORTH} start={50} speed={7.2} kind="car" variant="pickup" color="#8e9ba1" />
       <RouteVehicle route={CENTER_NORTH} start={240} speed={7.2} kind="car" variant="sedan" color="#b6c3c9" />
+      <RouteVehicle route={CENTER_NORTH} start={130} speed={6.4} kind="bus" color="#c1d0d5" />
       <RouteVehicle route={CENTER_SOUTH} start={90} speed={7.5} kind="car" variant="taxi" color="#b9a56f" />
       <RouteVehicle route={CENTER_SOUTH} start={280} speed={7.5} kind="car" variant="security" color="#596b74" />
+      <RouteVehicle route={CENTER_SOUTH} start={180} speed={6.7} kind="car" variant="sedan" color="#b6c3c9" />
 
       {/* Ciclovía continua sobre la avenida */}
       <RouteVehicle route={BIKE_LOOP} start={30} speed={3.1} kind="bike" color="#84969e" jacket="#b7a16d" />
       <RouteVehicle route={BIKE_LOOP} start={230} speed={3.1} kind="bike" color="#94a6ad" jacket="#869fa4" />
       <RouteVehicle route={BIKE_LOOP} start={430} speed={3.1} kind="bike" color="#84969e" jacket="#a5755c" />
       <RouteVehicle route={BIKE_LOOP} start={630} speed={3.1} kind="bike" color="#94a6ad" jacket="#7f979c" />
+      <RouteVehicle route={BIKE_LOOP} start={330} speed={2.9} kind="bike" color="#8a9da4" jacket="#9d8a63" />
+      <RouteVehicle route={BIKE_LOOP} start={530} speed={3.2} kind="bike" color="#9aabb1" jacket="#788f94" />
     </group>
   )
 }

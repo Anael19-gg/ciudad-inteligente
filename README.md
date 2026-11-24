@@ -24,15 +24,22 @@ Abre **Guion** en la barra de recorrido para consultar las notas de exposición.
 
 ## La ciudad
 
-- **Ciudad continua de gran formato**: más de 480 × 300 unidades de trama urbana, con tres macro sectores integrados (A, B y C), calles, avenidas y manzanas que conectan todo el territorio.
-- **Zona A**: semáforos con sensores, cámaras LPR, transporte autónomo y paradas con Wi-Fi 6 / 5G.
-- **Zona B**: cámaras PTZ con reconocimiento facial, drones de patrullaje, arcos lectores y centro de seguridad.
-- **Zona C**: vivienda, medidores inteligentes, red de agua, subestación eléctrica, paneles solares y aerogeneradores.
-- **Diseño urbano**: anillo perimetral con cuatro glorietas, torres de formas cónicas y fachadas luminosas diferenciadas por sector.
-- **Movilidad continua**: autos, buses y bicicletas recorren rutas cerradas sin desapariciones; los semáforos de la avenida detienen el tráfico en rojo y lo liberan en verde.
-- **Vida urbana**: personas caminando por la avenida y los sectores; vista de día y de noche con un botón en el encabezado.
-- **Nubes internacionales**: enlaces visuales entre la infraestructura de borde y los centros de cómputo de EE. UU. y la Unión Europea.
-- **Rendimiento**: geometría instanciada, texturas procedurales, vehículos ligeros y una interfaz sin efectos de postprocesado.
+- **Tres tercios completos**: la ciudad se divide en tres zonas de igual extensión. La Zona C ocupa todo el tercio oeste, la Zona A el centro y la Zona B el tercio este. La infraestructura de cada zona se distribuye por todo su territorio, no solo en el núcleo.
+- **Zona A · Movilidad y conectividad**: avenida instrumentada, semáforos sincronizados, cámaras LPR, paradas con Wi-Fi 6 / 5G, electrolineras, tótems de movilidad, parques y ciclovía.
+- **Zona B · Seguridad urbana predictiva**: centro de seguridad, cámaras PTZ, drones de patrullaje, arcos lectores, puestos de control, plataformas de drones y torres de iluminación.
+- **Zona C · Sostenibilidad y energía**: vivienda, medidores inteligentes, red de agua, subestación eléctrica, paneles solares, aerogeneradores, jardines comunitarios y torres de agua.
+- **Diseño urbano**: más de 480 × 300 unidades de trama urbana, anillo perimetral con cuatro glorietas, torres de formas cónicas, fachadas procedurales, coronas escalonadas, equipos de azotea, antenas y señalización luminosa.
+- **Movilidad continua**: autos de varios modelos (sedán, compacto, taxi, pickup y patrulla), buses y bicicletas recorren rutas cerradas sin desapariciones; los semáforos de la avenida detienen el tráfico en rojo/ámbar y lo liberan en verde.
+- **Vida urbana**: peatones caminando por la avenida y por las tres zonas, con vestuario y animación de marcha; iluminación de calle, árboles instanciados y parques.
+- **Cielo y clima**: vista de día con sombras direccionales y gradiente de cielo; vista nocturna con ventanas encendidas, letreros, halos de alumbrado público y enlaces de datos.
+- **Nubes internacionales**: enlaces animados entre la infraestructura de borde y los centros de cómputo de EE. UU. y la Unión Europea.
+- **Rendimiento**: geometría instanciada para edificios, árboles y alumbrado, texturas procedurales, vehículos ligeros, sombras solo en modo día y una interfaz sin postprocesado.
+
+## Easter eggs
+
+- **Sable de luz**: en la azotea del edificio municipal de la Zona A, en la esquina oeste de la azotea. Haz clic en el mango para encender la hoja azul.
+- **Nave X-wing**: en la azotea del centro de seguridad de la Zona B, sobre la plataforma circular. Haz clic para que despegue.
+- **Darth Vader**: camina por la acera sur de la avenida principal, cerca del cruce central, con capa y sable rojo.
 
 ## Controles
 
@@ -40,6 +47,7 @@ Abre **Guion** en la barra de recorrido para consultar las notas de exposición.
 - Haz clic en una etiqueta de zona o de nube para abrir su ficha.
 - Cambia entre **Infraestructura**, **Riesgos**, **Marco legal** y **Propiedad intelectual** desde la ficha de cada zona.
 - Usa el recorrido guiado para seguir el orden de la exposición.
+- Alterna **Día / Noche** con el botón del encabezado.
 - La ficha académica permanece visible en la esquina superior izquierda.
 - La hora del encabezado corresponde a **Mexicali, B.C.**
 
@@ -79,36 +87,9 @@ npx vercel
 npx vercel --prod
 ```
 
-La app es una sola página estática: no requiere API ni backend.
+## Producción
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Anael19-gg/ciudad-inteligente)
+- **GitHub:** https://github.com/Anael19-gg/ciudad-inteligente
+- **Vercel:** https://ciudad-inteligente-flame.vercel.app
 
-## Contenido y estructura
-
-- **Zonas, nubes, textos legales y guion:** [`src/data/project.ts`](src/data/project.ts)
-- **Ciudad, edificios, vialidades y mobiliario:** [`src/components/scene`](src/components/scene)
-- **Portada, navegación, fichas y recorrido:** [`src/components/ui`](src/components/ui)
-- **Texturas procedurales:** [`src/lib/textures.ts`](src/lib/textures.ts)
-- **Sistema visual:** [`src/styles/global.css`](src/styles/global.css) y [`src/styles/professional.css`](src/styles/professional.css)
-- **Portada y metadatos:** [`public/og-cover.png`](public/og-cover.png)
-
-La ficha académica toma los datos de `PROJECT` en `src/data/project.ts`. Para actualizar el docente, el equipo, el grupo o la fecha, edita ese objeto y vuelve a desplegar.
-
-## Stack
-
-- Vite + React 19 + TypeScript
-- Three.js con React Three Fiber y Drei
-- Fontsource: Geist e Instrument Serif
-
----
-
-**Equipo**
-
-- Díaz Silva Mónica Yuriskery
-- Prado Pimentel Pablo Alejandro
-- Ramos Morales Anael
-- Rios Gutierrez Julia
-- Tapia Morales Melany
-
-Facultad de Ciencias Administrativas · Universidad Autónoma de Baja California  
-Mexicali, B.C. · octubre de 2026
+Cada push a `main` despliega automáticamente una nueva versión en Vercel.
