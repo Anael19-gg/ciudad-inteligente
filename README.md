@@ -28,11 +28,12 @@ Abre **Guion** en la barra de recorrido para consultar las notas de exposición.
 - **Zona A · Movilidad y conectividad**: avenida instrumentada, semáforos sincronizados, cámaras LPR, paradas con Wi-Fi 6 / 5G, electrolineras, tótems de movilidad, parques y ciclovía.
 - **Zona B · Seguridad urbana predictiva**: centro de seguridad, cámaras PTZ, drones de patrullaje, arcos lectores, puestos de control, plataformas de drones y torres de iluminación.
 - **Zona C · Sostenibilidad y energía**: vivienda, medidores inteligentes, red de agua, subestación eléctrica, paneles solares, aerogeneradores, jardines comunitarios y torres de agua.
-- **Diseño urbano**: más de 480 × 300 unidades de trama urbana, anillo perimetral con cuatro glorietas, torres de formas cónicas, fachadas procedurales, coronas escalonadas, equipos de azotea, antenas y señalización luminosa.
-- **Movilidad continua**: autos de varios modelos (sedán, compacto, taxi, pickup y patrulla), buses y bicicletas recorren rutas cerradas sin desapariciones; los semáforos de la avenida detienen el tráfico en rojo/ámbar y lo liberan en verde.
-- **Vida urbana**: peatones caminando por la avenida y por las tres zonas, con vestuario y animación de marcha; iluminación de calle, árboles instanciados y parques.
+- **Diseño urbano**: más de 480 × 300 unidades de trama urbana, anillo perimetral con cuatro glorietas y cinco edificios singulares (torre circular, zigurat, cúpula de operaciones, torres gemelas y terrazas verdes) que rompen la silueta repetitiva.
+- **Movilidad continua**: autos de varios modelos (sedán, compacto, taxi, pickup y patrulla), buses y bicicletas recorren rutas cerradas sin desapariciones; los semáforos de la avenida detienen el tráfico en rojo/ámbar y lo liberan en verde. La avenida respeta carriles de ida y vuelta y las calles perimetrales tienen un solo sentido.
+- **Vida urbana**: más de 30 peatones caminando por la avenida, parques y las tres zonas, con vestuario y animación de marcha; dos helicópteros futuristas sobrevuelan la ciudad de forma continua; iluminación de calle, árboles instanciados y parques.
+- **Agua y vegetación**: tres estanques decorativos con rocas, juncos, bancas y faroles; arbustos, maceteros y parterres distribuidos en lotes libres.
 - **Cielo y clima**: vista de día con sombras direccionales y gradiente de cielo; vista nocturna con ventanas encendidas, letreros, halos de alumbrado público y enlaces de datos.
-- **Nubes internacionales**: enlaces animados entre la infraestructura de borde y los centros de cómputo de EE. UU. y la Unión Europea.
+- **Nubes internacionales**: múltiples enlaces animados desde la infraestructura de las tres zonas hacia los centros de cómputo de EE. UU. y la Unión Europea.
 - **Rendimiento**: geometría instanciada para edificios, árboles y alumbrado, texturas procedurales, vehículos ligeros, sombras solo en modo día y una interfaz sin postprocesado.
 
 ## Easter eggs

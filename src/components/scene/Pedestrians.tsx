@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react'
+import { useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
 
@@ -55,52 +55,70 @@ const NORTH_WALK = makeWalkerRoute([
   [220, -9.7],
 ])
 const WEST_WALK = makeWalkerRoute([
-  [-180, 51],
-  [-100, 51],
-  [-100, 108],
-  [-180, 108],
+  [-174, 54],
+  [-106, 54],
+  [-106, 104],
+  [-174, 104],
 ])
 const EAST_WALK = makeWalkerRoute([
-  [100, 51],
-  [180, 51],
-  [180, 108],
-  [100, 108],
+  [106, 54],
+  [174, 54],
+  [174, 104],
+  [106, 104],
 ])
 const C_HOMES_WALK = makeWalkerRoute([
-  [-136, 12],
-  [-100, 12],
-  [-100, 42],
-  [-136, 42],
+  [-134, 10.5],
+  [-105, 10.5],
+  [-105, 42],
+  [-134, 42],
 ])
 const C_WORKS_WALK = makeWalkerRoute([
-  [-140, -5],
-  [-140, -42],
-  [-104, -42],
-  [-104, -5],
+  [-134, -12],
+  [-134, -42],
+  [-106, -42],
+  [-106, -12],
 ])
 const B_TOWERS_WALK = makeWalkerRoute([
-  [103, 10],
-  [136, 10],
-  [136, 45],
-  [103, 45],
+  [108, 10.5],
+  [136, 10.5],
+  [136, 43],
+  [108, 43],
 ])
 const B_SOUTH_WALK = makeWalkerRoute([
-  [140, -10],
-  [178, -10],
-  [178, -44],
-  [140, -44],
+  [134, -12],
+  [134, -42.5],
+  [106, -42.5],
+  [106, -12],
 ])
 const A_NORTH_WALK = makeWalkerRoute([
-  [-62, 55],
-  [62, 55],
-  [62, 76],
-  [-62, 76],
+  [-56, 56],
+  [56, 56],
+  [56, 72],
+  [-56, 72],
 ])
 const A_SOUTH_WALK = makeWalkerRoute([
-  [62, -55],
-  [-62, -55],
-  [-62, -76],
-  [62, -76],
+  [56, -56],
+  [-56, -56],
+  [-56, -72],
+  [56, -72],
+])
+const C_LAKE_WALK = makeWalkerRoute([
+  [-163, 61],
+  [-149, 61],
+  [-149, 73],
+  [-163, 73],
+])
+const A_POND_WALK = makeWalkerRoute([
+  [34, 96],
+  [54, 96],
+  [54, 104],
+  [34, 104],
+])
+const B_POND_WALK = makeWalkerRoute([
+  [84, 25],
+  [95, 25],
+  [95, 36],
+  [84, 36],
 ])
 
 interface PersonColors {
@@ -129,10 +147,10 @@ function PersonModel({
   useFrame(({ clock }) => {
     const time = clock.elapsedTime * 2.6 + phase
     const swing = Math.sin(time) * 0.34
-    if (leftLeg.current) leftLeg.current.rotation.z = swing
-    if (rightLeg.current) rightLeg.current.rotation.z = -swing
-    if (leftArm.current) leftArm.current.rotation.z = -swing * 0.7
-    if (rightArm.current) rightArm.current.rotation.z = swing * 0.7
+    if (leftLeg.current) leftLeg.current.rotation.x = swing
+    if (rightLeg.current) rightLeg.current.rotation.x = -swing
+    if (leftArm.current) leftArm.current.rotation.x = -swing * 0.7
+    if (rightArm.current) rightArm.current.rotation.x = swing * 0.7
     if (body.current) body.current.position.y = Math.abs(Math.sin(time)) * 0.025
     if (cape.current) {
       cape.current.rotation.z = Math.sin(time * 0.6) * 0.035
@@ -147,11 +165,11 @@ function PersonModel({
           {/* Torso y armadura */}
           <mesh position={[0, 1.05, 0]}>
             <boxGeometry args={[0.44, 0.82, 0.32]} />
-            <meshStandardMaterial color="#0a0b0d" roughness={0.55} metalness={0.35} />
+            <meshStandardMaterial color="#15191f" roughness={0.55} metalness={0.35} />
           </mesh>
           <mesh position={[0, 1.29, 0.01]}>
             <boxGeometry args={[0.55, 0.36, 0.38]} />
-            <meshStandardMaterial color="#101216" roughness={0.32} metalness={0.62} />
+            <meshStandardMaterial color="#1d222b" roughness={0.32} metalness={0.62} />
           </mesh>
           {[1.16, 1.23, 1.3].map((y) => (
             <mesh key={y} position={[0, y, 0.205]}>
@@ -181,13 +199,13 @@ function PersonModel({
           ))}
           <mesh position={[0, 1.45, 0]}>
             <cylinderGeometry args={[0.1, 0.12, 0.14, 10]} />
-            <meshStandardMaterial color="#101216" roughness={0.4} metalness={0.5} />
+            <meshStandardMaterial color="#1d222b" roughness={0.4} metalness={0.5} />
           </mesh>
 
           {/* Cinturón y tabardo */}
           <mesh position={[0, 0.71, 0]}>
             <boxGeometry args={[0.48, 0.13, 0.36]} />
-            <meshStandardMaterial color="#0b0c0f" roughness={0.5} metalness={0.4} />
+            <meshStandardMaterial color="#161a20" roughness={0.5} metalness={0.4} />
           </mesh>
           <mesh position={[0, 0.71, 0.19]}>
             <boxGeometry args={[0.13, 0.14, 0.03]} />
@@ -205,21 +223,31 @@ function PersonModel({
           </mesh>
           <mesh position={[0, 0.48, -0.16]} rotation={[-0.06, 0, 0]}>
             <boxGeometry args={[0.42, 0.52, 0.05]} />
-            <meshStandardMaterial color="#07080a" roughness={0.85} />
+            <meshStandardMaterial color="#11141a" roughness={0.85} />
           </mesh>
 
           {/* Casco, máscara y lentes */}
           <mesh position={[0, 1.62, -0.005]} scale={[1, 0.92, 1.02]}>
             <sphereGeometry args={[0.2, 16, 14]} />
-            <meshStandardMaterial color="#111318" roughness={0.24} metalness={0.68} />
+            <meshStandardMaterial color="#1b2029" roughness={0.24} metalness={0.68} />
           </mesh>
           <mesh position={[0, 1.6, 0.04]}>
             <boxGeometry args={[0.37, 0.08, 0.22]} />
-            <meshStandardMaterial color="#0b0d11" roughness={0.3} metalness={0.6} />
+            <meshStandardMaterial color="#161a21" roughness={0.3} metalness={0.6} />
           </mesh>
+          <mesh position={[0, 1.515, 0.11]}>
+            <boxGeometry args={[0.34, 0.028, 0.2]} />
+            <meshStandardMaterial color="#69737b" roughness={0.28} metalness={0.8} />
+          </mesh>
+          {[-0.12, 0.12].map((x) => (
+            <mesh key={`cheek-${x}`} position={[x, 1.47, 0.235]} rotation={[0, x < 0 ? 0.2 : -0.2, 0]}>
+              <boxGeometry args={[0.1, 0.13, 0.03]} />
+              <meshStandardMaterial color="#303741" roughness={0.35} metalness={0.65} />
+            </mesh>
+          ))}
           <mesh position={[0, 1.52, 0.17]} rotation={[-0.14, 0, 0]}>
             <boxGeometry args={[0.3, 0.26, 0.13]} />
-            <meshStandardMaterial color="#0b0d11" roughness={0.32} metalness={0.55} />
+            <meshStandardMaterial color="#161a21" roughness={0.32} metalness={0.55} />
           </mesh>
           {[-0.09, 0.09].map((x) => (
             <mesh key={x} position={[x, 1.56, 0.225]} rotation={[0, 0, x < 0 ? 0.12 : -0.12]}>
@@ -257,7 +285,7 @@ function PersonModel({
             ].map((panel, index) => (
               <mesh key={index} position={[0, panel.y, panel.z]} rotation={[0.04 + index * 0.03, 0, 0]}>
                 <boxGeometry args={[panel.w, panel.h, 0.045]} />
-                <meshStandardMaterial color="#07080a" roughness={0.88} metalness={0.05} side={THREE.DoubleSide} />
+                <meshStandardMaterial color="#11141a" roughness={0.88} metalness={0.05} side={THREE.DoubleSide} />
               </mesh>
             ))}
           </group>
@@ -270,15 +298,15 @@ function PersonModel({
             <group key={leg.x} ref={leg.ref} position={[leg.x, 0.72, 0]}>
               <mesh position={[0, -0.18, 0]}>
                 <boxGeometry args={[0.17, 0.38, 0.18]} />
-                <meshStandardMaterial color="#0b0c0f" roughness={0.62} />
+                <meshStandardMaterial color="#161a20" roughness={0.62} />
               </mesh>
               <mesh position={[0, -0.46, 0.01]}>
                 <boxGeometry args={[0.18, 0.14, 0.2]} />
-                <meshStandardMaterial color="#14171d" roughness={0.38} metalness={0.55} />
+                <meshStandardMaterial color="#20252d" roughness={0.38} metalness={0.55} />
               </mesh>
               <mesh position={[0, -0.64, 0]}>
                 <boxGeometry args={[0.15, 0.28, 0.16]} />
-                <meshStandardMaterial color="#090a0d" roughness={0.68} />
+                <meshStandardMaterial color="#13161c" roughness={0.68} />
               </mesh>
               <mesh position={[0, -0.8, 0.05]}>
                 <boxGeometry args={[0.17, 0.11, 0.26]} />
@@ -303,11 +331,11 @@ function PersonModel({
               </mesh>
               <mesh position={[0, -0.58, 0.02]}>
                 <boxGeometry args={[0.13, 0.26, 0.15]} />
-                <meshStandardMaterial color="#090a0d" roughness={0.62} />
+                <meshStandardMaterial color="#13161c" roughness={0.62} />
               </mesh>
               <mesh position={[0, -0.75, 0.05]}>
                 <boxGeometry args={[0.15, 0.13, 0.19]} />
-                <meshStandardMaterial color="#0b0d11" roughness={0.45} metalness={0.4} />
+                <meshStandardMaterial color="#161a21" roughness={0.45} metalness={0.4} />
               </mesh>
               {arm.x > 0 && (
                 <group position={[0, -0.78, 0.09]} rotation={[0.08, 0, -0.18]}>
@@ -319,23 +347,23 @@ function PersonModel({
                     <cylinderGeometry args={[0.06, 0.045, 0.08, 10]} />
                     <meshStandardMaterial color="#20282e" metalness={0.7} roughness={0.3} />
                   </mesh>
-                  <mesh position={[0, 1.3, 0]}>
-                    <cylinderGeometry args={[0.018, 0.021, 2.3, 8]} />
+                  <mesh position={[0, 0.68, 0]}>
+                    <cylinderGeometry args={[0.016, 0.019, 1.15, 8]} />
                     <meshBasicMaterial color="#fff0f0" toneMapped={false} />
                   </mesh>
-                  <mesh position={[0, 1.3, 0]}>
-                    <cylinderGeometry args={[0.055, 0.06, 2.3, 10]} />
+                  <mesh position={[0, 0.68, 0]}>
+                    <cylinderGeometry args={[0.05, 0.055, 1.15, 10]} />
                     <meshBasicMaterial color="#ff4d4d" toneMapped={false} transparent opacity={0.85} />
                   </mesh>
-                  <mesh position={[0, 1.3, 0]}>
-                    <cylinderGeometry args={[0.14, 0.14, 2.3, 10]} />
-                    <meshBasicMaterial color="#ff2f2f" toneMapped={false} transparent opacity={0.12} depthWrite={false} />
+                  <mesh position={[0, 0.68, 0]}>
+                    <cylinderGeometry args={[0.12, 0.12, 1.15, 10]} />
+                    <meshBasicMaterial color="#ff2f2f" toneMapped={false} transparent opacity={0.1} depthWrite={false} />
                   </mesh>
-                  <mesh position={[0, 2.47, 0]}>
-                    <sphereGeometry args={[0.035, 8, 8]} />
+                  <mesh position={[0, 1.27, 0]}>
+                    <sphereGeometry args={[0.03, 8, 8]} />
                     <meshBasicMaterial color="#ffe6e6" toneMapped={false} />
                   </mesh>
-                  <pointLight position={[0, 1.4, 0]} color="#ff5a4a" intensity={12} distance={10} decay={2} />
+                  <pointLight position={[0, 0.8, 0]} color="#ff5a4a" intensity={8} distance={7} decay={2} />
                 </group>
               )}
             </group>
@@ -431,18 +459,163 @@ function Walker({
     progress.current = (progress.current + speed * delta) % route.total
     const point = walkAt(route, progress.current)
     group.current.position.set(point.x, 0, point.z)
-    const target = Math.atan2(-point.tz, point.tx)
+    const target = Math.atan2(point.tx, point.tz)
     const current = group.current.rotation.y
     const difference = Math.atan2(Math.sin(target - current), Math.cos(target - current))
     group.current.rotation.y = current + difference * Math.min(1, delta * 5)
   })
 
   return (
-    <group ref={group} position={[initial.x, 0, initial.z]} rotation={[0, Math.atan2(-initial.tz, initial.tx), 0]} scale={vader ? 1.12 : 1}>
+    <group ref={group} position={[initial.x, vader ? 0.14 : 0, initial.z]} rotation={[0, Math.atan2(initial.tx, initial.tz), 0]} scale={vader ? 1.08 : 1}>
       <PersonModel colors={colors} vader={vader} phase={start * 0.13} />
     </group>
   )
 }
+
+interface CrowdPerson {
+  route: WalkRoute
+  start: number
+  speed: number
+  colors: PersonColors
+}
+
+const Y_AXIS = new THREE.Vector3(0, 1, 0)
+
+function InstancedCrowd({ people }: { people: CrowdPerson[] }) {
+  const torsoRef = useRef<THREE.InstancedMesh>(null)
+  const headRef = useRef<THREE.InstancedMesh>(null)
+  const hairRef = useRef<THREE.InstancedMesh>(null)
+  const legRef = useRef<THREE.InstancedMesh>(null)
+  const shoeRef = useRef<THREE.InstancedMesh>(null)
+  const armRef = useRef<THREE.InstancedMesh>(null)
+  const progress = useRef(people.map((person) => person.start % person.route.total))
+  const count = people.length
+
+  const setMatrices = useMemo(() => {
+    const base = new THREE.Matrix4()
+    const rotation = new THREE.Matrix4()
+    const local = new THREE.Matrix4()
+    const transform = new THREE.Matrix4()
+    const scaleMatrix = new THREE.Matrix4()
+    const scratch = new THREE.Matrix4()
+    const legSwing = new THREE.Matrix4()
+    const legSwingOpposite = new THREE.Matrix4()
+    const hipLeft = new THREE.Matrix4()
+    const hipRight = new THREE.Matrix4()
+    const armSwingLeft = new THREE.Matrix4()
+    const armSwingRight = new THREE.Matrix4()
+    const shoulderLeft = new THREE.Matrix4()
+    const shoulderRight = new THREE.Matrix4()
+
+    return (elapsed: number) => {
+      if (!torsoRef.current || !headRef.current || !hairRef.current || !legRef.current || !shoeRef.current || !armRef.current) return
+      const half = count
+      for (let i = 0; i < count; i += 1) {
+        const person = people[i]
+        const point = walkAt(person.route, progress.current[i])
+        const yaw = Math.atan2(point.tx, point.tz)
+        const bob = Math.abs(Math.sin(elapsed * 2.6 + person.start * 0.13)) * 0.025
+        const swing = Math.sin(elapsed * 2.6 + person.start * 0.13) * 0.34
+
+        base.makeTranslation(point.x, bob, point.z)
+        rotation.makeRotationY(yaw)
+        base.multiply(rotation)
+
+        torsoRef.current.setMatrixAt(i, scratch.copy(base).multiply(local.makeTranslation(0, 1.05, 0)))
+        headRef.current.setMatrixAt(i, scratch.copy(base).multiply(local.makeTranslation(0, 1.47, 0)))
+        hairRef.current.setMatrixAt(
+          i,
+          scratch
+            .copy(base)
+            .multiply(local.makeTranslation(0, 1.57, -0.035))
+            .multiply(scaleMatrix.makeScale(1, 0.8, 1)),
+        )
+
+        legSwing.makeRotationX(swing)
+        legSwingOpposite.makeRotationX(-swing)
+        hipLeft.copy(base).multiply(local.makeTranslation(-0.1, 0.74, 0)).multiply(legSwing)
+        hipRight.copy(base).multiply(local.makeTranslation(0.1, 0.74, 0)).multiply(legSwingOpposite)
+        legRef.current.setMatrixAt(i, transform.copy(hipLeft).multiply(local.makeTranslation(0, -0.3, 0)))
+        legRef.current.setMatrixAt(i + half, transform.copy(hipRight).multiply(local.makeTranslation(0, -0.3, 0)))
+        shoeRef.current.setMatrixAt(i, transform.copy(hipLeft).multiply(local.makeTranslation(0, -0.67, 0.02)))
+        shoeRef.current.setMatrixAt(i + half, transform.copy(hipRight).multiply(local.makeTranslation(0, -0.67, 0.02)))
+
+        armSwingLeft.makeRotationX(-swing * 0.7)
+        armSwingRight.makeRotationX(swing * 0.7)
+        shoulderLeft.copy(base).multiply(local.makeTranslation(-0.235, 1.28, 0)).multiply(armSwingLeft)
+        shoulderRight.copy(base).multiply(local.makeTranslation(0.235, 1.28, 0)).multiply(armSwingRight)
+        armRef.current.setMatrixAt(i, transform.copy(shoulderLeft).multiply(local.makeTranslation(0, -0.22, 0)))
+        armRef.current.setMatrixAt(i + half, transform.copy(shoulderRight).multiply(local.makeTranslation(0, -0.22, 0)))
+      }
+      torsoRef.current.instanceMatrix.needsUpdate = true
+      headRef.current.instanceMatrix.needsUpdate = true
+      hairRef.current.instanceMatrix.needsUpdate = true
+      legRef.current.instanceMatrix.needsUpdate = true
+      shoeRef.current.instanceMatrix.needsUpdate = true
+      armRef.current.instanceMatrix.needsUpdate = true
+    }
+  }, [people, count])
+
+  useLayoutEffect(() => {
+    if (!torsoRef.current || !headRef.current || !hairRef.current || !legRef.current || !shoeRef.current || !armRef.current) return
+    people.forEach((person, index) => {
+      torsoRef.current!.setColorAt(index, new THREE.Color(person.colors.coat))
+      headRef.current!.setColorAt(index, new THREE.Color(person.colors.skin))
+      hairRef.current!.setColorAt(index, new THREE.Color(person.colors.hair))
+      legRef.current!.setColorAt(index, new THREE.Color(person.colors.trousers))
+      legRef.current!.setColorAt(index + people.length, new THREE.Color(person.colors.trousers))
+      shoeRef.current!.setColorAt(index, new THREE.Color('#12181d'))
+      shoeRef.current!.setColorAt(index + people.length, new THREE.Color('#12181d'))
+      armRef.current!.setColorAt(index, new THREE.Color(person.colors.coat))
+      armRef.current!.setColorAt(index + people.length, new THREE.Color(person.colors.coat))
+    })
+    torsoRef.current.instanceColor!.needsUpdate = true
+    headRef.current.instanceColor!.needsUpdate = true
+    hairRef.current.instanceColor!.needsUpdate = true
+    legRef.current.instanceColor!.needsUpdate = true
+    shoeRef.current.instanceColor!.needsUpdate = true
+    armRef.current.instanceColor!.needsUpdate = true
+    setMatrices(0)
+  }, [people, setMatrices])
+
+  useFrame(({ clock }, delta) => {
+    const step = Math.min(delta, 0.1)
+    for (let i = 0; i < count; i += 1) {
+      progress.current[i] = (progress.current[i] + people[i].speed * step) % people[i].route.total
+    }
+    setMatrices(clock.elapsedTime)
+  })
+
+  return (
+    <group>
+      <instancedMesh ref={torsoRef} args={[undefined, undefined, count]} castShadow>
+        <boxGeometry args={[0.36, 0.62, 0.25]} />
+        <meshStandardMaterial color="#ffffff" roughness={0.78} />
+      </instancedMesh>
+      <instancedMesh ref={headRef} args={[undefined, undefined, count]}>
+        <sphereGeometry args={[0.155, 12, 10]} />
+        <meshStandardMaterial color="#ffffff" roughness={0.8} />
+      </instancedMesh>
+      <instancedMesh ref={hairRef} args={[undefined, undefined, count]}>
+        <sphereGeometry args={[0.155, 10, 8]} />
+        <meshStandardMaterial color="#ffffff" roughness={0.88} />
+      </instancedMesh>
+      <instancedMesh ref={legRef} args={[undefined, undefined, count * 2]} castShadow>
+        <boxGeometry args={[0.14, 0.6, 0.15]} />
+        <meshStandardMaterial color="#ffffff" roughness={0.82} />
+      </instancedMesh>
+      <instancedMesh ref={shoeRef} args={[undefined, undefined, count * 2]}>
+        <boxGeometry args={[0.15, 0.14, 0.25]} />
+        <meshStandardMaterial color="#ffffff" roughness={0.6} />
+      </instancedMesh>
+      <instancedMesh ref={armRef} args={[undefined, undefined, count * 2]} castShadow>
+        <boxGeometry args={[0.1, 0.46, 0.13]} />
+        <meshStandardMaterial color="#ffffff" roughness={0.82} />
+      </instancedMesh>
+    </group>
+  )
+}
+
 
 const PEOPLE: { route: WalkRoute; start: number; speed: number; colors: PersonColors; vader?: boolean }[] = [
   {
@@ -578,21 +751,83 @@ const PEOPLE: { route: WalkRoute; start: number; speed: number; colors: PersonCo
     speed: 1.3,
     colors: { coat: '#ad9c7c', trousers: '#222d33', skin: '#c6a184', hair: '#1d2428' },
   },
+  {
+    route: C_LAKE_WALK,
+    start: 12,
+    speed: 1.2,
+    colors: { coat: '#9a8864', trousers: '#2a3439', skin: '#b58d73', hair: '#2a231d' },
+  },
+  {
+    route: C_LAKE_WALK,
+    start: 46,
+    speed: 1.35,
+    colors: { coat: '#7f9187', trousers: '#1f2a2e', skin: '#c49d82', hair: '#1e2427' },
+  },
+  {
+    route: A_POND_WALK,
+    start: 18,
+    speed: 1.3,
+    colors: { coat: '#a5b4b8', trousers: '#27343b', skin: '#c5a087', hair: '#211c18' },
+  },
+  {
+    route: A_POND_WALK,
+    start: 54,
+    speed: 1.25,
+    colors: { coat: '#b39c7b', trousers: '#222c32', skin: '#a87e64', hair: '#26201b' },
+  },
+  {
+    route: B_POND_WALK,
+    start: 10,
+    speed: 1.35,
+    colors: { coat: '#7a8095', trousers: '#202832', skin: '#bd947b', hair: '#1d2428' },
+  },
+  {
+    route: B_POND_WALK,
+    start: 44,
+    speed: 1.3,
+    colors: { coat: '#8d9aa1', trousers: '#263137', skin: '#c49b7d', hair: '#1f2428' },
+  },
+  {
+    route: SOUTH_WALK,
+    start: 900,
+    speed: 1.4,
+    colors: { coat: '#b7a583', trousers: '#28343b', skin: '#b58d73', hair: '#29221d' },
+  },
+  {
+    route: NORTH_WALK,
+    start: 980,
+    speed: 1.3,
+    colors: { coat: '#83969b', trousers: '#273238', skin: '#c7a084', hair: '#1c2023' },
+  },
+  {
+    route: WEST_WALK,
+    start: 470,
+    speed: 1.35,
+    colors: { coat: '#9c856b', trousers: '#263137', skin: '#c6a184', hair: '#1f1a16' },
+  },
 ]
 
+const CROWD: CrowdPerson[] = PEOPLE.filter((person) => !person.vader).map(({ route, start, speed, colors }) => ({
+  route,
+  start,
+  speed,
+  colors,
+}))
+
 export function Pedestrians() {
+  const vader = PEOPLE.find((person) => person.vader)
   return (
     <group>
-      {PEOPLE.map((person, index) => (
+      <InstancedCrowd people={CROWD} />
+      {vader && (
         <Walker
-          key={index}
-          route={person.route}
-          start={person.start}
-          speed={person.speed}
-          colors={person.colors}
-          vader={person.vader}
+          route={vader.route}
+          start={vader.start}
+          speed={vader.speed}
+          colors={vader.colors}
+          vader
         />
-      ))}
+      )}
     </group>
   )
 }

@@ -47,13 +47,13 @@ function DataLink({
 
   return (
     <group>
-      <Line points={points} color={color} transparent opacity={0.22} lineWidth={1.4} />
+      <Line points={points} color={color} transparent opacity={0.3} lineWidth={1.6} />
       <Line
         points={points}
         color={color}
         transparent
-        opacity={0.36}
-        lineWidth={0.8}
+        opacity={0.5}
+        lineWidth={0.9}
         dashed
         dashSize={1.4}
         gapSize={2.6}
@@ -253,14 +253,27 @@ export function Clouds({
 
   return (
     <group>
-      <DataLink from={[-14, 9.2, -24]} to={[us.position[0], us.position[1] - 1.5, us.position[2]]} color="#7fb6ff" count={6} />
-      <DataLink from={[160, 12.2, -30]} to={[us.position[0] + 2, us.position[1] - 1.5, us.position[2]]} color="#b0a0ff" count={5} />
-      <DataLink from={[200, 6, 4]} to={[us.position[0] + 3, us.position[1] - 1.5, us.position[2] + 2]} color="#aeb9ff" count={3} />
-      <DataLink from={[0, 5.5, 60]} to={[us.position[0], us.position[1] - 1.5, us.position[2]]} color="#79e3f2" count={3} />
-      <DataLink from={[-114, 5.4, -15.5]} to={[eu.position[0] + 2, eu.position[1] - 1.5, eu.position[2]]} color="#c3a6ff" count={5} />
-      <DataLink from={[-118, 3, 21]} to={[eu.position[0], eu.position[1] - 1.5, eu.position[2] + 2]} color="#f2c97b" count={4} />
-      <DataLink from={[-165, 3, -95]} to={[eu.position[0] + 3, eu.position[1] - 1.5, eu.position[2]]} color="#ffcf8f" count={3} />
-      <DataLink from={[-208, 18, -112]} to={[eu.position[0] - 2, eu.position[1] - 1.5, eu.position[2] + 2]} color="#c9d8ff" count={3} />
+      {/* Zona A → nube EE. UU. */}
+      <DataLink from={[-14, 9.2, -24]} to={[us.position[0], us.position[1] - 1.5, us.position[2]]} color="#7fe6f2" count={4} />
+      <DataLink from={[0, 5.5, 60]} to={[us.position[0] - 3, us.position[1] - 1.5, us.position[2] + 2]} color="#79e3f2" count={3} />
+      <DataLink from={[45, 3.2, 101]} to={[us.position[0] + 4, us.position[1] - 1.5, us.position[2] - 2]} color="#79e3f2" count={3} />
+      <DataLink from={[70, 3, -62]} to={[us.position[0], us.position[1] - 1.5, us.position[2] + 3]} color="#79e3f2" count={3} />
+      <DataLink from={[23.5, 7, 0]} to={[us.position[0] - 5, us.position[1] - 1.5, us.position[2] + 1]} color="#95edf7" count={2} />
+
+      {/* Zona B → nube EE. UU. */}
+      <DataLink from={[160, 12.2, -30]} to={[us.position[0] + 2, us.position[1] - 1.5, us.position[2]]} color="#b0a0ff" count={4} />
+      <DataLink from={[160, 7, 4]} to={[us.position[0] + 5, us.position[1] - 1.5, us.position[2] + 2]} color="#aeb9ff" count={3} />
+      <DataLink from={[112, 3.2, -72]} to={[us.position[0] + 3, us.position[1] - 1.5, us.position[2] + 4]} color="#b0a0ff" count={2} />
+      <DataLink from={[220, 8, 58]} to={[us.position[0] + 6, us.position[1] - 1.5, us.position[2] - 2]} color="#c3b8ff" count={2} />
+
+      {/* Zona C → nube UE */}
+      <DataLink from={[-115, 5.4, -15.5]} to={[eu.position[0] + 2, eu.position[1] - 1.5, eu.position[2]]} color="#f2c97b" count={4} />
+      <DataLink from={[-118, 3, 21]} to={[eu.position[0], eu.position[1] - 1.5, eu.position[2] + 2]} color="#f2c97b" count={3} />
+      <DataLink from={[-160, 4, 57]} to={[eu.position[0] - 3, eu.position[1] - 1.5, eu.position[2] + 2]} color="#ffcf8f" count={3} />
+      <DataLink from={[-205, 3, 118]} to={[eu.position[0] - 4, eu.position[1] - 1.5, eu.position[2] - 2]} color="#f2c97b" count={2} />
+      <DataLink from={[-152, 5, 126]} to={[eu.position[0] + 4, eu.position[1] - 1.5, eu.position[2] + 1]} color="#ffd8a2" count={2} />
+      <DataLink from={[-208, 18, -125]} to={[eu.position[0] - 2, eu.position[1] - 1.5, eu.position[2] + 3]} color="#c9d8ff" count={2} />
+
       <CloudCore cloud={us} onSelect={onSelect} showAnnotations={showAnnotations} />
       <CloudCore cloud={eu} onSelect={onSelect} showAnnotations={showAnnotations} />
     </group>

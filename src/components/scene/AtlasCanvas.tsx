@@ -149,10 +149,6 @@ function Atmosphere({ day }: { day: boolean }) {
         <directionalLight position={[-90, 55, -70]} intensity={0.95} color="#cfe6ff" />
         <pointLight position={[-14, 12, -24]} intensity={16} distance={32} decay={2} color="#5fd8ff" />
         <pointLight position={[160, 15, -30]} intensity={14} distance={30} decay={2} color="#9080ff" />
-        <pointLight position={[-155, 38, 55]} intensity={90} distance={150} decay={2} color="#ffcf9b" />
-        <pointLight position={[-155, 38, -85]} intensity={80} distance={140} decay={2} color="#ffd9b0" />
-        <pointLight position={[180, 38, 55]} intensity={85} distance={150} decay={2} color="#b4a8ff" />
-        <pointLight position={[180, 38, -85]} intensity={75} distance={140} decay={2} color="#a9b8ff" />
       </>
     )
   }
@@ -171,15 +167,8 @@ function Atmosphere({ day }: { day: boolean }) {
       <pointLight position={[-155, 38, -85]} intensity={130} distance={150} decay={2} color="#ffd9b0" />
       <pointLight position={[180, 38, 55]} intensity={140} distance={160} decay={2} color="#b4a8ff" />
       <pointLight position={[180, 38, -85]} intensity={120} distance={150} decay={2} color="#a9b8ff" />
-      {[-140, -12, 60, 140].map((x, index) => (
-        <pointLight
-          key={x}
-          position={[x, 5.6, index % 2 === 0 ? 9 : -9]}
-          intensity={16}
-          distance={22}
-          decay={2}
-          color="#ffd9a8"
-        />
+      {[-12, 60].map((x) => (
+        <pointLight key={x} position={[x, 5.6, x < 0 ? 9 : -9]} intensity={14} distance={22} decay={2} color="#ffd9a8" />
       ))}
     </>
   )
@@ -206,7 +195,7 @@ export function AtlasCanvas({
     <div className="canvas-host" aria-label="Modelo 3D interactivo de la ciudad inteligente">
       <Canvas
         camera={{ position: [0, 300, 560], fov: 36, near: 0.8, far: 4000 }}
-        dpr={[1, 1.35]}
+        dpr={[1, 1]}
         shadows
         gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
         fallback={

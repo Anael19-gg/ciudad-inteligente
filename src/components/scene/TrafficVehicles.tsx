@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react'
+import { useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { RoundedBox } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
@@ -65,8 +65,8 @@ const westStops = AVENUE_SIGNALS.map((x) => Math.max(0, 180 - x - 2.5))
 
 const AVENUE_EAST_OUTER = makeRoute(
   [
-    [-180, -4.8],
-    [180, -4.8],
+    [-180, 4.8],
+    [180, 4.8],
     [180, 48],
     [-180, 48],
   ],
@@ -74,8 +74,8 @@ const AVENUE_EAST_OUTER = makeRoute(
 )
 const AVENUE_EAST_INNER = makeRoute(
   [
-    [-180, -2.2],
-    [180, -2.2],
+    [-180, 2.2],
+    [180, 2.2],
     [180, 48],
     [-180, 48],
   ],
@@ -83,8 +83,8 @@ const AVENUE_EAST_INNER = makeRoute(
 )
 const AVENUE_WEST_INNER = makeRoute(
   [
-    [180, 2.2],
-    [-180, 2.2],
+    [180, -2.2],
+    [-180, -2.2],
     [-180, -48],
     [180, -48],
   ],
@@ -92,8 +92,8 @@ const AVENUE_WEST_INNER = makeRoute(
 )
 const AVENUE_WEST_OUTER = makeRoute(
   [
-    [180, 4.8],
-    [-180, 4.8],
+    [180, -4.8],
+    [-180, -4.8],
     [-180, -48],
     [180, -48],
   ],
@@ -101,16 +101,16 @@ const AVENUE_WEST_OUTER = makeRoute(
 )
 
 const WEST_NORTH = makeRoute([
-  [-180, 48],
   [-100, 48],
-  [-100, 110],
+  [-180, 48],
   [-180, 110],
+  [-100, 110],
 ])
 const EAST_NORTH = makeRoute([
-  [100, 48],
   [180, 48],
-  [180, 110],
+  [100, 48],
   [100, 110],
+  [180, 110],
 ])
 const WEST_SOUTH = makeRoute([
   [-180, -48],
@@ -125,10 +125,10 @@ const EAST_SOUTH = makeRoute([
   [100, -110],
 ])
 const CENTER_NORTH = makeRoute([
-  [-62, 48],
   [62, 48],
-  [62, 110],
+  [-62, 48],
   [-62, 110],
+  [62, 110],
 ])
 const CENTER_SOUTH = makeRoute([
   [-62, -48],
@@ -145,6 +145,30 @@ const BIKE_LOOP = makeRoute([
 
 type CarVariant = 'sedan' | 'compact' | 'taxi' | 'pickup' | 'security'
 type VehicleKind = 'car' | 'bus' | 'bike'
+
+function VehicleWheels({ positions, radius }: { positions: [number, number, number][]; radius: number }) {
+  const wheels = useRef<THREE.InstancedMesh>(null)
+  useLayoutEffect(() => {
+    if (!wheels.current) return
+    const matrix = new THREE.Matrix4()
+    const position = new THREE.Vector3()
+    const quaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI / 2, 0, 0))
+    const scale = new THREE.Vector3(1, 1, 1)
+    positions.forEach(([x, y, z], index) => {
+      position.set(x, y, z)
+      matrix.compose(position, quaternion, scale)
+      wheels.current!.setMatrixAt(index, matrix)
+    })
+    wheels.current.instanceMatrix.needsUpdate = true
+  }, [positions])
+
+  return (
+    <instancedMesh ref={wheels} args={[undefined, undefined, positions.length]} castShadow>
+      <cylinderGeometry args={[radius, radius, 0.16, 10]} />
+      <meshStandardMaterial color="#080d10" roughness={0.7} />
+    </instancedMesh>
+  )
+}
 
 function CarModel({ variant = 'sedan', color = '#b6c3c9' }: { variant?: CarVariant; color?: string }) {
   const isPickup = variant === 'pickup'
@@ -179,14 +203,15 @@ function CarModel({ variant = 'sedan', color = '#b6c3c9' }: { variant?: CarVaria
         <boxGeometry args={[length - 0.2, 0.08, 0.96]} />
         <meshBasicMaterial color={isSecurity ? '#9bb7c1' : '#81a8b6'} transparent opacity={0.55} toneMapped={false} />
       </mesh>
-      {[-length * 0.3, length * 0.3].map((x) =>
-        [-0.53, 0.53].map((z) => (
-          <mesh key={`${x}-${z}`} position={[x, 0.26, z]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.22, 0.22, 0.15, 10]} />
-            <meshStandardMaterial color="#080d10" roughness={0.7} />
-          </mesh>
-        )),
-      )}
+      <VehicleWheels
+        positions={[
+          [-length * 0.3, 0.26, -0.53],
+          [-length * 0.3, 0.26, 0.53],
+          [length * 0.3, 0.26, -0.53],
+          [length * 0.3, 0.26, 0.53],
+        ]}
+        radius={0.22}
+      />
       <mesh position={[length / 2 + 0.02, 0.5, 0]}>
         <boxGeometry args={[0.05, 0.16, 0.88]} />
         <meshBasicMaterial color="#eaf7fa" toneMapped={false} />
@@ -225,14 +250,15 @@ function BusModel({ color = '#b9c7cc' }: { color?: string }) {
         <boxGeometry args={[4.3, 0.1, 1.8]} />
         <meshBasicMaterial color="#74dbe7" transparent opacity={0.7} toneMapped={false} />
       </mesh>
-      {[-1.7, 1.7].map((x) =>
-        [-0.84, 0.84].map((z) => (
-          <mesh key={`${x}-${z}`} position={[x, 0.28, z]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.3, 0.3, 0.2, 12]} />
-            <meshStandardMaterial color="#080d10" roughness={0.7} />
-          </mesh>
-        )),
-      )}
+      <VehicleWheels
+        positions={[
+          [-1.7, 0.28, -0.84],
+          [-1.7, 0.28, 0.84],
+          [1.7, 0.28, -0.84],
+          [1.7, 0.28, 0.84],
+        ]}
+        radius={0.3}
+      />
       <mesh position={[2.33, 0.9, 0]}>
         <boxGeometry args={[0.05, 0.32, 1.55]} />
         <meshBasicMaterial color="#e9f8fa" toneMapped={false} />
@@ -249,50 +275,139 @@ function BusModel({ color = '#b9c7cc' }: { color?: string }) {
   )
 }
 
-function BikeModel({ jacket = '#c3a36a', frame = '#8da0a8' }: { jacket?: string; frame?: string }) {
-  const wheels = useRef<THREE.Group>(null)
+function BikeTube({
+  a,
+  b,
+  color,
+  radius = 0.024,
+}: {
+  a: [number, number]
+  b: [number, number]
+  color: string
+  radius?: number
+}) {
+  const dx = b[0] - a[0]
+  const dy = b[1] - a[1]
+  const length = Math.hypot(dx, dy)
+  return (
+    <mesh
+      position={[(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, 0]}
+      rotation={[0, 0, Math.atan2(dy, dx) - Math.PI / 2]}
+    >
+      <cylinderGeometry args={[radius, radius, length, 6]} />
+      <meshStandardMaterial color={color} metalness={0.6} roughness={0.4} />
+    </mesh>
+  )
+}
+
+function BikeWheel({ x, frame }: { x: number; frame: string }) {
+  const wheel = useRef<THREE.Group>(null)
   useFrame(({ clock }) => {
-    if (wheels.current) wheels.current.rotation.z = clock.elapsedTime * 2
+    if (wheel.current) wheel.current.rotation.z = -clock.elapsedTime * 5.2
   })
 
   return (
-    <group>
-      <group ref={wheels}>
-        {[-0.62, 0.62].map((x) => (
-          <mesh key={x} position={[x, 0.34, 0]} rotation={[Math.PI / 2, 0, 0]}>
-            <torusGeometry args={[0.31, 0.035, 5, 18]} />
-            <meshBasicMaterial color="#aeb9bd" />
+    <group position={[x, 0.34, 0]}>
+      <group ref={wheel}>
+        <mesh>
+          <torusGeometry args={[0.31, 0.028, 6, 22]} />
+          <meshStandardMaterial color="#1c2429" roughness={0.55} metalness={0.3} />
+        </mesh>
+        <mesh>
+          <torusGeometry args={[0.275, 0.012, 5, 22]} />
+          <meshStandardMaterial color="#aeb9bd" roughness={0.35} metalness={0.7} />
+        </mesh>
+        {[0, Math.PI / 3, (Math.PI * 2) / 3].map((angle) => (
+          <mesh key={angle} rotation={[0, 0, angle]}>
+            <boxGeometry args={[0.55, 0.012, 0.012]} />
+            <meshStandardMaterial color={frame} roughness={0.35} metalness={0.7} />
           </mesh>
         ))}
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.04, 0.04, 0.09, 8]} />
+          <meshStandardMaterial color="#8d9aa0" roughness={0.3} metalness={0.8} />
+        </mesh>
       </group>
-      <mesh position={[0, 0.42, 0]} rotation={[0, 0, -0.1]}>
-        <boxGeometry args={[1.05, 0.045, 0.045]} />
-        <meshStandardMaterial color={frame} metalness={0.6} roughness={0.4} />
+    </group>
+  )
+}
+
+function BikeModel({ jacket = '#c3a36a', frame = '#8da0a8' }: { jacket?: string; frame?: string }) {
+  return (
+    <group>
+      <BikeWheel x={-0.62} frame={frame} />
+      <BikeWheel x={0.66} frame={frame} />
+
+      {/* Cuadro */}
+      <BikeTube a={[-0.62, 0.34]} b={[0, 0.4]} color={frame} />
+      <BikeTube a={[-0.62, 0.34]} b={[-0.2, 0.8]} color={frame} />
+      <BikeTube a={[0, 0.4]} b={[-0.2, 0.8]} color={frame} />
+      <BikeTube a={[0, 0.4]} b={[0.5, 0.82]} color={frame} />
+      <BikeTube a={[-0.2, 0.8]} b={[0.5, 0.82]} color={frame} />
+      <BikeTube a={[0.5, 0.82]} b={[0.66, 0.34]} color="#3f4d54" radius={0.02} />
+      <BikeTube a={[0.5, 0.82]} b={[0.58, 0.95]} color="#3f4d54" radius={0.018} />
+
+      {/* Manubrio, sillín y pedales */}
+      <mesh position={[0.6, 0.97, 0]}>
+        <boxGeometry args={[0.05, 0.05, 0.5]} />
+        <meshStandardMaterial color="#1b2429" metalness={0.5} roughness={0.45} />
       </mesh>
-      <mesh position={[0.26, 0.5, 0]} rotation={[0, 0, 0.8]}>
-        <boxGeometry args={[0.04, 0.5, 0.04]} />
-        <meshStandardMaterial color={frame} metalness={0.6} roughness={0.4} />
-      </mesh>
-      <mesh position={[0.61, 0.64, 0]} rotation={[0, 0, 0]}>
-        <boxGeometry args={[0.04, 0.04, 0.42]} />
-        <meshStandardMaterial color="#1b2429" metalness={0.4} roughness={0.5} />
-      </mesh>
-      <mesh position={[-0.22, 0.62, 0]}>
-        <boxGeometry args={[0.28, 0.05, 0.16]} />
+      {[-0.24, 0.24].map((z) => (
+        <mesh key={z} position={[0.6, 0.97, z]} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.035, 0.035, 0.11, 7]} />
+          <meshStandardMaterial color="#0f1418" roughness={0.7} />
+        </mesh>
+      ))}
+      <mesh position={[-0.22, 0.82, 0]}>
+        <boxGeometry args={[0.3, 0.055, 0.17]} />
         <meshStandardMaterial color="#121a1e" roughness={0.7} />
       </mesh>
-      <mesh position={[-0.05, 0.93, 0]}>
-        <boxGeometry args={[0.28, 0.45, 0.28]} />
-        <meshStandardMaterial color={jacket} roughness={0.6} />
+      <mesh position={[0, 0.4, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.06, 0.06, 0.2, 8]} />
+        <meshStandardMaterial color="#6c7a81" metalness={0.7} roughness={0.35} />
       </mesh>
-      <mesh position={[-0.05, 1.23, 0]}>
+      {[-0.12, 0.12].map((z) => (
+        <mesh key={z} position={[0, 0.4, z]}>
+          <boxGeometry args={[0.16, 0.035, 0.05]} />
+          <meshStandardMaterial color="#1f282d" roughness={0.6} />
+        </mesh>
+      ))}
+      <mesh position={[0.66, 0.5, 0]}>
+        <sphereGeometry args={[0.045, 8, 8]} />
+        <meshBasicMaterial color="#ffe2ad" toneMapped={false} />
+      </mesh>
+
+      {/* Ciclista */}
+      <mesh position={[0.06, 1.06, 0]} rotation={[0, 0, -0.32]}>
+        <boxGeometry args={[0.27, 0.44, 0.26]} />
+        <meshStandardMaterial color={jacket} roughness={0.65} />
+      </mesh>
+      <mesh position={[0.2, 1.35, 0]}>
         <sphereGeometry args={[0.13, 10, 10]} />
         <meshStandardMaterial color="#b58d73" roughness={0.7} />
       </mesh>
-      <mesh position={[0.02, 0.78, 0]} rotation={[0, 0, -0.45]}>
-        <boxGeometry args={[0.36, 0.07, 0.07]} />
-        <meshStandardMaterial color={jacket} roughness={0.6} />
+      <mesh position={[0.17, 1.43, -0.02]} scale={[1, 0.65, 1]}>
+        <sphereGeometry args={[0.13, 9, 8]} />
+        <meshStandardMaterial color="#29221d" roughness={0.85} />
       </mesh>
+      {[-0.2, 0.2].map((z) => (
+        <mesh key={`arm-${z}`} position={[0.4, 1.12, z]} rotation={[0, 0, Math.PI / 2.5]}>
+          <boxGeometry args={[0.075, 0.45, 0.075]} />
+          <meshStandardMaterial color={jacket} roughness={0.7} />
+        </mesh>
+      ))}
+      {[-0.12, 0.12].map((z) => (
+        <group key={`leg-${z}`} position={[0, 0, z]}>
+          <mesh position={[-0.1, 0.66, 0]} rotation={[0, 0, 0.55]}>
+            <boxGeometry args={[0.12, 0.38, 0.12]} />
+            <meshStandardMaterial color="#28333a" roughness={0.75} />
+          </mesh>
+          <mesh position={[0.02, 0.47, 0]} rotation={[0, 0, -0.4]}>
+            <boxGeometry args={[0.1, 0.34, 0.1]} />
+            <meshStandardMaterial color="#202a30" roughness={0.75} />
+          </mesh>
+        </group>
+      ))}
     </group>
   )
 }
@@ -372,30 +487,36 @@ export function TrafficVehicles() {
       {/* Anillo exterior: tráfico continuo en los cuatro cuadrantes */}
       <RouteVehicle route={WEST_NORTH} start={40} speed={7.4} kind="car" variant="compact" color="#a6b6bd" />
       <RouteVehicle route={WEST_NORTH} start={220} speed={7.4} kind="car" variant="pickup" color="#8e9ba1" />
-      <RouteVehicle route={WEST_NORTH} start={120} speed={7.2} kind="car" variant="sedan" color="#b6c3c9" />
+      <RouteVehicle route={WEST_NORTH} start={120} speed={7.4} kind="car" variant="sedan" color="#b6c3c9" />
+      <RouteVehicle route={WEST_NORTH} start={320} speed={7.4} kind="car" variant="security" color="#596b74" />
       <RouteVehicle route={EAST_NORTH} start={60} speed={7.8} kind="car" variant="security" color="#596b74" />
       <RouteVehicle route={EAST_NORTH} start={250} speed={7.8} kind="car" variant="taxi" color="#b9a56f" />
-      <RouteVehicle route={EAST_NORTH} start={140} speed={7.6} kind="car" variant="compact" color="#a6b6bd" />
+      <RouteVehicle route={EAST_NORTH} start={140} speed={7.8} kind="car" variant="compact" color="#a6b6bd" />
+      <RouteVehicle route={EAST_NORTH} start={340} speed={7.8} kind="car" variant="pickup" color="#8e9ba1" />
       <RouteVehicle route={WEST_SOUTH} start={80} speed={7.1} kind="car" variant="taxi" color="#b9a56f" />
       <RouteVehicle route={WEST_SOUTH} start={260} speed={7.1} kind="car" variant="sedan" color="#a6b6bd" />
-      <RouteVehicle route={WEST_SOUTH} start={160} speed={6.9} kind="car" variant="pickup" color="#8e9ba1" />
+      <RouteVehicle route={WEST_SOUTH} start={160} speed={7.1} kind="car" variant="pickup" color="#8e9ba1" />
+      <RouteVehicle route={WEST_SOUTH} start={360} speed={7.1} kind="car" variant="compact" color="#b6c3c9" />
       <RouteVehicle route={EAST_SOUTH} start={30} speed={7.6} kind="bus" color="#c1d0d5" />
       <RouteVehicle route={EAST_SOUTH} start={230} speed={7.6} kind="car" variant="compact" color="#a6b6bd" />
-      <RouteVehicle route={EAST_SOUTH} start={140} speed={7.4} kind="car" variant="taxi" color="#b9a56f" />
+      <RouteVehicle route={EAST_SOUTH} start={140} speed={7.6} kind="car" variant="taxi" color="#b9a56f" />
+      <RouteVehicle route={EAST_SOUTH} start={330} speed={7.6} kind="car" variant="sedan" color="#b6c3c9" />
       <RouteVehicle route={CENTER_NORTH} start={50} speed={7.2} kind="car" variant="pickup" color="#8e9ba1" />
       <RouteVehicle route={CENTER_NORTH} start={240} speed={7.2} kind="car" variant="sedan" color="#b6c3c9" />
       <RouteVehicle route={CENTER_NORTH} start={130} speed={6.4} kind="bus" color="#c1d0d5" />
+      <RouteVehicle route={CENTER_NORTH} start={300} speed={6.4} kind="bus" color="#b6c5cb" />
       <RouteVehicle route={CENTER_SOUTH} start={90} speed={7.5} kind="car" variant="taxi" color="#b9a56f" />
       <RouteVehicle route={CENTER_SOUTH} start={280} speed={7.5} kind="car" variant="security" color="#596b74" />
-      <RouteVehicle route={CENTER_SOUTH} start={180} speed={6.7} kind="car" variant="sedan" color="#b6c3c9" />
+      <RouteVehicle route={CENTER_SOUTH} start={180} speed={7.5} kind="car" variant="sedan" color="#b6c3c9" />
+      <RouteVehicle route={CENTER_SOUTH} start={330} speed={7.5} kind="car" variant="pickup" color="#8e9ba1" />
 
       {/* Ciclovía continua sobre la avenida */}
-      <RouteVehicle route={BIKE_LOOP} start={30} speed={3.1} kind="bike" color="#84969e" jacket="#b7a16d" />
+      <RouteVehicle route={BIKE_LOOP} start={200} speed={3.1} kind="bike" color="#84969e" jacket="#b7a16d" />
       <RouteVehicle route={BIKE_LOOP} start={230} speed={3.1} kind="bike" color="#94a6ad" jacket="#869fa4" />
       <RouteVehicle route={BIKE_LOOP} start={430} speed={3.1} kind="bike" color="#84969e" jacket="#a5755c" />
       <RouteVehicle route={BIKE_LOOP} start={630} speed={3.1} kind="bike" color="#94a6ad" jacket="#7f979c" />
       <RouteVehicle route={BIKE_LOOP} start={330} speed={2.9} kind="bike" color="#8a9da4" jacket="#9d8a63" />
-      <RouteVehicle route={BIKE_LOOP} start={530} speed={3.2} kind="bike" color="#9aabb1" jacket="#788f94" />
+      <RouteVehicle route={BIKE_LOOP} start={130} speed={3.1} kind="bike" color="#84969e" jacket="#b18c6e" />
     </group>
   )
 }

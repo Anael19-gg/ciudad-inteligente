@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { Html, Line, RoundedBox, useCursor } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
@@ -58,22 +58,22 @@ function TrafficLight({ position }: { position: [number, number, number] }) {
 function LprArch({ x, color = '#6fa8ff' }: { x: number; color?: string }) {
   return (
     <group position={[x, 0, 0]}>
-      {[-7.4, 7.4].map((z) => (
+      {[-10.4, 10.4].map((z) => (
         <mesh key={z} position={[0, 3.1, z]}>
           <boxGeometry args={[0.34, 6.2, 0.34]} />
           <meshStandardMaterial color="#2b3740" metalness={0.6} roughness={0.45} />
         </mesh>
       ))}
       <mesh position={[0, 6.1, 0]}>
-        <boxGeometry args={[0.42, 0.42, 15.1]} />
+        <boxGeometry args={[0.42, 0.42, 21]} />
         <meshStandardMaterial color="#2b3740" metalness={0.6} roughness={0.45} />
       </mesh>
       <mesh position={[0, 5.83, 0]}>
-        <boxGeometry args={[0.1, 0.1, 13.4]} />
+        <boxGeometry args={[0.1, 0.1, 19.4]} />
         <meshBasicMaterial color={color} toneMapped={false} />
       </mesh>
-      <mesh position={[0, 3.1, 0]} rotation={[0, 0, 0]}>
-        <planeGeometry args={[13.2, 5.9]} />
+      <mesh position={[0, 3.1, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <planeGeometry args={[19.2, 5.9]} />
         <meshBasicMaterial color={color} transparent opacity={0.04} side={THREE.DoubleSide} depthWrite={false} />
       </mesh>
       {[-3.5, 3.5].map((z) => (
@@ -86,55 +86,129 @@ function LprArch({ x, color = '#6fa8ff' }: { x: number; color?: string }) {
   )
 }
 
-function BusStop({ position, rotation = 0 }: { position: [number, number, number]; rotation?: number }) {
+interface BusStopSpec {
+  x: number
+  z: number
+  rotation: number
+}
+
+function InstancedBusStops({ stops }: { stops: BusStopSpec[] }) {
+  const postsRef = useRef<THREE.InstancedMesh>(null)
+  const roofRef = useRef<THREE.InstancedMesh>(null)
+  const glowRef = useRef<THREE.InstancedMesh>(null)
+  const glassRef = useRef<THREE.InstancedMesh>(null)
+  const benchRef = useRef<THREE.InstancedMesh>(null)
+  const signFrameRef = useRef<THREE.InstancedMesh>(null)
+  const signScreenRef = useRef<THREE.InstancedMesh>(null)
+  const poleRef = useRef<THREE.InstancedMesh>(null)
+  const ringRef = useRef<THREE.InstancedMesh>(null)
+  const bulbRef = useRef<THREE.InstancedMesh>(null)
+  const count = stops.length
+
+  useLayoutEffect(() => {
+    if (
+      !postsRef.current ||
+      !roofRef.current ||
+      !glowRef.current ||
+      !glassRef.current ||
+      !benchRef.current ||
+      !signFrameRef.current ||
+      !signScreenRef.current ||
+      !poleRef.current ||
+      !ringRef.current ||
+      !bulbRef.current
+    ) {
+      return
+    }
+    const base = new THREE.Matrix4()
+    const rot = new THREE.Matrix4()
+    const local = new THREE.Matrix4()
+    const out = new THREE.Matrix4()
+    const ringRotation = new THREE.Matrix4().makeRotationX(Math.PI / 2)
+
+    stops.forEach((stop, index) => {
+      base.makeTranslation(stop.x, 0, stop.z).multiply(rot.makeRotationY(stop.rotation))
+
+      ;[0, 3.3].forEach((x, postIndex) => {
+        out.copy(base).multiply(local.makeTranslation(x, 1.75, 0))
+        postsRef.current!.setMatrixAt(index * 2 + postIndex, out)
+      })
+
+      out.copy(base).multiply(local.makeTranslation(1.65, 3.5, 0))
+      roofRef.current!.setMatrixAt(index, out)
+      out.copy(base).multiply(local.makeTranslation(1.65, 3.58, 0))
+      glowRef.current!.setMatrixAt(index, out)
+      out.copy(base).multiply(local.makeTranslation(1.65, 1.5, -0.95))
+      glassRef.current!.setMatrixAt(index, out)
+      out.copy(base).multiply(local.makeTranslation(1.65, 0.55, -0.4))
+      benchRef.current!.setMatrixAt(index, out)
+      out.copy(base).multiply(local.makeTranslation(0.25, 1.65, -0.75))
+      signFrameRef.current!.setMatrixAt(index, out)
+      out.copy(base).multiply(local.makeTranslation(0.25, 1.65, -0.71))
+      signScreenRef.current!.setMatrixAt(index, out)
+      out.copy(base).multiply(local.makeTranslation(3.9, 2.6, 0))
+      poleRef.current!.setMatrixAt(index, out)
+      out.copy(base).multiply(local.makeTranslation(3.9, 4.9, 0)).multiply(ringRotation)
+      ringRef.current!.setMatrixAt(index * 2, out)
+      out.copy(base).multiply(local.makeTranslation(3.9, 5.1, 0)).multiply(ringRotation)
+      ringRef.current!.setMatrixAt(index * 2 + 1, out)
+      out.copy(base).multiply(local.makeTranslation(3.9, 5.2, 0))
+      bulbRef.current!.setMatrixAt(index, out)
+    })
+    postsRef.current.instanceMatrix.needsUpdate = true
+    roofRef.current.instanceMatrix.needsUpdate = true
+    glowRef.current.instanceMatrix.needsUpdate = true
+    glassRef.current.instanceMatrix.needsUpdate = true
+    benchRef.current.instanceMatrix.needsUpdate = true
+    signFrameRef.current.instanceMatrix.needsUpdate = true
+    signScreenRef.current.instanceMatrix.needsUpdate = true
+    poleRef.current.instanceMatrix.needsUpdate = true
+    ringRef.current.instanceMatrix.needsUpdate = true
+    bulbRef.current.instanceMatrix.needsUpdate = true
+  }, [stops])
+
   return (
-    <group position={position} rotation={[0, rotation, 0]}>
-      <mesh position={[0, 1.75, 0]}>
+    <group>
+      <instancedMesh ref={postsRef} args={[undefined, undefined, count * 2]} frustumCulled={false}>
         <boxGeometry args={[0.12, 3.5, 0.12]} />
         <meshStandardMaterial color="#2b3942" metalness={0.6} roughness={0.4} />
-      </mesh>
-      <mesh position={[3.3, 1.75, 0]}>
-        <boxGeometry args={[0.12, 3.5, 0.12]} />
-        <meshStandardMaterial color="#2b3942" metalness={0.6} roughness={0.4} />
-      </mesh>
-      <mesh position={[1.65, 3.5, 0]}>
+      </instancedMesh>
+      <instancedMesh ref={roofRef} args={[undefined, undefined, count]} frustumCulled={false}>
         <boxGeometry args={[3.8, 0.14, 2.1]} />
         <meshStandardMaterial color="#141e24" metalness={0.5} roughness={0.5} />
-      </mesh>
-      <mesh position={[1.65, 3.58, 0]}>
+      </instancedMesh>
+      <instancedMesh ref={glowRef} args={[undefined, undefined, count]} frustumCulled={false}>
         <boxGeometry args={[3.6, 0.03, 1.9]} />
         <meshBasicMaterial color="#79e3f2" transparent opacity={0.6} toneMapped={false} />
-      </mesh>
-      <mesh position={[1.65, 1.5, -0.95]}>
+      </instancedMesh>
+      <instancedMesh ref={glassRef} args={[undefined, undefined, count]} frustumCulled={false}>
         <planeGeometry args={[3.3, 2.5]} />
-        <meshPhysicalMaterial color="#7bb9c9" transparent opacity={0.14} roughness={0.1} metalness={0.1} />
-      </mesh>
-      <mesh position={[1.65, 0.55, -0.4]}>
+        <meshPhysicalMaterial color="#7bb9c9" transparent opacity={0.14} roughness={0.1} metalness={0.1} side={THREE.DoubleSide} />
+      </instancedMesh>
+      <instancedMesh ref={benchRef} args={[undefined, undefined, count]} frustumCulled={false}>
         <boxGeometry args={[2.6, 0.12, 0.55]} />
         <meshStandardMaterial color="#27343b" metalness={0.5} roughness={0.5} />
-      </mesh>
-      <mesh position={[0.25, 1.65, -0.75]}>
+      </instancedMesh>
+      <instancedMesh ref={signFrameRef} args={[undefined, undefined, count]} frustumCulled={false}>
         <boxGeometry args={[0.6, 1.1, 0.06]} />
         <meshBasicMaterial color="#0c2029" />
-      </mesh>
-      <mesh position={[0.25, 1.65, -0.71]}>
+      </instancedMesh>
+      <instancedMesh ref={signScreenRef} args={[undefined, undefined, count]} frustumCulled={false}>
         <planeGeometry args={[0.46, 0.9]} />
-        <meshBasicMaterial color="#74e0f2" transparent opacity={0.7} />
-      </mesh>
-      <mesh position={[3.9, 2.6, 0]}>
+        <meshBasicMaterial color="#74e0f2" transparent opacity={0.7} side={THREE.DoubleSide} />
+      </instancedMesh>
+      <instancedMesh ref={poleRef} args={[undefined, undefined, count]} frustumCulled={false}>
         <cylinderGeometry args={[0.04, 0.06, 5.2, 6]} />
         <meshStandardMaterial color="#3b4a52" metalness={0.7} roughness={0.4} />
-      </mesh>
-      {[4.9, 5.1].map((y, index) => (
-        <mesh key={y} position={[3.9, y, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[0.26 + index * 0.12, 0.012, 6, 28]} />
-          <meshBasicMaterial color="#7ff0ff" toneMapped={false} transparent opacity={index === 0 ? 0.85 : 0.4} />
-        </mesh>
-      ))}
-      <mesh position={[3.9, 5.2, 0]}>
+      </instancedMesh>
+      <instancedMesh ref={ringRef} args={[undefined, undefined, count * 2]} frustumCulled={false}>
+        <torusGeometry args={[0.32, 0.012, 6, 28]} />
+        <meshBasicMaterial color="#7ff0ff" toneMapped={false} transparent opacity={0.55} />
+      </instancedMesh>
+      <instancedMesh ref={bulbRef} args={[undefined, undefined, count]} frustumCulled={false}>
         <sphereGeometry args={[0.08, 8, 8]} />
         <meshBasicMaterial color="#b8fbff" toneMapped={false} />
-      </mesh>
+      </instancedMesh>
     </group>
   )
 }
@@ -390,13 +464,15 @@ function PtzCamera({
 
 function Drone({ center, radius, height, speed, phase }: { center: [number, number]; radius: number; height: number; speed: number; phase: number }) {
   const group = useRef<THREE.Group>(null)
-  const rotors = useRef<THREE.Group>(null)
+  const rotors = useRef<THREE.Group[]>([])
   useFrame(({ clock }) => {
     if (!group.current) return
     const t = clock.elapsedTime * speed + phase
     group.current.position.set(center[0] + Math.cos(t) * radius, height + Math.sin(t * 2.1) * 0.45, center[1] + Math.sin(t) * radius)
-    group.current.rotation.y = -t + Math.PI / 2
-    if (rotors.current) rotors.current.rotation.y = clock.elapsedTime * 8
+    group.current.rotation.y = -t
+    rotors.current.forEach((rotor) => {
+      if (rotor) rotor.rotation.y = clock.elapsedTime * 8
+    })
   })
 
   return (
@@ -415,11 +491,11 @@ function Drone({ center, radius, height, speed, phase }: { center: [number, numb
             <boxGeometry args={[0.7, 0.06, 0.08]} />
             <meshStandardMaterial color="#333b4b" metalness={0.6} roughness={0.4} />
           </mesh>
-          <mesh position={[0, 0.12, 0]}>
+          <mesh position={[0, 0.12, 0]} rotation={[Math.PI / 2, 0, 0]}>
             <torusGeometry args={[0.32, 0.025, 5, 20]} />
             <meshBasicMaterial color="#6e7a91" transparent opacity={0.6} />
           </mesh>
-          <group ref={index === 0 ? rotors : undefined} position={[0, 0.14, 0]}>
+          <group ref={(el) => { if (el) rotors.current[index] = el }} position={[0, 0.14, 0]}>
             <mesh rotation={[0, 0, 0]}>
               <boxGeometry args={[0.6, 0.012, 0.035]} />
               <meshBasicMaterial color="#aeb9cc" transparent opacity={0.65} />
@@ -468,7 +544,7 @@ function LightsaberEgg({ position }: { position: [number, number, number] }) {
   })
 
   return (
-    <group position={position}>
+    <group position={position} scale={0.72}>
       {/* Peana de exhibición */}
       <mesh position={[0, 0.035, 0]}>
         <boxGeometry args={[0.62, 0.07, 0.48]} />
@@ -842,33 +918,34 @@ function XWingEgg({ position }: { position: [number, number, number] }) {
   )
 }
 
+const BUS_STOPS: BusStopSpec[] = [
+  { x: 7, z: 12.7, rotation: Math.PI },
+  { x: -8, z: -12.7, rotation: 0 },
+  { x: -68, z: 12.7, rotation: Math.PI },
+  { x: -40, z: -12.7, rotation: 0 },
+  { x: 40, z: 12.7, rotation: Math.PI },
+  { x: 68, z: -12.7, rotation: 0 },
+  { x: -120, z: -12.7, rotation: 0 },
+  { x: -160, z: 12.7, rotation: Math.PI },
+  { x: -80, z: -12.7, rotation: 0 },
+  { x: 80, z: 12.7, rotation: Math.PI },
+  { x: 120, z: -12.7, rotation: 0 },
+  { x: 160, z: -12.7, rotation: 0 },
+]
+
 export function Landmarks({ onSelect }: { onSelect: (selection: Selection) => void }) {
   return (
     <group>
       <MunicipalBuilding onSelect={onSelect} />
       <LightsaberEgg position={[-17.4, 9.13, -21.5]} />
+      <InstancedBusStops stops={BUS_STOPS} />
       <LprArch x={-23.5} />
       <LprArch x={23.5} />
-      <BusStop position={[7, 0, 8.6]} rotation={Math.PI} />
-      <BusStop position={[-8, 0, -8.6]} rotation={0} />
-      <BusStop position={[-60, 0, 8.6]} rotation={Math.PI} />
-      <BusStop position={[-40, 0, -8.6]} rotation={0} />
-      <BusStop position={[40, 0, 8.6]} rotation={Math.PI} />
-      <BusStop position={[60, 0, -8.6]} rotation={0} />
-      <BusStop position={[-200, 0, 8.6]} rotation={Math.PI} />
-      <BusStop position={[-120, 0, -8.6]} rotation={0} />
-      <BusStop position={[-160, 0, 8.6]} rotation={Math.PI} />
-      <BusStop position={[-80, 0, -8.6]} rotation={0} />
-      <BusStop position={[80, 0, 8.6]} rotation={Math.PI} />
-      <BusStop position={[120, 0, -8.6]} rotation={0} />
-      <BusStop position={[160, 0, -8.6]} rotation={0} />
-      <BusStop position={[200, 0, 8.6]} rotation={Math.PI} />
-      <LprArch x={-180} />
-      <LprArch x={-100} />
-      <LprArch x={100} />
-      <LprArch x={180} color="#b0a0ff" />
+      <LprArch x={-160} />
+      <LprArch x={-80} />
+      <LprArch x={80} />
       {AVENUE_SIGNALS.map((x, index) => (
-        <TrafficLight key={x} position={[x, 0, index % 2 === 0 ? 6.9 : -6.9]} />
+        <TrafficLight key={x} position={[x + (index % 2 === 0 ? 4.5 : -4.5), 0, index % 2 === 0 ? 6.9 : -6.9]} />
       ))}
 
       <SecurityHQ onSelect={onSelect} />
@@ -878,18 +955,25 @@ export function Landmarks({ onSelect }: { onSelect: (selection: Selection) => vo
       <PtzCamera position={[174, 0, -42]} rotation={2.8} />
       <PtzCamera position={[176, 0, 10]} rotation={4.1} />
       <PtzCamera position={[146, 0, 24]} rotation={0.8} beam />
-      <PtzCamera position={[200, 0, 40]} rotation={3.1} beam />
-      <PtzCamera position={[160, 0, 90]} rotation={4.4} />
-      <PtzCamera position={[200, 0, -80]} rotation={2.3} />
+      <PtzCamera position={[170, 0, 40]} rotation={3.1} beam />
+      <PtzCamera position={[185, 0, 118]} rotation={4.4} />
+      <PtzCamera position={[200, 0, -90]} rotation={2.3} />
       <PtzCamera position={[110, 0, -90]} rotation={1.1} beam />
       <PtzCamera position={[96, 0, 62]} rotation={1.7} />
       <PtzCamera position={[220, 0, 58]} rotation={4.9} beam />
+      <PtzCamera position={[95, 0, -38]} rotation={1.3} beam />
+      <PtzCamera position={[230, 0, 18]} rotation={3.6} />
+      <PtzCamera position={[130, 0, 118]} rotation={5.2} />
+      <PtzCamera position={[226, 0, -36]} rotation={2.7} beam />
       <Drone center={[160, -20]} radius={11} height={16} speed={0.18} phase={0} />
       <Drone center={[146, 6]} radius={8} height={20} speed={-0.13} phase={2.4} />
       <Drone center={[150, 60]} radius={14} height={18} speed={0.11} phase={1.2} />
       <Drone center={[110, -70]} radius={10} height={22} speed={-0.12} phase={4.1} />
       <Drone center={[196, 20]} radius={12} height={17} speed={-0.16} phase={3.1} />
-      <LprArch x={200} color="#b0a0ff" />
+      <Drone center={[96, 108]} radius={9} height={24} speed={0.15} phase={5.2} />
+      <Drone center={[220, -38]} radius={11} height={19} speed={-0.1} phase={1.8} />
+      <Drone center={[182, 82]} radius={8} height={21} speed={0.13} phase={3.7} />
+      <LprArch x={160} color="#b0a0ff" />
     </group>
   )
 }

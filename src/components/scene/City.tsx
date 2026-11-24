@@ -5,6 +5,9 @@ import { useFrame } from '@react-three/fiber'
 import { createAsphaltTexture, createFacadeTexture, createGlowTexture, createSolarTexture, createWindowTexture } from '../../lib/textures'
 import { TrafficVehicles } from './TrafficVehicles'
 import { Pedestrians } from './Pedestrians'
+import { AirTraffic } from './AirTraffic'
+import { SignatureBuildings } from './SignatureBuildings'
+import { Decorations } from './Decorations'
 import type { Vec3 } from '../../data/project'
 
 function makeRng(seed: number) {
@@ -51,6 +54,56 @@ const ROUNDABOUTS = [
   { x: 0, z: -RING_RZ },
 ]
 
+const RING_INNER_X = 196.6
+const RING_INNER_Z = 121
+const RING_OUTER_X = 219.4
+const RING_OUTER_Z = 135
+
+function isOnTransport(x: number, z: number) {
+  if (Math.abs(z) < 7.8) return true
+  if (VERTICAL_ROADS.some((road) => Math.abs(x - road) < 5.2)) return true
+  if (HORIZONTAL_ROADS.some((road) => road !== 0 && Math.abs(z - road) < 5)) return true
+  const inner = (x / RING_INNER_X) ** 2 + (z / RING_INNER_Z) ** 2
+  const outer = (x / RING_OUTER_X) ** 2 + (z / RING_OUTER_Z) ** 2
+  if (inner >= 1 && outer <= 1) return true
+  if (ROUNDABOUTS.some((roundabout) => Math.hypot(x - roundabout.x, z - roundabout.z) < 24)) return true
+  return false
+}
+
+const TREE_BLOCKERS = [
+  { x: -156, z: 68, r: 8 },
+  { x: -165, z: 100, r: 10 },
+  { x: -160, z: 35, r: 14 },
+  { x: 45, z: 101, r: 8 },
+  { x: 92, z: 30, r: 7 },
+  { x: -48, z: 67, r: 4.5 },
+  { x: 48, z: -67, r: 4.5 },
+  { x: -45, z: -95, r: 4.5 },
+  { x: 200, z: 120, r: 4.5 },
+  { x: -214, z: -60, r: 5 },
+  { x: 0, z: 94, r: 18 },
+  { x: 45, z: -95, r: 15 },
+  { x: 158, z: 92, r: 15 },
+  { x: 205, z: 93, r: 20 },
+  { x: -160, z: 57, r: 9 },
+  { x: -154, z: -64, r: 9 },
+  { x: -205, z: 118, r: 9 },
+  { x: -112, z: 92, r: 9 },
+  { x: -198, z: -70, r: 9 },
+  { x: 7, z: 12.7, r: 3.5 },
+  { x: -8, z: -12.7, r: 3.5 },
+  { x: -68, z: 12.7, r: 3.5 },
+  { x: -40, z: -12.7, r: 3.5 },
+  { x: 40, z: 12.7, r: 3.5 },
+  { x: 68, z: -12.7, r: 3.5 },
+  { x: -120, z: -12.7, r: 3.5 },
+  { x: -160, z: 12.7, r: 3.5 },
+  { x: -80, z: -12.7, r: 3.5 },
+  { x: 80, z: 12.7, r: 3.5 },
+  { x: 120, z: -12.7, r: 3.5 },
+  { x: 160, z: -12.7, r: 3.5 },
+]
+
 const SPECIAL_TOWERS = [
   { x: 128, z: 66, h: 44, r: 4.4 },
   { x: -128, z: 66, h: 38, r: 4.1 },
@@ -83,28 +136,55 @@ const OUTER_CLEARINGS = [
   { x: 45, z: 87, r: 7 },
   { x: -45, z: -87, r: 7 },
   { x: 45, z: -87, r: 7 },
-  { x: -52, z: 70, r: 12 },
-  { x: 52, z: -70, r: 12 },
-  { x: 112, z: 60, r: 9 },
+  { x: -48, z: 67, r: 12 },
+  { x: 48, z: -67, r: 12 },  { x: 112, z: 60, r: 9 },
   { x: 150, z: 60, r: 9 },
-  { x: 190, z: 60, r: 9 },
+  { x: 165, z: 60, r: 9 },
   { x: 150, z: -60, r: 9 },
-  { x: 190, z: -60, r: 9 },
+  { x: 165, z: -60, r: 9 },
   { x: 112, z: -72, r: 9 },
-  { x: 210, z: 72, r: 9 },
-  { x: 205, z: -72, r: 9 },
+  { x: 210, z: 68, r: 9 },
+  { x: 205, z: -68, r: 9 },
   { x: 220, z: 25, r: 9 },
   { x: 98, z: 92, r: 9 },
-  { x: 132, z: -100, r: 9 },
-  { x: -170, z: 55, r: 16 },
-  { x: -210, z: 20, r: 16 },
-  { x: -150, z: 115, r: 15 },
+  { x: 106, z: -100, r: 9 },
+  { x: -160, z: 57, r: 16 },
+  { x: -154, z: -64, r: 14 },
+  { x: -205, z: 118, r: 15 },
   { x: -222, z: 42, r: 14 },
   { x: -175, z: 120, r: 14 },
   { x: -150, z: 40, r: 12 },
-  { x: -105, z: 118, r: 12 },
-  { x: -190, z: 68, r: 9 },
+  { x: -120, z: 126, r: 12 },
+  { x: -198, z: 70, r: 12 },
   { x: -132, z: 124, r: 9 },
+  { x: 0, z: 94, r: 18 },
+  { x: 45, z: -95, r: 15 },
+  { x: 158, z: 92, r: 15 },
+  { x: 205, z: 93, r: 20 },
+  { x: -160, z: 35, r: 17 },
+  { x: -156, z: 68, r: 11 },
+  { x: 45, z: 101, r: 11 },
+  { x: 92, z: 30, r: 10 },
+  { x: 110, z: 80, r: 10 },
+  { x: 160, z: 55, r: 10 },
+  { x: -45, z: -95, r: 12 },
+  { x: 200, z: 120, r: 12 },
+  { x: -214, z: -60, r: 12 },
+  { x: 90, z: 60, r: 9 },
+  { x: 225, z: 22, r: 9 },
+  { x: 228, z: -32, r: 9 },
+  { x: 75, z: 42, r: 8 },
+  { x: 10, z: 68, r: 7 },
+  { x: -18, z: -68, r: 7 },
+  { x: -8, z: 52, r: 6 },
+  { x: -112, z: 92, r: 12 },
+  { x: -165, z: 100, r: 12 },
+  { x: -222, z: 34, r: 14 },
+  { x: -198, z: -70, r: 15 },
+  { x: -155, z: 15, r: 11 },
+  { x: -225, z: 60, r: 12 },
+  { x: -88, z: 55, r: 9 },
+  { x: -88, z: 30, r: 9 },
 ]
 
 const OUTER_HOUSE_POSITIONS: Vec3[] = [
@@ -116,10 +196,10 @@ const OUTER_HOUSE_POSITIONS: Vec3[] = [
   [-216, 0, 96],
   [-208, 0, 96],
   [-200, 0, 96],
-  [-196, 0, 30],
-  [-188, 0, 30],
-  [-196, 0, 38],
-  [-188, 0, 38],
+  [-226, 0, 30],
+  [-218, 0, 30],
+  [-226, 0, 38],
+  [-218, 0, 38],
 ]
 
 function buildOuterBlocks(): BuildingSpec[] {
@@ -238,6 +318,7 @@ function InstancedBuildings({
   emissiveIntensity = 0.5,
   day = false,
   dayTint = '#c9d4d8',
+  roofSolar = false,
 }: {
   buildings: BuildingSpec[]
   emissive: string
@@ -247,6 +328,7 @@ function InstancedBuildings({
   emissiveIntensity?: number
   day?: boolean
   dayTint?: string
+  roofSolar?: boolean
 }) {
   const meshRef = useRef<THREE.InstancedMesh>(null)
   const roofRef = useRef<THREE.InstancedMesh>(null)
@@ -257,6 +339,7 @@ function InstancedBuildings({
   const neonRef = useRef<THREE.InstancedMesh>(null)
   const padRef = useRef<THREE.InstancedMesh>(null)
   const signRef = useRef<THREE.InstancedMesh>(null)
+  const solarRef = useRef<THREE.InstancedMesh>(null)
 
   useLayoutEffect(() => {
     if (
@@ -268,7 +351,8 @@ function InstancedBuildings({
       !baseRef.current ||
       !neonRef.current ||
       !padRef.current ||
-      !signRef.current
+      !signRef.current ||
+      !solarRef.current
     ) {
       return
     }
@@ -279,6 +363,7 @@ function InstancedBuildings({
     const color = new THREE.Color()
     const dayColor = new THREE.Color(dayTint)
     const roofColor = new THREE.Color()
+    const solarQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(-0.34, 0.22, 0))
 
     buildings.forEach((b, i) => {
       position.set(b.x, b.h / 2, b.z)
@@ -337,6 +422,12 @@ function InstancedBuildings({
       scale.set(sign ? b.w * 0.36 : 0.0001, sign ? 0.72 + (i % 3) * 0.22 : 0.0001, 0.055)
       matrix.compose(position, quaternion, scale)
       signRef.current!.setMatrixAt(i, matrix)
+
+      const hasSolar = roofSolar && b.h > 4 && i % 2 === 0
+      position.set(b.x - b.w * 0.1, b.h + 0.56, b.z + b.d * 0.06)
+      scale.set(hasSolar ? b.w * 0.42 : 0.0001, hasSolar ? 0.06 : 0.0001, hasSolar ? b.d * 0.25 : 0.0001)
+      matrix.compose(position, solarQuat, scale)
+      solarRef.current!.setMatrixAt(i, matrix)
     })
     meshRef.current.instanceMatrix.needsUpdate = true
     roofRef.current.instanceMatrix.needsUpdate = true
@@ -347,6 +438,7 @@ function InstancedBuildings({
     neonRef.current.instanceMatrix.needsUpdate = true
     padRef.current.instanceMatrix.needsUpdate = true
     signRef.current.instanceMatrix.needsUpdate = true
+    solarRef.current.instanceMatrix.needsUpdate = true
     if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true
     if (roofRef.current.instanceColor) roofRef.current.instanceColor.needsUpdate = true
     if (baseRef.current.instanceColor) baseRef.current.instanceColor.needsUpdate = true
@@ -406,6 +498,11 @@ function InstancedBuildings({
       <instancedMesh ref={signRef} args={[undefined, undefined, buildings.length]}>
         <boxGeometry args={[1, 1, 1]} />
         <meshStandardMaterial color={day ? '#c8d2d6' : '#111b22'} emissive={accent} emissiveIntensity={day ? 0.22 : 1.35} roughness={0.35} metalness={0.3} />
+      </instancedMesh>
+
+      <instancedMesh ref={solarRef} args={[undefined, undefined, buildings.length]}>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial color="#0d2741" emissive="#2f7fa8" emissiveIntensity={day ? 0.22 : 0.8} roughness={0.45} metalness={0.35} />
       </instancedMesh>
 
       <instancedMesh ref={padRef} args={[undefined, undefined, buildings.length]}>
@@ -579,35 +676,92 @@ function Crosswalk({ x }: { x: number }) {
   )
 }
 
-function House({ position, lit = 0.6 }: { position: Vec3; lit?: number }) {
-  const rng = makeRng(Math.round(position[0] * 13 + position[2] * 7))
-  const warm = rng() < lit
+function InstancedHouses({ positions, day = false }: { positions: Vec3[]; day?: boolean }) {
+  const bodyRef = useRef<THREE.InstancedMesh>(null)
+  const roofRef = useRef<THREE.InstancedMesh>(null)
+  const doorRef = useRef<THREE.InstancedMesh>(null)
+  const sideRef = useRef<THREE.InstancedMesh>(null)
+  const meterRef = useRef<THREE.InstancedMesh>(null)
+  const groundRef = useRef<THREE.InstancedMesh>(null)
+
+  useLayoutEffect(() => {
+    if (!bodyRef.current || !roofRef.current || !doorRef.current || !sideRef.current || !meterRef.current || !groundRef.current) return
+    const matrix = new THREE.Matrix4()
+    const position = new THREE.Vector3()
+    const quaternion = new THREE.Quaternion()
+    const roofQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, Math.PI / 4, 0))
+    const sideQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, Math.PI / 2, 0))
+    const scale = new THREE.Vector3(1, 1, 1)
+    const color = new THREE.Color()
+    const cool = new THREE.Color('#132b38')
+    const warm = new THREE.Color('#ffce8f')
+
+    positions.forEach(([x, y, z], index) => {
+      const lit = Math.sin(x * 1.73 + z * 2.11) > -0.15
+
+      position.set(x, y + 1.25, z)
+      matrix.compose(position, quaternion, scale)
+      bodyRef.current!.setMatrixAt(index, matrix)
+
+      position.set(x, y + 3.35, z)
+      matrix.compose(position, roofQuat, scale)
+      roofRef.current!.setMatrixAt(index, matrix)
+
+      position.set(x, y + 1.35, z + 1.92)
+      matrix.compose(position, quaternion, scale)
+      doorRef.current!.setMatrixAt(index, matrix)
+      doorRef.current!.setColorAt(index, color.copy(lit ? warm : cool))
+
+      position.set(x - 1.72, y + 1.35, z + 0.4)
+      matrix.compose(position, sideQuat, scale)
+      sideRef.current!.setMatrixAt(index, matrix)
+      sideRef.current!.setColorAt(index, color.copy(lit ? cool : warm))
+
+      position.set(x + 1.72, y + 0.9, z - 0.4)
+      matrix.compose(position, sideQuat, scale)
+      meterRef.current!.setMatrixAt(index, matrix)
+
+      position.set(x, y + 0.04, z)
+      const groundQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0))
+      matrix.compose(position, groundQuat, scale)
+      groundRef.current!.setMatrixAt(index, matrix)
+    })
+    bodyRef.current.instanceMatrix.needsUpdate = true
+    roofRef.current.instanceMatrix.needsUpdate = true
+    doorRef.current.instanceMatrix.needsUpdate = true
+    sideRef.current.instanceMatrix.needsUpdate = true
+    meterRef.current.instanceMatrix.needsUpdate = true
+    groundRef.current.instanceMatrix.needsUpdate = true
+    if (doorRef.current.instanceColor) doorRef.current.instanceColor.needsUpdate = true
+    if (sideRef.current.instanceColor) sideRef.current.instanceColor.needsUpdate = true
+  }, [positions])
+
   return (
-    <group position={position}>
-      <mesh position={[0, 1.25, 0]}>
+    <group>
+      <instancedMesh ref={bodyRef} args={[undefined, undefined, positions.length]} castShadow>
         <boxGeometry args={[3.4, 2.5, 3.8]} />
-        <meshStandardMaterial color="#2b2b2c" roughness={0.85} />
-      </mesh>
-      <mesh position={[0, 2.7, 0]} rotation={[0, Math.PI / 4, 0]}>
-        <coneGeometry args={[2.9, 1.35, 4]} />
-        <meshStandardMaterial color="#1b2024" roughness={0.8} flatShading />
-      </mesh>
-      <mesh position={[0, 1.35, 1.92]}>
+        <meshStandardMaterial color={day ? '#4b463f' : '#2b2b2c'} roughness={0.85} />
+      </instancedMesh>
+      <instancedMesh ref={roofRef} args={[undefined, undefined, positions.length]} castShadow frustumCulled={false}>
+        <coneGeometry args={[2.9, 2.5, 4]} />
+        <meshStandardMaterial color={day ? '#8b6b4f' : '#352a23'} roughness={0.8} flatShading />
+      </instancedMesh>
+      <instancedMesh ref={doorRef} args={[undefined, undefined, positions.length]}>
         <planeGeometry args={[0.7, 0.85]} />
-        <meshBasicMaterial color={warm ? '#ffce8f' : '#132b38'} toneMapped={false} transparent opacity={warm ? 0.85 : 0.6} />
-      </mesh>
-      <mesh position={[-1.72, 1.35, 0.4]} rotation={[0, Math.PI / 2, 0]}>
+        <meshBasicMaterial color="#ffffff" toneMapped={false} transparent opacity={0.8} />
+      </instancedMesh>
+      <instancedMesh ref={sideRef} args={[undefined, undefined, positions.length]}>
         <planeGeometry args={[0.55, 0.7]} />
-        <meshBasicMaterial color={rng() < 0.5 ? '#ffce8f' : '#132b38'} toneMapped={false} transparent opacity={0.6} />
-      </mesh>
-      <mesh position={[1.72, 0.9, -0.4]} rotation={[0, Math.PI / 2, 0]}>
+        <meshBasicMaterial color="#ffffff" toneMapped={false} transparent opacity={0.65} />
+      </instancedMesh>
+      <instancedMesh ref={meterRef} args={[undefined, undefined, positions.length]}>
         <boxGeometry args={[0.38, 0.5, 0.22]} />
         <meshStandardMaterial color="#0c1820" emissive="#5fd8ff" emissiveIntensity={2.2} />
-      </mesh>
-      <mesh position={[0, 0.04, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+      </instancedMesh>
+      <instancedMesh ref={groundRef} args={[undefined, undefined, positions.length]}>
         <circleGeometry args={[2.9, 16]} />
         <meshBasicMaterial color="#1a2b25" transparent opacity={0.5} depthWrite={false} />
-      </mesh>
+      </instancedMesh>
     </group>
   )
 }
@@ -649,7 +803,7 @@ function WindTurbine({ position, speed = 0.4 }: { position: Vec3; speed?: number
   )
 }
 
-function IndustryAndResidential() {
+function IndustryAndResidential({ day = false }: { day?: boolean }) {
   const solar = useMemo(() => createSolarTexture(), [])
   const housePositions: Vec3[] = useMemo(() => {
     const positions: Vec3[] = []
@@ -660,17 +814,13 @@ function IndustryAndResidential() {
     }
     return positions
   }, [])
+  const allHouses = useMemo(() => [...housePositions, ...OUTER_HOUSE_POSITIONS], [housePositions])
 
   return (
     <group>
-      {housePositions.map((position, index) => (
-        <House key={index} position={position} lit={index % 3 === 0 ? 0.9 : 0.55} />
-      ))}
+      <InstancedHouses positions={allHouses} day={day} />
 
       {/* Residential extension in Zona C */}
-      {OUTER_HOUSE_POSITIONS.map((position, index) => (
-        <House key={`outer-${index}`} position={position} lit={index % 4 === 0 ? 1 : 0.6} />
-      ))}
       <mesh position={[-212, 0.04, 92]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[36, 2.4]} />
         <meshStandardMaterial color="#11181d" roughness={0.9} />
@@ -681,7 +831,7 @@ function IndustryAndResidential() {
       </mesh>
 
       {/* Outer wind and solar in Zona C */}
-      <WindTurbine position={[-208, 0, -112]} speed={0.28} />
+      <WindTurbine position={[-208, 0, -125]} speed={0.28} />
       <WindTurbine position={[-190, 0, -126]} speed={0.36} />
       <WindTurbine position={[-132, 0, -16]} speed={0.33} />
       <group position={[-206, 0, -96]}>
@@ -744,7 +894,7 @@ function IndustryAndResidential() {
       </group>
 
       {/* Outer water facility in Zona C */}
-      <group position={[-140, 0, 126]}>
+      <group position={[-152, 0, 126]}>
         {[-2.1, 2.1].map((x) => (
           <group key={x} position={[x, 0, 0]}>
             <mesh position={[0, 1.9, 0]}>
@@ -904,30 +1054,49 @@ function SolarFarm({
   spacingX?: number
   spacingZ?: number
 }) {
+  const panelRef = useRef<THREE.InstancedMesh>(null)
+  const supportRef = useRef<THREE.InstancedMesh>(null)
+  const count = cols * rows
+
+  useLayoutEffect(() => {
+    if (!panelRef.current || !supportRef.current) return
+    const matrix = new THREE.Matrix4()
+    const positionVec = new THREE.Vector3()
+    const quaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(-0.48, 0, 0))
+    const identity = new THREE.Quaternion()
+    const scale = new THREE.Vector3(1, 1, 1)
+    let index = 0
+    for (let col = 0; col < cols; col += 1) {
+      for (let row = 0; row < rows; row += 1) {
+        const x = (col - (cols - 1) / 2) * spacingX
+        const z = (row - (rows - 1) / 2) * spacingZ
+        positionVec.set(x, 0.5, z)
+        matrix.compose(positionVec, quaternion, scale)
+        panelRef.current!.setMatrixAt(index, matrix)
+        positionVec.set(x, 0.3, z)
+        matrix.compose(positionVec, identity, scale)
+        supportRef.current!.setMatrixAt(index, matrix)
+        index += 1
+      }
+    }
+    panelRef.current.instanceMatrix.needsUpdate = true
+    supportRef.current.instanceMatrix.needsUpdate = true
+  }, [cols, rows, spacingX, spacingZ])
+
   return (
     <group position={position}>
       <mesh position={[0, 0.04, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[cols * spacingX + 2.4, rows * spacingZ + 1.6]} />
         <meshStandardMaterial color="#161e23" roughness={0.9} />
       </mesh>
-      {Array.from({ length: cols }).map((_, col) =>
-        Array.from({ length: rows }).map((_, row) => {
-          const x = (col - (cols - 1) / 2) * spacingX
-          const z = (row - (rows - 1) / 2) * spacingZ
-          return (
-            <group key={`${col}-${row}`} position={[x, 0.5, z]} rotation={[-0.48, 0, 0]}>
-              <mesh>
-                <boxGeometry args={[2.5, 0.04, 1.55]} />
-                <meshStandardMaterial map={solar} emissive="#2c6280" emissiveIntensity={0.35} roughness={0.5} />
-              </mesh>
-              <mesh position={[0, -0.16, 0]}>
-                <boxGeometry args={[0.1, 0.3, 0.1]} />
-                <meshStandardMaterial color="#4a5a61" metalness={0.6} roughness={0.5} />
-              </mesh>
-            </group>
-          )
-        }),
-      )}
+      <instancedMesh ref={panelRef} args={[undefined, undefined, count]} frustumCulled={false}>
+        <boxGeometry args={[2.5, 0.04, 1.55]} />
+        <meshStandardMaterial map={solar} emissive="#2c6280" emissiveIntensity={0.35} roughness={0.5} />
+      </instancedMesh>
+      <instancedMesh ref={supportRef} args={[undefined, undefined, count]} frustumCulled={false}>
+        <boxGeometry args={[0.1, 0.3, 0.1]} />
+        <meshStandardMaterial color="#4a5a61" metalness={0.6} roughness={0.5} />
+      </instancedMesh>
     </group>
   )
 }
@@ -1150,6 +1319,86 @@ function CommunityGarden({ position }: { position: Vec3 }) {
   )
 }
 
+function BiogasDome({ position }: { position: Vec3 }) {
+  return (
+    <group position={position}>
+      <mesh position={[0, 0.04, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[9, 7]} />
+        <meshStandardMaterial color="#1c2620" roughness={0.9} />
+      </mesh>
+      <mesh position={[0, 0.85, 0]}>
+        <cylinderGeometry args={[3, 3.15, 1.7, 20]} />
+        <meshStandardMaterial color="#485b52" roughness={0.6} metalness={0.35} />
+      </mesh>
+      <mesh position={[0, 1.7, 0]}>
+        <sphereGeometry args={[3, 20, 10, 0, Math.PI * 2, 0, Math.PI / 2]} />
+        <meshStandardMaterial color="#5f7a68" roughness={0.55} metalness={0.3} />
+      </mesh>
+      <mesh position={[0, 3.65, 0]}>
+        <cylinderGeometry args={[2.4, 2.7, 0.5, 20]} />
+        <meshStandardMaterial color="#35463e" roughness={0.7} />
+      </mesh>
+      <mesh position={[0, 2.5, 2.8]}>
+        <boxGeometry args={[1.2, 0.8, 0.3]} />
+        <meshStandardMaterial color="#24322c" roughness={0.6} />
+      </mesh>
+      <mesh position={[0, 2.5, 2.98]}>
+        <boxGeometry args={[0.8, 0.08, 0.04]} />
+        <meshBasicMaterial color="#8ce6a8" toneMapped={false} />
+      </mesh>
+      {[-2.2, 2.2].map((x) => (
+        <mesh key={x} position={[x, 0.8, 3.2]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.16, 0.16, 2.1, 8]} />
+          <meshStandardMaterial color="#7e8c87" metalness={0.6} roughness={0.4} />
+        </mesh>
+      ))}
+      <mesh position={[0, 4.0, 0]}>
+        <sphereGeometry args={[0.1, 8, 8]} />
+        <meshBasicMaterial color="#ffb86b" toneMapped={false} />
+      </mesh>
+    </group>
+  )
+}
+
+function VerticalFarm({ position }: { position: Vec3 }) {
+  return (
+    <group position={position}>
+      <mesh position={[0, 0.05, 0]}>
+        <boxGeometry args={[9.6, 0.2, 7.4]} />
+        <meshStandardMaterial color="#1a2420" roughness={0.85} />
+      </mesh>
+      <mesh position={[0, 3.6, 0]}>
+        <boxGeometry args={[9, 7, 6.8]} />
+        <meshStandardMaterial color="#263530" roughness={0.6} metalness={0.2} />
+      </mesh>
+      {[0.7, 1.5, 2.3, 3.1, 3.9, 4.7, 5.5, 6.3].map((y) => (
+        <mesh key={y} position={[0, y, 3.43]}>
+          <boxGeometry args={[8.2, 0.12, 0.06]} />
+          <meshBasicMaterial color="#6fe0a2" toneMapped={false} transparent opacity={0.85} />
+        </mesh>
+      ))}
+      {[-3.4, 3.4].map((x) => (
+        <mesh key={x} position={[x, 4.2, 3.43]}>
+          <boxGeometry args={[0.14, 6.2, 0.06]} />
+          <meshBasicMaterial color="#3d8f68" toneMapped={false} transparent opacity={0.6} />
+        </mesh>
+      ))}
+      <mesh position={[0, 7.35, 0]} rotation={[0, 0, Math.PI / 4]}>
+        <boxGeometry args={[6.6, 0.22, 5.2]} />
+        <meshStandardMaterial color="#83a991" roughness={0.35} metalness={0.35} transparent opacity={0.55} />
+      </mesh>
+      <mesh position={[0, 7.55, 0]}>
+        <boxGeometry args={[9.2, 0.12, 7]} />
+        <meshStandardMaterial color="#33483f" roughness={0.7} />
+      </mesh>
+      <mesh position={[0, 7.95, 0]}>
+        <boxGeometry args={[4.2, 0.05, 0.06]} />
+        <meshBasicMaterial color="#a5f0c2" toneMapped={false} />
+      </mesh>
+    </group>
+  )
+}
+
 function PocketPark({ position }: { position: Vec3 }) {
   return (
     <group position={position}>
@@ -1221,38 +1470,54 @@ function ZoneDistricts({ day = false }: { day?: boolean }) {
       {/* Zona A · movilidad en todo el tercio central */}
       <EvHub position={[-70, 0, 62]} rotation={0.2} />
       <EvHub position={[70, 0, -62]} rotation={Math.PI + 0.2} />
+      <EvHub position={[75, 0, 42]} rotation={Math.PI} />
       <MobilityKiosk position={[-20, 0, 56]} />
       <MobilityKiosk position={[20, 0, -56]} />
+      <MobilityKiosk position={[-8, 0, 52]} />
       <WifiPylon position={[-45, 0, 87]} />
       <WifiPylon position={[45, 0, 87]} />
       <WifiPylon position={[-45, 0, -87]} />
       <WifiPylon position={[45, 0, -87]} />
-      <PocketPark position={[-52, 0, 70]} />
-      <PocketPark position={[52, 0, -70]} />
+      <WifiPylon position={[10, 0, 68]} />
+      <WifiPylon position={[-18, 0, -68]} />
+      <PocketPark position={[-48, 0, 67]} />
+      <PocketPark position={[48, 0, -67]} />
+      <PocketPark position={[-45, 0, -95]} />
 
       {/* Zona B · seguridad en todo el tercio este */}
       <SecurityCheckpoint position={[112, 0, 60]} />
       <SecurityCheckpoint position={[150, 0, 60]} />
-      <SecurityCheckpoint position={[190, 0, 60]} />
+      <SecurityCheckpoint position={[165, 0, 60]} />
+      <SecurityCheckpoint position={[90, 0, 60]} />
       <SecurityCheckpoint position={[150, 0, -60]} rotation={Math.PI} />
-      <SecurityCheckpoint position={[190, 0, -60]} rotation={Math.PI} />
+      <SecurityCheckpoint position={[165, 0, -60]} rotation={Math.PI} />
       <DronePad position={[112, 0, -72]} />
-      <DronePad position={[210, 0, 72]} />
-      <DronePad position={[205, 0, -72]} />
+      <DronePad position={[210, 0, 68]} />
+      <DronePad position={[205, 0, -68]} />
+      <DronePad position={[225, 0, 22]} />
       <SpotlightTower position={[220, 0, 25]} rotation={2.2} />
       <SpotlightTower position={[98, 0, 92]} rotation={0.8} />
-      <SpotlightTower position={[132, 0, -100]} rotation={4.2} />
+      <SpotlightTower position={[106, 0, -100]} rotation={4.2} />
+      <SpotlightTower position={[228, 0, -32]} rotation={3.3} />
+      <PocketPark position={[200, 0, 120]} />
 
       {/* Zona C · energía, agua y comunidad en todo el tercio oeste */}
-      <SolarFarm position={[-170, 0, 55]} solar={solar} cols={4} rows={3} />
-      <SolarFarm position={[-210, 0, 20]} solar={solar} cols={3} rows={4} spacingX={3.2} spacingZ={2.4} />
-      <SolarFarm position={[-150, 0, 115]} solar={solar} cols={3} rows={3} />
+      <SolarFarm position={[-160, 0, 57]} solar={solar} cols={4} rows={3} />
+      <SolarFarm position={[-154, 0, -64]} solar={solar} cols={3} rows={4} spacingX={3.2} spacingZ={2.4} />
+      <SolarFarm position={[-205, 0, 118]} solar={solar} cols={3} rows={3} />
+      <SolarFarm position={[-112, 0, 92]} solar={solar} cols={4} rows={3} spacingX={3} spacingZ={2.4} />
+      <SolarFarm position={[-198, 0, -69]} solar={solar} cols={3} rows={3} spacingX={3.1} spacingZ={2.5} />
       <WindTurbine position={[-222, 0, 42]} speed={0.3} />
       <WindTurbine position={[-175, 0, 120]} speed={0.24} />
+      <WindTurbine position={[-155, 0, 15]} speed={0.34} />
+      <WindTurbine position={[-225, 0, 60]} speed={0.28} />
+      <BiogasDome position={[-88, 0, 55]} />
+      <VerticalFarm position={[-88, 0, 30]} />
+      <PocketPark position={[-214, 0, -60]} />
       <CommunityGarden position={[-150, 0, 40]} />
-      <CommunityGarden position={[-105, 0, 118]} />
-      <PocketPark position={[-158, 0, 94]} />
-      <group position={[-190, 0, 68]}>
+      <CommunityGarden position={[-120, 0, 126]} />
+      <PocketPark position={[-165, 0, 100]} />
+      <group position={[-198, 0, 70]}>
         {[-1.5, 1.5].map((x) =>
           [-1.5, 1.5].map((z) => (
             <mesh key={`${x}-${z}`} position={[x, 1.9, z]}>
@@ -1507,14 +1772,25 @@ export function City({ day = false }: { day?: boolean }) {
     ;[-164, -158, -152].forEach((x) => {
       ;[88, 94, 100].forEach((z) => positions.push([x, 0, z]))
     })
-    return positions
-  }, [])
+    ;[-52, -45, -38].forEach((x) => {
+      ;[-101, -95, -89].forEach((z) => positions.push([x, 0, z]))
+    })
+    ;[-226, -220, -214].forEach((x) => {
+      ;[-64, -58].forEach((z) => positions.push([x, 0, z]))
+    })
+    return positions.filter(([x, , z]) => {
+      if (isOnTransport(x, z)) return false
+      if (buildings.some((building) => Math.abs(x - building.x) < building.w / 2 + 0.9 && Math.abs(z - building.z) < building.d / 2 + 0.9)) return false
+      if (TREE_BLOCKERS.some((blocker) => Math.hypot(x - blocker.x, z - blocker.z) < blocker.r)) return false
+      return true
+    })
+  }, [buildings])
 
   const ringLamps = useMemo<Vec3[]>(
     () =>
       Array.from({ length: 12 }, (_, index) => {
         const angle = (index / 12) * Math.PI * 2
-        return [Math.cos(angle) * (RING_RX + 9), 0, Math.sin(angle) * (RING_RZ + 10)]
+        return [Math.cos(angle) * (RING_RX + 18), 0, Math.sin(angle) * (RING_RZ + 18)]
       }),
     [],
   )
@@ -1536,12 +1812,12 @@ export function City({ day = false }: { day?: boolean }) {
     ringLamps.forEach(([x, , z], index) => add(x, z, index % 2 === 0 ? 1 : -1))
 
     ;[-160, -80, 80, 160, 220, -220].forEach((x) => {
-      add(x, 51.5, 1)
-      add(x, -51.5, -1)
+      add(x, 54.5, 1)
+      add(x, -54.5, -1)
     })
     ;[-140, 0, 140].forEach((x) => {
-      add(x, 113.5, 1)
-      add(x, -113.5, -1)
+      add(x, 116.5, 1)
+      add(x, -116.5, -1)
     })
     ;[-200, -150, -100, -50, 0, 50, 100, 150, 200].forEach((x) => {
       add(x, 83, 1)
@@ -1550,7 +1826,7 @@ export function City({ day = false }: { day?: boolean }) {
       add(x, -105, -1)
     })
 
-    return lights
+    return lights.filter((light) => !isOnTransport(light.position[0], light.position[2]))
   }, [ringLamps])
 
   return (
@@ -1716,7 +1992,7 @@ export function City({ day = false }: { day?: boolean }) {
       <InstancedBuildings buildings={bBuildings} emissive="#d4d1e6" texture={windowB} facade={facadeB} accent="#B0A0FF" emissiveIntensity={day ? 0.16 : 1.0} day={day} dayTint="#c8bce6" />
       <InstancedBuildings buildings={aOuter} emissive="#cddde3" texture={windowA} facade={facadeA} accent="#79E3F2" emissiveIntensity={day ? 0.14 : 0.9} day={day} dayTint="#b9d5df" />
       <InstancedBuildings buildings={bOuter} emissive="#bab5cf" texture={windowB} facade={facadeB} accent="#B0A0FF" emissiveIntensity={day ? 0.14 : 0.88} day={day} dayTint="#c8bce6" />
-      <InstancedBuildings buildings={cOuter} emissive="#d8b98c" texture={windowC} facade={facadeC} accent="#F2C97B" emissiveIntensity={day ? 0.14 : 0.84} day={day} dayTint="#d8c197" />
+      <InstancedBuildings buildings={cOuter} emissive="#d8b98c" texture={windowC} facade={facadeC} accent="#F2C97B" emissiveIntensity={day ? 0.14 : 0.84} day={day} dayTint="#d8c197" roofSolar />
 
       {SPECIAL_TOWERS.map((tower, index) => (
         <FuturisticTower
@@ -1727,11 +2003,14 @@ export function City({ day = false }: { day?: boolean }) {
           accent={tower.x < -80 ? '#F2C97B' : tower.x > 80 ? '#B0A0FF' : '#79E3F2'}
         />
       ))}
+      <SignatureBuildings day={day} />
 
       <TrafficVehicles />
       <Pedestrians />
-      <IndustryAndResidential />
+      <AirTraffic day={day} />
+      <IndustryAndResidential day={day} />
       <ZoneDistricts day={day} />
+      <Decorations day={day} />
     </group>
   )
 }
