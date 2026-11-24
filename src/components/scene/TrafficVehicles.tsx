@@ -483,12 +483,15 @@ export function TrafficVehicles() {
       <RouteVehicle route={AVENUE_EAST_INNER} start={220} speed={6.4} kind="bus" color="#c1d0d5" />
       <RouteVehicle route={AVENUE_WEST_OUTER} start={165} speed={8.8} kind="car" variant="security" color="#596b74" />
       <RouteVehicle route={AVENUE_WEST_INNER} start={260} speed={6.1} kind="bus" color="#b6c5cb" />
+      <RouteVehicle route={AVENUE_EAST_OUTER} start={300} speed={9.2} kind="car" variant="taxi" color="#b9a56f" />
+      <RouteVehicle route={AVENUE_WEST_OUTER} start={320} speed={8.8} kind="car" variant="compact" color="#a6b6bd" />
 
       {/* Anillo exterior: tráfico continuo en los cuatro cuadrantes */}
       <RouteVehicle route={WEST_NORTH} start={40} speed={7.4} kind="car" variant="compact" color="#a6b6bd" />
       <RouteVehicle route={WEST_NORTH} start={220} speed={7.4} kind="car" variant="pickup" color="#8e9ba1" />
       <RouteVehicle route={WEST_NORTH} start={120} speed={7.4} kind="car" variant="sedan" color="#b6c3c9" />
       <RouteVehicle route={WEST_NORTH} start={320} speed={7.4} kind="car" variant="security" color="#596b74" />
+      <RouteVehicle route={WEST_NORTH} start={400} speed={7.4} kind="car" variant="sedan" color="#b6c3c9" />
       <RouteVehicle route={EAST_NORTH} start={60} speed={7.8} kind="car" variant="security" color="#596b74" />
       <RouteVehicle route={EAST_NORTH} start={250} speed={7.8} kind="car" variant="taxi" color="#b9a56f" />
       <RouteVehicle route={EAST_NORTH} start={140} speed={7.8} kind="car" variant="compact" color="#a6b6bd" />
@@ -501,6 +504,7 @@ export function TrafficVehicles() {
       <RouteVehicle route={EAST_SOUTH} start={230} speed={7.6} kind="car" variant="compact" color="#a6b6bd" />
       <RouteVehicle route={EAST_SOUTH} start={140} speed={7.6} kind="car" variant="taxi" color="#b9a56f" />
       <RouteVehicle route={EAST_SOUTH} start={330} speed={7.6} kind="car" variant="sedan" color="#b6c3c9" />
+      <RouteVehicle route={EAST_SOUTH} start={430} speed={7.6} kind="car" variant="pickup" color="#8e9ba1" />
       <RouteVehicle route={CENTER_NORTH} start={50} speed={7.2} kind="car" variant="pickup" color="#8e9ba1" />
       <RouteVehicle route={CENTER_NORTH} start={240} speed={7.2} kind="car" variant="sedan" color="#b6c3c9" />
       <RouteVehicle route={CENTER_NORTH} start={130} speed={6.4} kind="bus" color="#c1d0d5" />
@@ -517,6 +521,7 @@ export function TrafficVehicles() {
       <RouteVehicle route={BIKE_LOOP} start={630} speed={3.1} kind="bike" color="#94a6ad" jacket="#7f979c" />
       <RouteVehicle route={BIKE_LOOP} start={330} speed={2.9} kind="bike" color="#8a9da4" jacket="#9d8a63" />
       <RouteVehicle route={BIKE_LOOP} start={130} speed={3.1} kind="bike" color="#84969e" jacket="#b18c6e" />
+      <RouteVehicle route={BIKE_LOOP} start={500} speed={3.1} kind="bike" color="#94a6ad" jacket="#8b9fa4" />
     </group>
   )
 }

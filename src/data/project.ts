@@ -136,7 +136,7 @@ export const ZONES: Zone[] = [
     accent: '#79E3F2',
     center: [0, 0, 0],
     markerAnchor: [0, 12, 0],
-    camera: { pos: [30, 4.5, 4], target: [-30, 2, 9] },
+    camera: { pos: [0, 100, 160], target: [0, 3, 0] },
     content: {
       infra: {
         intro: 'Del sensor de piso al servidor municipal, y de ahí a la nube.',

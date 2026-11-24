@@ -1980,3 +1980,231 @@ body {
   }
 }
 
+
+/* ---------------------------- Document annotations -------------------------- */
+
+.doc-legend {
+  position: absolute;
+  left: 24px;
+  bottom: 126px;
+  z-index: 14;
+  width: 228px;
+  padding: 12px 13px 11px;
+  background: #0b1014;
+  border: 1px solid var(--line);
+  pointer-events: auto;
+}
+
+.doc-legend__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.doc-legend__eyebrow {
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.doc-legend__toggle {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.doc-legend__toggle:hover {
+  color: var(--ink);
+}
+
+.doc-legend__context {
+  margin: 5px 0 9px;
+  font-size: 9px;
+  color: var(--faint);
+}
+
+.doc-legend__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.doc-legend__row {
+  display: grid;
+  grid-template-columns: 9px 1fr auto;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 5px 4px;
+  border: 0;
+  background: transparent;
+  color: var(--faint);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  opacity: 0.42;
+  transition: opacity 0.18s ease, color 0.18s ease;
+}
+
+.doc-legend__row.is-on,
+.doc-legend__row:hover {
+  opacity: 1;
+  color: var(--ink-soft);
+}
+
+.doc-legend__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--layer-color);
+}
+
+.doc-legend__name {
+  font-size: 9px;
+  letter-spacing: 0.02em;
+}
+
+.doc-legend__count {
+  font-size: 8px;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.doc-legend__row.is-on .doc-legend__count {
+  color: var(--muted);
+}
+
+.doc-legend__hint {
+  margin: 8px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--line-soft);
+  font-size: 8px;
+  line-height: 1.45;
+  color: var(--faint);
+}
+
+.doc-legend.is-off .doc-legend__rows,
+.doc-legend.is-off .doc-legend__hint {
+  opacity: 0.55;
+}
+
+.doc-tag {
+  --doc-color: #6fa8ff;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  width: max-content;
+  max-width: 184px;
+  padding: 6px 8px 6px 9px;
+  border: 1px solid #26333a;
+  border-left: 2px solid var(--doc-color);
+  border-radius: 3px;
+  background: #0a1014;
+  color: var(--ink);
+  font-family: var(--sans);
+  text-align: left;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: none;
+}
+
+.doc-tag:hover,
+.doc-tag.is-hovered {
+  background: #101920;
+  border-color: #3a4a52;
+  border-left-color: var(--doc-color);
+}
+
+.doc-tag__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+}
+
+.doc-tag__layer {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 7px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--doc-color);
+}
+
+.doc-tag__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--doc-color);
+}
+
+.doc-tag__zone {
+  font-size: 7px;
+  letter-spacing: 0.1em;
+  color: var(--faint);
+}
+
+.doc-tag__label {
+  display: block;
+  font-size: 9.5px;
+  font-weight: 500;
+  line-height: 1.28;
+  color: #dce5e8;
+}
+
+.doc-tag__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 7px;
+  letter-spacing: 0.04em;
+  color: var(--faint);
+}
+
+.doc-tag:hover .doc-tag__action,
+.doc-tag.is-hovered .doc-tag__action {
+  color: var(--ink-soft);
+}
+
+@media (max-width: 900px) {
+  .doc-legend {
+    display: none;
+  }
+}
+
+.doc-legend__all {
+  width: 100%;
+  margin-top: 6px;
+  padding: 5px 6px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 8px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.doc-legend__all:hover:not(:disabled) {
+  background: var(--surface-raised);
+  color: var(--ink);
+}
+
+.doc-legend__all:disabled {
+  color: var(--faint);
+  cursor: default;
+}

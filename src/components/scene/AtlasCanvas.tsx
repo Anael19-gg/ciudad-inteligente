@@ -4,9 +4,10 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { CameraControls } from '@react-three/drei'
 import { City } from './City'
 import { Landmarks } from './Landmarks'
+import { Annotations } from './Annotations'
 import { Clouds } from './Clouds'
 import { Overlays } from './Overlays'
-import type { Selection, Vec3 } from '../../data/project'
+import type { LayerId, Selection, Vec3, ZoneId } from '../../data/project'
 
 export interface CameraView {
   pos: Vec3
@@ -182,6 +183,9 @@ export function AtlasCanvas({
   showZoneLabels,
   showCloudLabels,
   day,
+  activeZone,
+  showDocPoints,
+  docLayers,
 }: {
   view: CameraView
   nonce: number
@@ -190,6 +194,9 @@ export function AtlasCanvas({
   showZoneLabels: boolean
   showCloudLabels: boolean
   day: boolean
+  activeZone: ZoneId | null
+  showDocPoints: boolean
+  docLayers: Record<LayerId, boolean>
 }) {
   return (
     <div className="canvas-host" aria-label="Modelo 3D interactivo de la ciudad inteligente">
@@ -217,6 +224,7 @@ export function AtlasCanvas({
         <City day={day} />
         <Landmarks onSelect={onSelect} />
         <Clouds onSelect={onSelect} showAnnotations={showCloudLabels} />
+        <Annotations activeZone={activeZone} visible={showDocPoints} layers={docLayers} onSelect={onSelect} />
         <Overlays onSelect={onSelect} showAnnotations={showZoneLabels} />
         {!day && <Motes />}
       </Canvas>

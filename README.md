@@ -33,6 +33,7 @@ Abre **Guion** en la barra de recorrido para consultar las notas de exposición.
 - **Vida urbana**: más de 30 peatones caminando por la avenida, parques y las tres zonas, con vestuario y animación de marcha; dos helicópteros futuristas sobrevuelan la ciudad de forma continua; iluminación de calle, árboles instanciados y parques.
 - **Agua y vegetación**: tres estanques decorativos con rocas, juncos, bancas y faroles; arbustos, maceteros y parterres distribuidos en lotes libres.
 - **Cielo y clima**: vista de día con sombras direccionales y gradiente de cielo; vista nocturna con ventanas encendidas, letreros, halos de alumbrado público y enlaces de datos.
+- **Puntos del documento**: capa de etiquetas 3D sobre semáforos, cámaras, drones, medidores, servidores y nubes, con filtros por color para infraestructura, riesgos, marco legal y propiedad intelectual; al tocar una etiqueta se abre la ficha de la zona en la capa correspondiente.
 - **Nubes internacionales**: múltiples enlaces animados desde la infraestructura de las tres zonas hacia los centros de cómputo de EE. UU. y la Unión Europea.
 - **Rendimiento**: geometría instanciada para edificios, árboles y alumbrado, texturas procedurales, vehículos ligeros, sombras solo en modo día y una interfaz sin postprocesado.
 
@@ -49,6 +50,7 @@ Abre **Guion** en la barra de recorrido para consultar las notas de exposición.
 - Cambia entre **Infraestructura**, **Riesgos**, **Marco legal** y **Propiedad intelectual** desde la ficha de cada zona.
 - Usa el recorrido guiado para seguir el orden de la exposición.
 - Alterna **Día / Noche** con el botón del encabezado.
+- Usa **Puntos del documento** para activar o desactivar las etiquetas y filtrarlas por color: infraestructura, riesgos, marco legal o propiedad intelectual.
 - La ficha académica permanece visible en la esquina superior izquierda.
 - La hora del encabezado corresponde a **Mexicali, B.C.**
 

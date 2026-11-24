@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { AtlasCanvas, type CameraView } from './components/scene/AtlasCanvas'
 import { CreditsCard } from './components/ui/CreditsCard'
+import { DocLegend } from './components/ui/DocLegend'
 import { Header } from './components/ui/Header'
 import { InfoPanel } from './components/ui/InfoPanel'
 import { Intro } from './components/ui/Intro'
@@ -11,6 +12,7 @@ import {
   OVERVIEW_VIEW,
   TOUR,
   ZONE_BY_ID,
+  type LayerId,
   type Selection,
 } from './data/project'
 
@@ -26,6 +28,13 @@ export default function App() {
   const [mode, setMode] = useState<'tour' | 'free'>('tour')
   const [notesOpen, setNotesOpen] = useState(false)
   const [day, setDay] = useState(false)
+  const [docVisible, setDocVisible] = useState(true)
+  const [docLayers, setDocLayers] = useState<Record<LayerId, boolean>>({
+    infra: true,
+    risk: false,
+    legal: false,
+    ip: false,
+  })
 
   const flyTo = useCallback((view: CameraView) => {
     setCamera(view)
@@ -37,6 +46,15 @@ export default function App() {
       setSelection(next)
       setMode('free')
       if (next?.type === 'zone') {
+        if (next.layer) {
+          setDocLayers({
+            infra: false,
+            risk: false,
+            legal: false,
+            ip: false,
+            [next.layer]: true,
+          })
+        }
         flyTo(ZONE_BY_ID[next.zone].camera)
       } else if (next?.type === 'cloud') {
         flyTo(CLOUD_BY_ID[next.cloud].camera)
@@ -116,6 +134,9 @@ export default function App() {
         showZoneLabels={showZoneLabels}
         showCloudLabels={showCloudLabels}
         day={day}
+        activeZone={selection?.type === 'zone' ? selection.zone : null}
+        showDocPoints={docVisible}
+        docLayers={docLayers}
       />
 
       <div className="grain" aria-hidden="true" />
@@ -124,6 +145,28 @@ export default function App() {
       <div className="ui">
         <Header selection={selection} onSelect={handleSelect} onHome={goHome} day={day} onToggleDay={() => setDay((value) => !value)} />
         <CreditsCard />
+        {!introOpen && (
+          <DocLegend
+            active={docVisible}
+            activeZone={selection?.type === 'zone' ? selection.zone : null}
+            layers={docLayers}
+            onToggle={() => setDocVisible((value) => !value)}
+            onToggleLayer={(layer) =>
+              setDocLayers((current) => ({
+                ...current,
+                [layer]: !current[layer],
+              }))
+            }
+            onShowAll={() =>
+              setDocLayers({
+                infra: true,
+                risk: true,
+                legal: true,
+                ip: true,
+              })
+            }
+          />
+        )}
         <TourBar
           step={step}
           stepIndex={tourIndex}
