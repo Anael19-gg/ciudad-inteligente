@@ -4,17 +4,14 @@ import { Html, Line } from '@react-three/drei'
 import type { ThreeEvent } from '@react-three/fiber'
 import { LAYER_BY_ID, ZONE_BY_ID, type LayerId, type Selection, type ZoneId } from '../../data/project'
 import { DOCUMENT_POINTS, type DocumentPoint } from '../../data/annotations'
-import { ArrowUpRight } from '../ui/icons'
 
 function DocLabel({
   point,
   hovered,
-  onHover,
   onSelect,
 }: {
   point: DocumentPoint
   hovered: boolean
-  onHover: (id: string | null) => void
   onSelect: (selection: Selection) => void
 }) {
   const layer = LAYER_BY_ID[point.layer]
@@ -32,8 +29,6 @@ function DocLabel({
             event.stopPropagation()
             onSelect({ type: 'zone', zone: point.zone, layer: point.layer })
           }}
-          onPointerOver={() => onHover(point.id)}
-          onPointerOut={() => onHover(null)}
           aria-label={`${zone.name}: ${point.label}. Abrir ${layer.short}.`}
         >
           <span className="doc-tag__head">
@@ -44,9 +39,6 @@ function DocLabel({
             <span className="doc-tag__zone">{zone.code}</span>
           </span>
           <span className="doc-tag__label">{point.label}</span>
-          <span className="doc-tag__action">
-            Ver ficha <ArrowUpRight size={9} />
-          </span>
         </button>
       </Html>
     </group>
@@ -152,7 +144,6 @@ export function Annotations({
           key={point.id}
           point={point}
           hovered={hovered === point.id}
-          onHover={setHovered}
           onSelect={onSelect}
         />
       ))}

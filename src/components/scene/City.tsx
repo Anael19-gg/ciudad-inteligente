@@ -8,6 +8,10 @@ import { Pedestrians } from './Pedestrians'
 import { AirTraffic } from './AirTraffic'
 import { SignatureBuildings } from './SignatureBuildings'
 import { Decorations } from './Decorations'
+import { CivicBuildings } from './CivicBuildings'
+import { Neighborhoods } from './Neighborhoods'
+import { ForestPark } from './ForestPark'
+import { StreetFurniture } from './StreetFurniture'
 import type { Vec3 } from '../../data/project'
 
 function makeRng(seed: number) {
@@ -102,6 +106,16 @@ const TREE_BLOCKERS = [
   { x: 80, z: 12.7, r: 3.5 },
   { x: 120, z: -12.7, r: 3.5 },
   { x: 160, z: -12.7, r: 3.5 },
+  { x: -120, z: 60, r: 14 },
+  { x: 35, z: 55, r: 11 },
+  { x: 82, z: 88, r: 11 },
+  { x: -40, z: -64, r: 11 },
+  { x: -45, z: 100, r: 11 },
+  { x: -170, z: 30, r: 14 },
+  { x: -225, z: 20, r: 18 },
+  { x: -88, z: -90, r: 16 },
+  { x: -45, z: 126, r: 15 },
+  { x: 0, z: 126, r: 30 },
 ]
 
 const SPECIAL_TOWERS = [
@@ -185,6 +199,16 @@ const OUTER_CLEARINGS = [
   { x: -225, z: 60, r: 12 },
   { x: -88, z: 55, r: 9 },
   { x: -88, z: 30, r: 9 },
+  { x: -120, z: 60, r: 14 },
+  { x: 35, z: 55, r: 11 },
+  { x: 82, z: 88, r: 11 },
+  { x: -40, z: -64, r: 11 },
+  { x: -45, z: 100, r: 11 },
+  { x: -170, z: 30, r: 14 },
+  { x: -225, z: 20, r: 18 },
+  { x: -88, z: -90, r: 16 },
+  { x: -45, z: 126, r: 15 },
+  { x: 0, z: 126, r: 30 },
 ]
 
 const OUTER_HOUSE_POSITIONS: Vec3[] = [
@@ -2011,6 +2035,10 @@ export function City({ day = false }: { day?: boolean }) {
       <IndustryAndResidential day={day} />
       <ZoneDistricts day={day} />
       <Decorations day={day} />
+      <CivicBuildings day={day} />
+      <Neighborhoods day={day} />
+      <ForestPark day={day} />
+      <StreetFurniture day={day} />
     </group>
   )
 }

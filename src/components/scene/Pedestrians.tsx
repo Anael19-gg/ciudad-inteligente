@@ -120,6 +120,30 @@ const B_POND_WALK = makeWalkerRoute([
   [95, 36],
   [84, 36],
 ])
+const SCHOOL_WALK = makeWalkerRoute([
+  [-132, 52],
+  [-108, 52],
+  [-108, 68],
+  [-132, 68],
+])
+const CLINIC_WALK = makeWalkerRoute([
+  [74, 82],
+  [92, 82],
+  [92, 95],
+  [74, 95],
+])
+const MARKET_WALK = makeWalkerRoute([
+  [-50, -58],
+  [-30, -58],
+  [-30, -73],
+  [-50, -73],
+])
+const FOREST_WALK = makeWalkerRoute([
+  [-18, 120],
+  [18, 120],
+  [18, 134],
+  [-18, 134],
+])
 
 interface PersonColors {
   coat: string
@@ -183,6 +207,16 @@ function PersonModel({
               <meshStandardMaterial color="#14161b" roughness={0.35} metalness={0.6} />
             </mesh>
           ))}
+          {[-0.34, 0.34].map((x) => (
+            <mesh key={`clasp-${x}`} position={[x, 1.46, 0.17]} rotation={[0, 0, x < 0 ? 0.34 : -0.34]}>
+              <boxGeometry args={[0.05, 0.06, 0.055]} />
+              <meshStandardMaterial color="#75818a" roughness={0.25} metalness={0.85} />
+            </mesh>
+          ))}
+          <mesh position={[0, 1.44, -0.17]}>
+            <boxGeometry args={[0.3, 0.035, 0.045]} />
+            <meshStandardMaterial color="#525c65" roughness={0.3} metalness={0.8} />
+          </mesh>
           <mesh position={[0.13, 1.25, 0.19]}>
             <boxGeometry args={[0.19, 0.2, 0.05]} />
             <meshStandardMaterial color="#08090b" roughness={0.4} metalness={0.5} />
@@ -268,7 +302,7 @@ function PersonModel({
           {[1.4, 1.34].map((y) => (
             <mesh key={`grill-${y}`} position={[0, y, 0.27]}>
               <boxGeometry args={[0.14, 0.025, 0.02]} />
-              <meshStandardMaterial color="#2b3138" roughness={0.5} metalness={0.6} />
+              <meshStandardMaterial color="#4c555d" roughness={0.5} metalness={0.6} />
             </mesh>
           ))}
           <mesh position={[0, 1.78, -0.01]} scale={[1, 0.55, 1]}>
@@ -311,6 +345,10 @@ function PersonModel({
               <mesh position={[0, -0.8, 0.05]}>
                 <boxGeometry args={[0.17, 0.11, 0.26]} />
                 <meshStandardMaterial color="#0d1015" roughness={0.4} metalness={0.4} />
+              </mesh>
+              <mesh position={[0, -0.84, 0.16]}>
+                <boxGeometry args={[0.14, 0.03, 0.06]} />
+                <meshStandardMaterial color="#5a646c" roughness={0.3} metalness={0.8} />
               </mesh>
             </group>
           ))}
@@ -363,7 +401,7 @@ function PersonModel({
                     <sphereGeometry args={[0.03, 8, 8]} />
                     <meshBasicMaterial color="#ffe6e6" toneMapped={false} />
                   </mesh>
-                  <pointLight position={[0, 0.8, 0]} color="#ff5a4a" intensity={8} distance={7} decay={2} />
+                  <pointLight position={[0, 0.8, 0]} color="#ff5a4a" intensity={12} distance={8} decay={2} />
                 </group>
               )}
             </group>
@@ -804,6 +842,42 @@ const PEOPLE: { route: WalkRoute; start: number; speed: number; colors: PersonCo
     start: 470,
     speed: 1.35,
     colors: { coat: '#9c856b', trousers: '#263137', skin: '#c6a184', hair: '#1f1a16' },
+  },
+  {
+    route: SCHOOL_WALK,
+    start: 20,
+    speed: 1.25,
+    colors: { coat: '#8d9fa5', trousers: '#243037', skin: '#c49b7d', hair: '#1d2428' },
+  },
+  {
+    route: SCHOOL_WALK,
+    start: 72,
+    speed: 1.35,
+    colors: { coat: '#b09a78', trousers: '#263238', skin: '#b58d73', hair: '#29221d' },
+  },
+  {
+    route: CLINIC_WALK,
+    start: 16,
+    speed: 1.3,
+    colors: { coat: '#7b959c', trousers: '#202b31', skin: '#c6a184', hair: '#1f2428' },
+  },
+  {
+    route: MARKET_WALK,
+    start: 28,
+    speed: 1.2,
+    colors: { coat: '#a98d69', trousers: '#2a3439', skin: '#b2876d', hair: '#26201b' },
+  },
+  {
+    route: FOREST_WALK,
+    start: 30,
+    speed: 1.15,
+    colors: { coat: '#849a8d', trousers: '#243037', skin: '#c5a087', hair: '#1c2428' },
+  },
+  {
+    route: FOREST_WALK,
+    start: 78,
+    speed: 1.25,
+    colors: { coat: '#9b836b', trousers: '#202b31', skin: '#a87e64', hair: '#211c18' },
   },
 ]
 
