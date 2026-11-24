@@ -1,41 +1,8 @@
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
-import { Html, Line, RoundedBox } from '@react-three/drei'
+import { Line, RoundedBox } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import type { LayerId, Selection, ZoneId } from '../../data/project'
-
-function SiteTag({
-  position,
-  label,
-  color,
-  zone,
-  layer,
-  onSelect,
-}: {
-  position: [number, number, number]
-  label: string
-  color: string
-  zone: ZoneId
-  layer: LayerId
-  onSelect: (selection: Selection) => void
-}) {
-  return (
-    <Html position={position} center distanceFactor={28} zIndexRange={[14, 0]} style={{ pointerEvents: 'none' }}>
-      <button
-        type="button"
-        className="site-tag"
-        style={{ pointerEvents: 'auto', '--tag-color': color } as React.CSSProperties}
-        onClick={(event) => {
-          event.stopPropagation()
-          onSelect({ type: 'zone', zone, layer })
-        }}
-      >
-        <span className="site-tag__dot" />
-        <span>{label}</span>
-      </button>
-    </Html>
-  )
-}
+import type { Selection } from '../../data/project'
 
 function TrafficLight({ position, offset = 0 }: { position: [number, number, number]; offset?: number }) {
   const materials = useRef<THREE.MeshBasicMaterial[]>([])
@@ -270,14 +237,6 @@ function MunicipalBuilding({ onSelect }: { onSelect: (selection: Selection) => v
         <boxGeometry args={[11.8, 0.12, 8.3]} />
         <meshStandardMaterial color="#0c171d" roughness={0.7} />
       </mesh>
-      <SiteTag
-        position={[0, 12.6, 0]}
-        label="EDGE · Municipio"
-        color="#6FA8FF"
-        zone="a"
-        layer="infra"
-        onSelect={onSelect}
-      />
     </group>
   )
 }
@@ -319,14 +278,6 @@ function SecurityHQ({ onSelect }: { onSelect: (selection: Selection) => void }) 
         <boxGeometry args={[14.6, 0.2, 2.6]} />
         <meshStandardMaterial color="#111820" metalness={0.3} roughness={0.7} />
       </mesh>
-      <SiteTag
-        position={[0, 14, 0]}
-        label="SECURITY OPS · IA"
-        color="#B0A0FF"
-        zone="b"
-        layer="infra"
-        onSelect={onSelect}
-      />
     </group>
   )
 }
@@ -446,30 +397,6 @@ export function Landmarks({ onSelect }: { onSelect: (selection: Selection) => vo
       <AutonomousShuttle lane={-2.7} direction={1} offset={33} speed={5.4} />
       <AutonomousShuttle lane={-2.7} direction={1} offset={92} speed={4.7} />
       <AutonomousShuttle lane={2.7} direction={-1} offset={64} speed={5.9} />
-      <SiteTag
-        position={[7, 5.4, 8.6]}
-        label="Wi-Fi 6 · 5G"
-        color="#6FA8FF"
-        zone="a"
-        layer="infra"
-        onSelect={onSelect}
-      />
-      <SiteTag
-        position={[-23.5, 7.1, 0]}
-        label="Lectura de placas"
-        color="#FF6B6B"
-        zone="a"
-        layer="risk"
-        onSelect={onSelect}
-      />
-      <SiteTag
-        position={[6, 4.9, 3]}
-        label="Control semafórico"
-        color="#6FA8FF"
-        zone="a"
-        layer="infra"
-        onSelect={onSelect}
-      />
 
       <SecurityHQ onSelect={onSelect} />
       <LprArch x={33.5} color="#b0a0ff" />
@@ -479,55 +406,6 @@ export function Landmarks({ onSelect }: { onSelect: (selection: Selection) => vo
       <PtzCamera position={[31, 0, 28]} rotation={0.8} beam />
       <Drone center={[46, -4]} radius={12} height={15} speed={0.18} phase={0} />
       <Drone center={[44, 8]} radius={8} height={19} speed={-0.13} phase={2.4} />
-      <SiteTag
-        position={[33.5, 7, 0]}
-        label="LPR perimetral"
-        color="#FF6B6B"
-        zone="b"
-        layer="risk"
-        onSelect={onSelect}
-      />
-      <SiteTag
-        position={[38, 17, -8]}
-        label="Drones de patrullaje"
-        color="#FF6B6B"
-        zone="b"
-        layer="risk"
-        onSelect={onSelect}
-      />
-      <SiteTag
-        position={[52, 12, -22]}
-        label="Reconocimiento facial"
-        color="#FF6B6B"
-        zone="b"
-        layer="risk"
-        onSelect={onSelect}
-      />
-
-      <SiteTag
-        position={[-42, 6.5, -15.5]}
-        label="Red de agua · IoT"
-        color="#F2C97B"
-        zone="c"
-        layer="infra"
-        onSelect={onSelect}
-      />
-      <SiteTag
-        position={[-53.5, 4.7, -14.5]}
-        label="Smart grid"
-        color="#F2C97B"
-        zone="c"
-        layer="infra"
-        onSelect={onSelect}
-      />
-      <SiteTag
-        position={[-46.5, 4.6, 21]}
-        label="Medidores en tiempo real"
-        color="#F2C97B"
-        zone="c"
-        layer="infra"
-        onSelect={onSelect}
-      />
     </group>
   )
 }

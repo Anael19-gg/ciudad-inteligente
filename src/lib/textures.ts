@@ -36,17 +36,17 @@ export function createWindowTexture(seed = 7, warmth = 0.18): THREE.CanvasTextur
       const y = row * cellH + padY
       const w = cellW - padX * 2
       const h = cellH - padY * 1.4
-      const lit = rng() < 0.5
+      const lit = rng() < 0.46
       if (!lit) {
         ctx.fillStyle = rng() < 0.4 ? '#0a1620' : '#071018'
         ctx.fillRect(x, y, w, h)
         continue
       }
       const warm = rng() < warmth
-      const alpha = 0.4 + rng() * 0.6
+      const alpha = 0.3 + rng() * 0.55
       ctx.fillStyle = warm
-        ? `rgba(255, 216, 168, ${alpha})`
-        : `rgba(150, 224, 255, ${alpha})`
+        ? `rgba(255, 219, 174, ${alpha})`
+        : `rgba(216, 230, 236, ${alpha})`
       ctx.fillRect(x, y, w, h)
       if (rng() < 0.24) {
         ctx.fillStyle = 'rgba(0,0,0,0.35)'
@@ -92,11 +92,11 @@ export function createAsphaltTexture(): THREE.CanvasTexture {
   canvas.height = size
   const ctx = canvas.getContext('2d')!
   const rng = mulberry32(31)
-  ctx.fillStyle = '#0a0e12'
+  ctx.fillStyle = '#232e35'
   ctx.fillRect(0, 0, size, size)
   for (let i = 0; i < 1800; i += 1) {
-    const value = 10 + Math.floor(rng() * 22)
-    ctx.fillStyle = `rgba(${value}, ${value + 6}, ${value + 10}, ${rng() * 0.4})`
+    const value = 36 + Math.floor(rng() * 28)
+    ctx.fillStyle = `rgba(${value}, ${value + 5}, ${value + 9}, ${rng() * 0.35})`
     ctx.fillRect(rng() * size, rng() * size, 1, 1)
   }
   const texture = new THREE.CanvasTexture(canvas)

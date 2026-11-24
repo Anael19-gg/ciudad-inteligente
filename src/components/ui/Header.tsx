@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import { CLOUDS, ZONES, type Selection } from '../../data/project'
-import { Globe } from './icons'
+import { PROJECT, ZONES, type Selection } from '../../data/project'
 
 interface HeaderProps {
   selection: Selection
@@ -14,7 +13,7 @@ function clockLabel() {
       hour: '2-digit',
       minute: '2-digit',
       hour12: false,
-      timeZone: 'America/Mexico_City',
+      timeZone: 'America/Tijuana',
     }).format(new Date())
   } catch {
     return '--:--'
@@ -43,18 +42,20 @@ export function Header({ selection, onSelect, onHome }: HeaderProps) {
           <span className="brand__title">
             Ciudad <em>Inteligente</em>
           </span>
-          <span className="brand__sub">Datos · territorio · derecho</span>
+          <span className="brand__sub">
+            {PROJECT.subject} · {PROJECT.activity}
+          </span>
         </span>
       </button>
 
-      <nav className="topnav" aria-label="Navegación del atlas">
+      <nav className="topnav" aria-label="Navegación del mapa">
         <button
           type="button"
           className={`topnav__item ${!selection ? 'is-active' : ''}`}
           onClick={onHome}
         >
           <span className="topnav__dot topnav__dot--atlas" />
-          Atlas
+          Vista general
         </button>
         {ZONES.map((zone) => (
           <button
@@ -62,7 +63,6 @@ export function Header({ selection, onSelect, onHome }: HeaderProps) {
             type="button"
             className={`topnav__item ${activeZone === zone.id ? 'is-active' : ''}`}
             onClick={() => onSelect({ type: 'zone', zone: zone.id })}
-            style={{ '--nav-accent': zone.accent } as React.CSSProperties}
           >
             <span className="topnav__dot" style={{ background: zone.accent }} />
             <span className="topnav__zone">Zona {zone.code}</span>
@@ -79,16 +79,9 @@ export function Header({ selection, onSelect, onHome }: HeaderProps) {
         </button>
       </nav>
 
-      <div className="status" aria-label="Estado del sistema">
-        <div className="status__row">
-          <span className="status__pulse" />
-          <span className="status__label">Sistema en línea</span>
-          <span className="status__time">{time} <small>CDMX</small></span>
-        </div>
-        <div className="status__meta">
-          <Globe size={12} />
-          <span>{CLOUDS.length} nubes · {ZONES.length} distritos · 12 balizas</span>
-        </div>
+      <div className="status" aria-label="Hora local">
+        <span className="status__time">{time}</span>
+        <span className="status__place">Mexicali, B.C.</span>
       </div>
     </header>
   )

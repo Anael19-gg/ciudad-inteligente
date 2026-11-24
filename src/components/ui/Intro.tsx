@@ -19,88 +19,83 @@ export function Intro({
     entered.current = true
     setLeaving(true)
     onEnter()
-    window.setTimeout(onDone, 920)
+    window.setTimeout(onDone, 650)
   }
 
   return (
-    <div className={`intro ${leaving ? 'is-leaving' : ''}`} role="dialog" aria-label="Portada del atlas">
-      <div className="intro__veil" />
-      <div className="intro__grain" aria-hidden="true" />
-      <div className="intro__inner">
-        <div className="intro__main">
-          <div className="intro__meta">
-            <span>Proyecto final · Derecho y datos</span>
-            <span className="intro__meta-sep" />
-            <span>Noviembre 2026</span>
-          </div>
+    <div className={`cover ${leaving ? 'is-leaving' : ''}`} role="dialog" aria-label="Portada del proyecto">
+      <div className="cover__grid" aria-hidden="true" />
 
-          <h1 className="intro__title">
-            <span className="intro__title-line">Ciudad</span>
-            <span className="intro__title-line intro__title-line--em">Inteligente</span>
+      <header className="cover__header">
+        <div className="cover__institution">
+          <span className="cover__uni">{PROJECT.university}</span>
+          <span>{PROJECT.faculty}</span>
+          <span>{PROJECT.program}</span>
+        </div>
+        <div className="cover__meta">
+          <span>{PROJECT.subject}</span>
+          <span>{PROJECT.activity} · {PROJECT.group}</span>
+          <span>{PROJECT.date}</span>
+        </div>
+      </header>
+
+      <div className="cover__main">
+        <div className="cover__intro">
+          <span className="cover__eyebrow">Recorrido interactivo</span>
+          <h1 className="cover__title">
+            Ciudad
+            <span>Inteligente</span>
           </h1>
-
-          <p className="intro__lede">
-            Un atlas en <em>tres dimensiones</em> para recorrer la ciudad que decide con datos: su infraestructura, sus
-            riesgos constitucionales, su marco legal y la propiedad de lo que la hace funcionar.
+          <p className="cover__subtitle">{PROJECT.subtitle}</p>
+          <p className="cover__lede">
+            Tres zonas geográficas conectadas a dos nubes internacionales. Un recorrido por la infraestructura, los
+            riesgos y el marco legal de cada sector de la ciudad.
           </p>
 
-          <div className="intro__actions">
-            <button type="button" className="enter-btn" onClick={enter}>
-              <span className="enter-btn__label">Entrar al recorrido</span>
-              <span className="enter-btn__icon">
-                <ArrowRight size={17} />
-              </span>
-            </button>
-            <span className="intro__hint">
-              Arrastra para orbitar · Rueda para acercar
-              <br />
-              Toca balizas, zonas y nubes para leer
-              {!ready && (
-                <span className="intro__loading">
-                  <span className="intro__loading-dot" />
-                  Preparando el modelo
-                </span>
-              )}
-            </span>
-          </div>
+          <button type="button" className="cover__enter" onClick={enter}>
+            <span>Entrar al recorrido</span>
+            <ArrowRight size={15} />
+          </button>
+
+          <p className="cover__hint">
+            Arrastra para mover la ciudad · Rueda o pinza para acercar
+            <br />
+            Abre una zona o una nube para consultar su ficha
+            {!ready && <span className="cover__loading"> · Preparando el modelo</span>}
+          </p>
         </div>
 
-        <aside className="intro__index" aria-label="Contenido del recorrido">
-          <span className="intro__index-label">El territorio</span>
-          <div className="intro__zones">
+        <aside className="cover__aside">
+          <div className="cover__team">
+            <h2>Equipo</h2>
+            <ul>
+              {PROJECT.team.map((name) => (
+                <li key={name}>{name}</li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="cover__teacher">
+            <h2>Docente</h2>
+            <strong>{PROJECT.docent}</strong>
+          </div>
+
+          <div className="cover__zones">
+            <h2>Zonas del recorrido</h2>
             {ZONES.map((zone) => (
-              <div className="intro__zone" key={zone.id} style={{ '--zone-accent': zone.accent } as React.CSSProperties}>
-                <span className="intro__zone-num">{zone.index}</span>
-                <span className="intro__zone-copy">
-                  <strong>{zone.name}</strong>
-                  <span>{zone.kicker}</span>
-                </span>
-                <span className="intro__zone-dot" />
+              <div className="cover__zone" key={zone.id} style={{ '--zone-accent': zone.accent } as React.CSSProperties}>
+                <span className="cover__zone-code">{zone.code}</span>
+                <span className="cover__zone-name">{zone.name}</span>
               </div>
             ))}
-          </div>
-          <div className="intro__clouds">
-            <span className="intro__clouds-label">Cómputo</span>
-            <span>Nube EE. UU.</span>
-            <span className="intro__clouds-divider" />
-            <span>Nube UE</span>
           </div>
         </aside>
       </div>
 
-      <footer className="intro__footer">
-        <div className="intro__footer-block">
-          <span>Docente</span>
-          <strong>{PROJECT.docent}</strong>
-        </div>
-        <div className="intro__footer-block">
-          <span>Entrega</span>
-          <strong>{PROJECT.date} · {PROJECT.year}</strong>
-        </div>
-        <div className="intro__footer-block intro__footer-block--right">
-          <span>Modelo</span>
-          <strong>03 distritos · 02 nubes · 04 capas</strong>
-        </div>
+      <footer className="cover__footer">
+        <span>{PROJECT.place}</span>
+        <span>{PROJECT.faculty} · {PROJECT.university}</span>
+        <span>{PROJECT.date}</span>
       </footer>
     </div>
   )

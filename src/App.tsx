@@ -4,43 +4,27 @@ import { CreditsCard } from './components/ui/CreditsCard'
 import { Header } from './components/ui/Header'
 import { InfoPanel } from './components/ui/InfoPanel'
 import { Intro } from './components/ui/Intro'
-import { LayerRail } from './components/ui/LayerRail'
 import { TourBar } from './components/ui/TourBar'
 import {
   CLOUDS_VIEW,
   CLOUD_BY_ID,
-  LAYERS,
   OVERVIEW_VIEW,
   TOUR,
   ZONE_BY_ID,
-  type LayerId,
   type Selection,
 } from './data/project'
 
-const ARRIVAL_VIEW: CameraView = { pos: [0, 132, 212], target: [0, 12, -2] }
+const ARRIVAL_VIEW: CameraView = { pos: [0, 196, 346], target: [0, 6, -8] }
 
 export default function App() {
   const [ready, setReady] = useState(false)
   const [introOpen, setIntroOpen] = useState(true)
   const [selection, setSelection] = useState<Selection>(null)
-  const [activeLayers, setActiveLayers] = useState<Set<LayerId>>(
-    () => new Set(LAYERS.map((layer) => layer.id)),
-  )
   const [camera, setCamera] = useState<CameraView>(ARRIVAL_VIEW)
   const [nonce, setNonce] = useState(0)
   const [tourIndex, setTourIndex] = useState(0)
   const [mode, setMode] = useState<'tour' | 'free'>('tour')
   const [notesOpen, setNotesOpen] = useState(false)
-  const [compact, setCompact] = useState(
-    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 900px)').matches,
-  )
-
-  useEffect(() => {
-    const query = window.matchMedia('(max-width: 900px)')
-    const onChange = () => setCompact(query.matches)
-    query.addEventListener('change', onChange)
-    return () => query.removeEventListener('change', onChange)
-  }, [])
 
   const flyTo = useCallback((view: CameraView) => {
     setCamera(view)
@@ -53,9 +37,6 @@ export default function App() {
       setMode('free')
       if (next?.type === 'zone') {
         flyTo(ZONE_BY_ID[next.zone].camera)
-        if (next.layer) {
-          setActiveLayers((layers) => new Set(layers).add(next.layer!))
-        }
       } else if (next?.type === 'cloud') {
         flyTo(CLOUD_BY_ID[next.cloud].camera)
       } else if (next?.type === 'clouds') {
@@ -81,9 +62,6 @@ export default function App() {
       setTourIndex(clamped)
       setMode('tour')
       setSelection(step.selection)
-      if (step.layer) {
-        setActiveLayers((layers) => new Set(layers).add(step.layer!))
-      }
       flyTo(step.view)
     },
     [flyTo],
@@ -107,19 +85,6 @@ export default function App() {
     setSelection(null)
     flyTo(OVERVIEW_VIEW)
   }, [flyTo])
-
-  const toggleLayer = useCallback((layer: LayerId) => {
-    setActiveLayers((layers) => {
-      const next = new Set(layers)
-      if (next.has(layer)) next.delete(layer)
-      else next.add(layer)
-      return next
-    })
-  }, [])
-
-  const allLayers = useCallback(() => {
-    setActiveLayers(new Set(LAYERS.map((layer) => layer.id)))
-  }, [])
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -145,12 +110,10 @@ export default function App() {
       <AtlasCanvas
         view={camera}
         nonce={nonce}
-        activeLayers={activeLayers}
         onSelect={handleSelect}
         onReady={() => setReady(true)}
         showZoneLabels={showZoneLabels}
         showCloudLabels={showCloudLabels}
-        compact={compact}
       />
 
       <div className="grain" aria-hidden="true" />
@@ -158,7 +121,6 @@ export default function App() {
 
       <div className="ui">
         <Header selection={selection} onSelect={handleSelect} onHome={goHome} />
-        <LayerRail activeLayers={activeLayers} onToggle={toggleLayer} onAll={allLayers} />
         <CreditsCard />
         <TourBar
           step={step}

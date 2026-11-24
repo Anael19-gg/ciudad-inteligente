@@ -24,6 +24,7 @@ interface BuildingSpec {
   h: number
   zone: 'a' | 'b'
   tint: string
+  outer?: boolean
 }
 
 const ZONE_TINTS = {
@@ -31,21 +32,68 @@ const ZONE_TINTS = {
   b: ['#292c40', '#313450', '#232638', '#363a55', '#2c3046'],
 }
 
+export const CITY_WIDTH = 280
+export const CITY_DEPTH = 180
+const VERTICAL_ROADS = [-100, -62, -28, 28, 62, 100]
+const HORIZONTAL_ROADS = [-78, -48, 0, 48, 78]
+
+function buildOuterBlocks(): BuildingSpec[] {
+  const rng = makeRng(118)
+  const outer: BuildingSpec[] = []
+
+  for (let x = -132; x <= 132; x += 9.5) {
+    for (let z = -84; z <= 84; z += 9.5) {
+      if (Math.abs(x) <= 66 && Math.abs(z) <= 44) continue
+      if (Math.abs(z) < 12) continue
+      if (VERTICAL_ROADS.some((road) => Math.abs(x - road) < 8)) continue
+      if (HORIZONTAL_ROADS.some((road) => Math.abs(z - road) < 7.5)) continue
+      if (rng() > 0.78) continue
+
+      const east = x > 0
+      const periphery = Math.abs(z) > 52
+      let h: number
+      if (east) {
+        h = 6 + rng() * 14 + (periphery ? 2 : 0)
+      } else {
+        h = 3 + rng() * 7 + (periphery ? rng() * 5 : 0)
+      }
+      if (rng() < 0.08) h += 5
+
+      outer.push({
+        x,
+        z,
+        w: 4.4 + rng() * 2.1,
+        d: 4.6 + rng() * 2.2,
+        h,
+        zone: east ? 'b' : 'a',
+        outer: true,
+        tint: (east ? ZONE_TINTS.b : ZONE_TINTS.a)[
+          Math.floor(rng() * (east ? ZONE_TINTS.b.length : ZONE_TINTS.a.length))
+        ],
+      })
+    }
+  }
+
+  return outer
+}
+
 function buildCityBlocks(): BuildingSpec[] {
   const rng = makeRng(42)
   const buildings: BuildingSpec[] = []
   const colsA = [-21, -14, -7, 0, 7, 14, 21]
   const rowsA = [
+    { z: -38.5, skip: [] as number[] },
     { z: -27.5, skip: [-21, -14, -7] },
     { z: -17.5, skip: [-21, -14, -7] },
     { z: 17.5, skip: [] as number[] },
     { z: 27.5, skip: [] as number[] },
+    { z: 38.5, skip: [] as number[] },
   ]
 
   for (const row of rowsA) {
     for (const x of colsA) {
       if (row.skip.includes(x)) continue
-      const h = 7 + rng() * 14 + (Math.abs(x) < 10 ? rng() * 6 : 0)
+      const h = 6 + rng() * 13 + (Math.abs(x) < 10 && Math.abs(row.z) < 33 ? rng() * 6 : 0)
       const w = 4.6 + rng() * 1.5
       const d = 5.2 + rng() * 1.4
       buildings.push({
@@ -62,16 +110,18 @@ function buildCityBlocks(): BuildingSpec[] {
 
   const colsB = [34.5, 42, 49.5, 57]
   const rowsB = [
+    { z: -40, skip: [42, 49.5] },
     { z: -29, skip: [42, 49.5] },
     { z: -18, skip: [42, 49.5] },
     { z: 17, skip: [] as number[] },
     { z: 28, skip: [] as number[] },
+    { z: 40, skip: [] as number[] },
   ]
 
   for (const row of rowsB) {
     for (const x of colsB) {
       if (row.skip.includes(x)) continue
-      const h = 10 + rng() * 20 + (row.z > 0 ? rng() * 5 : 0)
+      const h = 9 + rng() * 19 + (row.z > 0 ? rng() * 5 : 0)
       const w = 4.4 + rng() * 1.6
       const d = 5 + rng() * 1.8
       buildings.push({
@@ -86,17 +136,19 @@ function buildCityBlocks(): BuildingSpec[] {
     }
   }
 
-  return buildings
+  return [...buildings, ...buildOuterBlocks()]
 }
 
 function InstancedBuildings({
   buildings,
   emissive,
   texture,
+  emissiveIntensity = 0.5,
 }: {
   buildings: BuildingSpec[]
   emissive: string
   texture: THREE.CanvasTexture
+  emissiveIntensity?: number
 }) {
   const meshRef = useRef<THREE.InstancedMesh>(null)
   const roofRef = useRef<THREE.InstancedMesh>(null)
@@ -134,7 +186,7 @@ function InstancedBuildings({
           roughness={0.5}
           metalness={0.45}
           emissive={emissive}
-          emissiveIntensity={0.9}
+          emissiveIntensity={emissiveIntensity}
           emissiveMap={texture}
           color="#ffffff"
         />
@@ -143,39 +195,6 @@ function InstancedBuildings({
         <boxGeometry args={[1, 1, 1]} />
         <meshStandardMaterial color="#0a1015" roughness={0.75} metalness={0.3} />
       </instancedMesh>
-    </group>
-  )
-}
-
-function TowerLights({ buildings }: { buildings: BuildingSpec[] }) {
-  const towers = useMemo(() => buildings.filter((b) => b.h > 19).slice(0, 10), [buildings])
-  const group = useRef<THREE.Group>(null)
-  useFrame((state) => {
-    if (!group.current) return
-    const t = state.clock.elapsedTime
-    const pulse = 0.55 + Math.sin(t * 2.2) * 0.45
-    group.current.children.forEach((child) => {
-      const material = (child as THREE.Mesh).material
-      if (material && 'opacity' in material) {
-        ;(material as THREE.MeshBasicMaterial).opacity = pulse
-      }
-    })
-  })
-
-  return (
-    <group ref={group}>
-      {towers.map((tower, index) => (
-        <group key={`${tower.x}-${tower.z}`} position={[tower.x, tower.h, tower.z]}>
-          <mesh position={[0, 0.8, 0]}>
-            <cylinderGeometry args={[0.035, 0.05, 1.6, 5]} />
-            <meshStandardMaterial color="#34414a" metalness={0.6} roughness={0.5} />
-          </mesh>
-          <mesh position={[0, 1.65, 0]}>
-            <sphereGeometry args={[0.09, 8, 8]} />
-            <meshBasicMaterial color={index % 3 === 0 ? '#ff8c7a' : '#ffb27a'} toneMapped={false} transparent opacity={0.9} />
-          </mesh>
-        </group>
-      ))}
     </group>
   )
 }
@@ -305,7 +324,7 @@ function IndustryAndResidential() {
   const solar = useMemo(() => createSolarTexture(), [])
   const housePositions: Vec3[] = useMemo(() => {
     const positions: Vec3[] = []
-    for (const z of [13.5, 21.5, 29.5]) {
+    for (const z of [13.5, 21.5, 29.5, 37.5]) {
       for (const x of [-56.5, -49.5, -42.5, -35.5]) {
         positions.push([x, 0, z])
       }
@@ -318,6 +337,18 @@ function IndustryAndResidential() {
       {housePositions.map((position, index) => (
         <House key={index} position={position} lit={index % 3 === 0 ? 0.9 : 0.55} />
       ))}
+
+      {/* Residential streets */}
+      {[17.5, 25.5, 33.5].map((z) => (
+        <mesh key={z} position={[-46, 0.034, z]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[27, 2.3]} />
+          <meshStandardMaterial color="#0c1217" roughness={0.92} />
+        </mesh>
+      ))}
+      <mesh position={[-31.8, 0.034, 25]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[2.2, 27]} />
+        <meshStandardMaterial color="#0c1217" roughness={0.92} />
+      </mesh>
 
       {/* Industrial campus */}
       <group position={[-51.5, 0, -27]}>
@@ -428,50 +459,16 @@ function IndustryAndResidential() {
   )
 }
 
-function ZonePlate({
-  center,
-  width,
-  depth,
-  color,
-}: {
-  center: [number, number]
-  width: number
-  depth: number
-  color: string
-}) {
-  const x = center[0]
-  const z = center[1]
-  return (
-    <group>
-      <mesh position={[x, 0.025, z]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[width, depth]} />
-        <meshBasicMaterial color={color} transparent opacity={0.035} depthWrite={false} />
-      </mesh>
-      <Line
-        points={[
-          [x - width / 2, 0.07, z - depth / 2],
-          [x + width / 2, 0.07, z - depth / 2],
-          [x + width / 2, 0.07, z + depth / 2],
-          [x - width / 2, 0.07, z + depth / 2],
-          [x - width / 2, 0.07, z - depth / 2],
-        ]}
-        color={color}
-        transparent
-        opacity={0.4}
-        lineWidth={1}
-      />
-    </group>
-  )
-}
-
 export function City() {
   const buildings = useMemo(() => buildCityBlocks(), [])
-  const windowA = useMemo(() => createWindowTexture(12, 0.08), [])
-  const windowB = useMemo(() => createWindowTexture(29, 0.14), [])
+  const windowA = useMemo(() => createWindowTexture(12, 0.34), [])
+  const windowB = useMemo(() => createWindowTexture(29, 0.38), [])
   const asphalt = useMemo(() => createAsphaltTexture(), [])
   const glow = useMemo(() => createGlowTexture(), [])
-  const aBuildings = useMemo(() => buildings.filter((b) => b.zone === 'a'), [buildings])
-  const bBuildings = useMemo(() => buildings.filter((b) => b.zone === 'b'), [buildings])
+  const aBuildings = useMemo(() => buildings.filter((b) => b.zone === 'a' && !b.outer), [buildings])
+  const bBuildings = useMemo(() => buildings.filter((b) => b.zone === 'b' && !b.outer), [buildings])
+  const aOuter = useMemo(() => buildings.filter((b) => b.zone === 'a' && b.outer), [buildings])
+  const bOuter = useMemo(() => buildings.filter((b) => b.zone === 'b' && b.outer), [buildings])
 
   const trees: Vec3[] = useMemo(
     () => [
@@ -492,112 +489,138 @@ export function City() {
       [52, 0, 11.5],
       [35.5, 0, -11.5],
       [52, 0, -11.5],
+      [-120, 0, 11.5],
+      [-100, 0, 11.5],
+      [-82, 0, 11.5],
+      [82, 0, 11.5],
+      [100, 0, 11.5],
+      [120, 0, 11.5],
+      [-118, 0, -11.5],
+      [-96, 0, -11.5],
+      [86, 0, -11.5],
+      [108, 0, -11.5],
     ],
     [],
   )
 
   return (
     <group>
-      {/* Floating diorama base */}
-      <RoundedBox args={[144, 1.8, 96]} radius={0.9} smoothness={3} position={[0, -1.02, 0]}>
+      {/* Flota la ciudad sobre una base continua */}
+      <RoundedBox args={[CITY_WIDTH + 4, 1.8, CITY_DEPTH + 4]} radius={0.9} smoothness={3} position={[0, -1.02, 0]}>
         <meshStandardMaterial color="#0a1015" roughness={0.42} metalness={0.55} />
       </RoundedBox>
       <Line
         points={[
-          [-71.6, -0.12, -47.6],
-          [71.6, -0.12, -47.6],
-          [71.6, -0.12, 47.6],
-          [-71.6, -0.12, 47.6],
-          [-71.6, -0.12, -47.6],
+          [-(CITY_WIDTH / 2 + 1.8), -0.12, -(CITY_DEPTH / 2 + 1.8)],
+          [CITY_WIDTH / 2 + 1.8, -0.12, -(CITY_DEPTH / 2 + 1.8)],
+          [CITY_WIDTH / 2 + 1.8, -0.12, CITY_DEPTH / 2 + 1.8],
+          [-(CITY_WIDTH / 2 + 1.8), -0.12, CITY_DEPTH / 2 + 1.8],
+          [-(CITY_WIDTH / 2 + 1.8), -0.12, -(CITY_DEPTH / 2 + 1.8)],
         ]}
         color="#7fa5b4"
         transparent
-        opacity={0.22}
+        opacity={0.16}
         lineWidth={1}
       />
       <mesh position={[0, -0.2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[200, 150]} />
-        <meshBasicMaterial map={glow} color="#2f7d99" transparent opacity={0.13} depthWrite={false} blending={THREE.AdditiveBlending} />
+        <planeGeometry args={[CITY_WIDTH + 70, CITY_DEPTH + 60]} />
+        <meshBasicMaterial map={glow} color="#2f7d99" transparent opacity={0.08} depthWrite={false} blending={THREE.AdditiveBlending} />
       </mesh>
 
-      {/* Terrain */}
+      {/* Terreno */}
       <mesh position={[0, -0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[141, 93]} />
+        <planeGeometry args={[CITY_WIDTH - 3, CITY_DEPTH - 3]} />
         <meshStandardMaterial color="#070c10" roughness={0.94} metalness={0.12} />
       </mesh>
       <mesh position={[0, 0.012, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[144, 96]} />
-        <meshBasicMaterial map={glow} color="#1c637c" transparent opacity={0.24} depthWrite={false} blending={THREE.AdditiveBlending} />
+        <planeGeometry args={[CITY_WIDTH, CITY_DEPTH]} />
+        <meshBasicMaterial map={glow} color="#1c637c" transparent opacity={0.12} depthWrite={false} blending={THREE.AdditiveBlending} />
       </mesh>
-      <gridHelper args={[96, 48, '#16232c', '#0b1319']} position={[0, 0.02, 0]} scale={[1.458, 1, 1]}>
-        <lineBasicMaterial attach="material" transparent opacity={0.32} />
+      <gridHelper args={[180, 90, '#16232c', '#0b1319']} position={[0, 0.02, 0]} scale={[CITY_WIDTH / 180, 1, 1]}>
+        <lineBasicMaterial attach="material" transparent opacity={0.2} />
       </gridHelper>
 
-      {/* Zone grounds */}
-      <ZonePlate center={[0, 0]} width={46} depth={70} color="#79E3F2" />
-      <ZonePlate center={[46, 0]} width={28} depth={70} color="#B0A0FF" />
-      <ZonePlate center={[-46, 0]} width={28} depth={70} color="#F2C97B" />
-
-      {/* Roads */}
+      {/* Avenida principal */}
       <mesh position={[0, 0.028, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[140, 12.5]} />
-        <meshStandardMaterial map={asphalt} color="#cdd8dc" roughness={0.88} metalness={0.15} />
+        <planeGeometry args={[CITY_WIDTH - 4, 12.5]} />
+        <meshStandardMaterial map={asphalt} color="#ffffff" roughness={0.82} metalness={0.15} />
       </mesh>
       {[8.3, -8.3].map((z) => (
         <mesh key={z} position={[0, 0.032, z]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[140, 3.6]} />
-          <meshStandardMaterial color="#0c1319" roughness={0.86} metalness={0.1} />
-        </mesh>
-      ))}
-      {[28, -28].map((x) => (
-        <mesh key={x} position={[x, 0.029, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[7.5, 90]} />
-          <meshStandardMaterial map={asphalt} color="#c8d3d7" roughness={0.9} metalness={0.12} />
+          <planeGeometry args={[CITY_WIDTH - 4, 3.6]} />
+          <meshStandardMaterial color="#202b31" roughness={0.82} metalness={0.1} />
         </mesh>
       ))}
 
-      {/* Glowing curbs */}
+      {/* Red vial conectada */}
+      {VERTICAL_ROADS.map((x) => (
+        <mesh key={`v-${x}`} position={[x, 0.029, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[7.5, CITY_DEPTH - 6]} />
+          <meshStandardMaterial map={asphalt} color="#ffffff" roughness={0.85} metalness={0.12} />
+        </mesh>
+      ))}
+      {[-78, -48, 48, 78].map((z) => (
+        <mesh key={`h-${z}`} position={[0, 0.029, z]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[CITY_WIDTH - 4, 7]} />
+          <meshStandardMaterial map={asphalt} color="#ffffff" roughness={0.85} metalness={0.12} />
+        </mesh>
+      ))}
+
+      {/* Cordones discretos */}
       {[6.35, -6.35].map((z) => (
         <mesh key={z} position={[0, 0.05, z]}>
-          <boxGeometry args={[140, 0.06, 0.1]} />
-          <meshBasicMaterial color="#73d8ee" toneMapped={false} transparent opacity={0.75} />
-        </mesh>
-      ))}
-      {[31.85, 24.15, -24.15, -31.85].map((x) => (
-        <mesh key={x} position={[x, 0.05, 0]} rotation={[0, 0, 0]}>
-          <boxGeometry args={[0.09, 0.05, 90]} />
-          <meshBasicMaterial color="#4e7d8c" toneMapped={false} transparent opacity={0.4} />
+          <boxGeometry args={[CITY_WIDTH - 4, 0.06, 0.08]} />
+          <meshBasicMaterial color="#6f8790" toneMapped={false} transparent opacity={0.35} />
         </mesh>
       ))}
 
-      {/* Lane markings */}
-      <Line
-        points={[
-          [-69, 0.06, 0],
-          [69, 0.06, 0],
-        ]}
-        color="#ffdca8"
-        transparent
-        opacity={0.32}
-        lineWidth={1.1}
-        dashed
-        dashSize={2.4}
-        gapSize={2.8}
-      />
-      {[3.1, -3.1].map((z) => (
+      {/* Señalización vial */}
+      {[-3.1, 3.1].map((z) => (
         <Line
-          key={z}
+          key={`lane-${z}`}
           points={[
-            [-69, 0.06, z],
-            [69, 0.06, z],
+            [-(CITY_WIDTH / 2 - 3), 0.06, z],
+            [CITY_WIDTH / 2 - 3, 0.06, z],
           ]}
-          color="#d9f0f5"
+          color="#b7c3c7"
           transparent
-          opacity={0.24}
+          opacity={0.2}
           lineWidth={0.8}
           dashed
           dashSize={2.2}
           gapSize={3}
+        />
+      ))}
+      {VERTICAL_ROADS.map((x) => (
+        <Line
+          key={`lane-v-${x}`}
+          points={[
+            [x, 0.06, -(CITY_DEPTH / 2 - 4)],
+            [x, 0.06, CITY_DEPTH / 2 - 4],
+          ]}
+          color="#a7b4b9"
+          transparent
+          opacity={0.16}
+          lineWidth={0.7}
+          dashed
+          dashSize={2.6}
+          gapSize={3.6}
+        />
+      ))}
+      {[-78, -48, 48, 78].map((z) => (
+        <Line
+          key={`lane-h-${z}`}
+          points={[
+            [-(CITY_WIDTH / 2 - 4), 0.06, z],
+            [CITY_WIDTH / 2 - 4, 0.06, z],
+          ]}
+          color="#a7b4b9"
+          transparent
+          opacity={0.16}
+          lineWidth={0.7}
+          dashed
+          dashSize={2.6}
+          gapSize={3.6}
         />
       ))}
 
@@ -608,10 +631,10 @@ export function City() {
         <Tree key={index} position={position} scale={index > 8 ? 1.15 : 1} />
       ))}
 
-      {[-24, -12, 0, 12, 24].map((x) => (
+      {[-24, -12, 0, 12, 24, 46, 78, 116].map((x) => (
         <StreetLight key={`s-${x}`} position={[x, 0, 10.5]} facing={-1} />
       ))}
-      {[-18, -6, 6, 18].map((x) => (
+      {[-18, -6, 6, 18, -46, -78, -116].map((x) => (
         <StreetLight key={`n-${x}`} position={[x, 0, -10.5]} facing={1} />
       ))}
       {[-42, -56].map((x) => (
@@ -626,9 +649,10 @@ export function City() {
         <StreetLight key={`r-${x}-${z}`} position={[x, 0, z]} facing={1} />
       ))}
 
-      <InstancedBuildings buildings={aBuildings} emissive="#9bdcff" texture={windowA} />
-      <InstancedBuildings buildings={bBuildings} emissive="#b6b0ff" texture={windowB} />
-      <TowerLights buildings={[...aBuildings, ...bBuildings]} />
+      <InstancedBuildings buildings={aBuildings} emissive="#cddde3" texture={windowA} emissiveIntensity={0.65} />
+      <InstancedBuildings buildings={bBuildings} emissive="#d4d1e6" texture={windowB} emissiveIntensity={0.65} />
+      <InstancedBuildings buildings={aOuter} emissive="#aebfc8" texture={windowA} emissiveIntensity={0.36} />
+      <InstancedBuildings buildings={bOuter} emissive="#bab5cf" texture={windowB} emissiveIntensity={0.36} />
 
       <IndustryAndResidential />
     </group>

@@ -93,6 +93,8 @@ function DataLink({
   )
 }
 
+const CLOUD_SCALE = 1.3
+
 function CloudCore({
   cloud,
   onSelect,
@@ -110,7 +112,7 @@ function CloudCore({
   useCursor(hovering)
 
   useFrame(({ clock }, delta) => {
-    const target = hovering ? 1.045 : 1
+    const target = hovering ? CLOUD_SCALE * 1.04 : CLOUD_SCALE
     if (groupRef.current) {
       const current = groupRef.current.scale.x
       const next = THREE.MathUtils.damp(current, target, 7, delta)
@@ -192,7 +194,7 @@ function CloudCore({
           <meshStandardMaterial
             color={cloud.accent}
             emissive={cloud.accent}
-            emissiveIntensity={1.8}
+            emissiveIntensity={0.9}
             roughness={0.25}
             metalness={0.4}
             flatShading
@@ -200,16 +202,16 @@ function CloudCore({
         </mesh>
         <mesh position={[0, 2.2, 0]}>
           <icosahedronGeometry args={[1.35, 1]} />
-          <meshBasicMaterial color={cloud.accent} transparent opacity={0.08} wireframe toneMapped={false} />
+          <meshBasicMaterial color={cloud.accent} transparent opacity={0.05} wireframe toneMapped={false} />
         </mesh>
         <mesh position={[0, -0.2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <ringGeometry args={[2.6, 2.72, 48]} />
-          <meshBasicMaterial color={cloud.accent} transparent opacity={0.25} toneMapped={false} side={THREE.DoubleSide} />
+          <meshBasicMaterial color={cloud.accent} transparent opacity={0.18} toneMapped={false} side={THREE.DoubleSide} />
         </mesh>
-        <pointLight color={cloud.accent} intensity={16} distance={24} decay={2} />
+        <pointLight color={cloud.accent} intensity={8} distance={24} decay={2} />
       </group>
       <Html
-        position={[0, -4.9, 0]}
+        position={[0, -6.3, 0]}
         center
         zIndexRange={[16, 0]}
         style={{ pointerEvents: 'none', display: showAnnotations ? undefined : 'none' }}
@@ -223,15 +225,15 @@ function CloudCore({
             onSelect({ type: 'cloud', cloud: cloud.id })
           }}
         >
-          <span className="cloud-tag__eyebrow">
-            {cloud.index} · {cloud.region}
-          </span>
-          <span className="cloud-tag__name">{cloud.name}</span>
-          <span className="cloud-tag__foot">
-            {cloud.zones.length} {cloud.zones.length === 1 ? 'zona conectada' : 'zonas conectadas'}
-            <span className="cloud-tag__arrow">
-              <ArrowUpRight size={13} />
+          <span className="cloud-tag__code">{cloud.index}</span>
+          <span className="cloud-tag__body">
+            <span className="cloud-tag__name">{cloud.name}</span>
+            <span className="cloud-tag__meta">
+              {cloud.region} · {cloud.zones.length} {cloud.zones.length === 1 ? 'zona' : 'zonas'}
             </span>
+          </span>
+          <span className="cloud-tag__arrow">
+            <ArrowUpRight size={12} />
           </span>
         </button>
       </Html>

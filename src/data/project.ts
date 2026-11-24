@@ -24,11 +24,6 @@ export interface LayerContent {
   entries: Entry[]
 }
 
-export interface Marker {
-  layer: LayerId
-  position: Vec3
-}
-
 export interface Zone {
   id: ZoneId
   index: string
@@ -43,7 +38,6 @@ export interface Zone {
   markerAnchor: Vec3
   camera: { pos: Vec3; target: Vec3 }
   content: Record<LayerId, LayerContent>
-  markers: Marker[]
 }
 
 export interface Cloud {
@@ -110,17 +104,22 @@ export const LAYER_BY_ID = Object.fromEntries(LAYERS.map((l) => [l.id, l])) as R
 export const PROJECT = {
   title: 'Ciudad Inteligente',
   subtitle: 'Arquitectura de datos, territorio y derecho',
+  university: 'Universidad Autónoma de Baja California',
+  faculty: 'Facultad de Ciencias Administrativas',
+  program: 'Inteligencia de Negocios',
+  subject: 'Marco Legal de TI',
+  activity: 'Meta 4.2',
+  group: 'Grupo 261',
   docent: 'Dr. Ricardo Ching Wesman',
   team: [
-    'Anael Ramos Morales',
-    'Pablo Alejandro Prado Pimentel',
-    'Melany Tapia Morales',
-    'Mónica Yuriskery Díaz Silva',
-    'Julia Rios Gutierrez',
+    'Díaz Silva Mónica Yuriskery',
+    'Prado Pimentel Pablo Alejandro',
+    'Ramos Morales Anael',
+    'Rios Gutierrez Julia',
+    'Tapia Morales Melany',
   ],
-  place: 'Derecho, datos y territorio',
-  date: '24 de noviembre',
-  year: '2026',
+  place: 'Mexicali, B.C.',
+  date: 'Octubre de 2026',
 }
 
 export const ZONES: Zone[] = [
@@ -136,8 +135,8 @@ export const ZONES: Zone[] = [
     cloud: 'us',
     accent: '#79E3F2',
     center: [0, 0, 0],
-    markerAnchor: [0, 12, 0],
-    camera: { pos: [0, 76, 98], target: [0, 3, 0] },
+    markerAnchor: [0, 16, 0],
+    camera: { pos: [0, 88, 126], target: [0, 3, 0] },
     content: {
       infra: {
         intro: 'Del sensor de piso al servidor municipal, y de ahí a la nube.',
@@ -200,12 +199,6 @@ export const ZONES: Zone[] = [
         ],
       },
     },
-    markers: [
-      { layer: 'infra', position: [10.5, 0, 6.5] },
-      { layer: 'risk', position: [-13, 0, 6.5] },
-      { layer: 'legal', position: [-1, 0, -7] },
-      { layer: 'ip', position: [17, 0, -6] },
-    ],
   },
   {
     id: 'b',
@@ -219,8 +212,8 @@ export const ZONES: Zone[] = [
     cloud: 'us',
     accent: '#B0A0FF',
     center: [40, 0, 0],
-    markerAnchor: [40, 14, -4],
-    camera: { pos: [74, 52, 60], target: [40, 5, -8] },
+    markerAnchor: [58, 20, -6],
+    camera: { pos: [104, 72, 92], target: [42, 5, -8] },
     content: {
       infra: {
         intro: 'Sensores que no solo registran: clasifican, predicen y alertan.',
@@ -283,12 +276,6 @@ export const ZONES: Zone[] = [
         ],
       },
     },
-    markers: [
-      { layer: 'infra', position: [33, 0, 8.5] },
-      { layer: 'risk', position: [46.5, 0, 9] },
-      { layer: 'legal', position: [35.5, 0, -9.5] },
-      { layer: 'ip', position: [47, 0, -7] },
-    ],
   },
   {
     id: 'c',
@@ -302,8 +289,8 @@ export const ZONES: Zone[] = [
     cloud: 'eu',
     accent: '#F2C97B',
     center: [-40, 0, 0],
-    markerAnchor: [-40, 13, 4],
-    camera: { pos: [-4, 60, 88], target: [-43, 4, -2] },
+    markerAnchor: [-58, 20, 6],
+    camera: { pos: [-18, 78, 116], target: [-47, 4, -2] },
     content: {
       infra: {
         intro: 'La red de servicios se convierte en una red de datos domésticos.',
@@ -362,12 +349,6 @@ export const ZONES: Zone[] = [
         ],
       },
     },
-    markers: [
-      { layer: 'infra', position: [-33.5, 0, 11.5] },
-      { layer: 'risk', position: [-47, 0, 15.5] },
-      { layer: 'legal', position: [-30.5, 0, -12] },
-      { layer: 'ip', position: [-48, 0, -13] },
-    ],
   },
 ]
 
@@ -381,15 +362,15 @@ export const CLOUDS: Cloud[] = [
     region: 'Nube pública / híbrida · us',
     tagline: 'Analítica de tráfico · Visión computacional',
     summary:
-      'Aloja la predicción de rutas de la Zona A y el motor de visión computacional de la Zona B. Es el punto donde un flujo transfronterizo se vuelve una decisión jurídica, no solo de ingeniería.',
-    position: [36, 31, -27],
-    camera: { pos: [40, 54, 60], target: [37, 25, -20] },
+      'Analítica de tráfico de la Zona A y visión computacional de la Zona B.',
+    position: [36, 52, -27],
+    camera: { pos: [52, 78, 82], target: [36, 45, -20] },
     zones: ['a', 'b'],
     accent: '#7FB6FF',
     entries: [
       {
         title: 'Cargas que procesa',
-        body: 'Predicción de rutas y control de tráfico (Zona A); entrenamiento e inferencia de visión computacional para alertas predictivas (Zona B).',
+        body: 'Analítica de tráfico de la Zona A y visión computacional de la Zona B (entrenamiento e inferencia para alertas predictivas).',
       },
       {
         title: 'T-MEC · Capítulo 19',
@@ -397,14 +378,10 @@ export const CLOUDS: Cloud[] = [
       },
       {
         title: 'Leyes estatales de EE. UU.',
-        body: 'CCPA/CPRA: derecho de opt-out del perfilado comercial y límites al uso de información personal sensible. TDPSA (Texas): minimización y consentimiento reforzado para datos sensibles.',
-      },
-      {
-        title: 'Fricción jurídica',
-        body: 'Que el flujo sea lícito bajo el T-MEC no vuelve lícita la vigilancia: la nube recibe datos que debieron recolectarse con base constitucional, necesidad y aviso de privacidad en origen.',
+        body: 'CCPA/CPRA: derecho de opt-out del perfilado comercial. TDPSA: limitación del uso de información personal sensible y minimización de datos.',
       },
     ],
-    chips: ['Zonas A + B', '2 motores de IA', 'T-MEC 19.11 · 19.12'],
+    chips: ['Zonas A + B'],
   },
   {
     id: 'eu',
@@ -413,15 +390,15 @@ export const CLOUDS: Cloud[] = [
     region: 'Frankfurt / Dublín · Nube regional',
     tagline: 'Telemetría energética · Detección de fugas',
     summary:
-      'Recibe la telemetría de la Zona C cada quince minutos. México no tiene decisión de adecuación general: la transferencia se sostiene en seudonimización, DPIA y cláusulas contractuales tipo.',
-    position: [-38, 30, -27],
-    camera: { pos: [-42, 54, 62], target: [-38, 25, -20] },
+      'Telemetría energética e hídrica de la Zona C, procesada en servidores de la Unión Europea.',
+    position: [-38, 50, -27],
+    camera: { pos: [-54, 78, 84], target: [-38, 43, -20] },
     zones: ['c'],
     accent: '#C3A6FF',
     entries: [
       {
         title: 'Cargas que procesa',
-        body: 'Balanceo de carga energética y detección de fugas a partir de lecturas de medidores inteligentes y sensores IoT de agua cada 15 minutos (Zona C).',
+        body: 'Telemetría de la Zona C cada 15 minutos: balanceo de carga energética y detección de fugas.',
       },
       {
         title: 'GDPR · Art. 25',
@@ -429,24 +406,20 @@ export const CLOUDS: Cloud[] = [
       },
       {
         title: 'GDPR · Art. 35',
-        body: 'DPIA: evaluación de impacto obligatoria por el monitoreo sistemático a gran escala que implica la red de telemetría.',
+        body: 'DPIA: evaluación de impacto por el monitoreo sistemático a gran escala que implica la red de telemetría.',
       },
       {
         title: 'Transferencia · Arts. 44–49',
         body: 'Cláusulas Contractuales Tipo (SCCs) aprobadas por la Comisión Europea, ya que México no cuenta con decisión de adecuación general.',
       },
-      {
-        title: 'Fricción jurídica',
-        body: 'El dato seudonimizado sigue siendo dato personal: inferir salud desde el consumo del hogar exige base de licitud, minimización y límites de finalidad.',
-      },
     ],
-    chips: ['Zona C', 'Telemetría 15 min', 'GDPR · SCCs'],
+    chips: ['Zona C'],
   },
 ]
 
 export const CLOUD_BY_ID = Object.fromEntries(CLOUDS.map((c) => [c.id, c])) as Record<CloudId, Cloud>
 
-export const CLOUDS_VIEW = { pos: [16, 78, 152] as Vec3, target: [16, 26, -14] as Vec3 }
+export const CLOUDS_VIEW = { pos: [16, 112, 192] as Vec3, target: [16, 40, -14] as Vec3 }
 
 export interface TourStep {
   id: string
@@ -465,14 +438,12 @@ export const TOUR: TourStep[] = [
     id: 'overview',
     index: '00',
     label: 'Vista general',
-    title: 'Tres zonas, dos nubes, un mismo problema',
-    caption: 'Arquitectura híbrida: Edge en México, cómputo en EE. UU. y la UE.',
-    view: { pos: [0, 88, 162], target: [0, 7, -2] },
+    title: 'Arquitectura híbrida',
+    caption: 'Tres zonas geográficas conectadas a dos nubes internacionales.',
+    view: { pos: [0, 150, 272], target: [0, 5, -8] },
     selection: null,
     notes: [
-      'Muestra las tres zonas y explica la arquitectura híbrida: Edge en México + nube en EE. UU. y la UE.',
-      'Destaca el rol dual de operadores: Municipio vs. privados.',
-      'Adelanta la tesis: la ciudad es una red de datos; el derecho es su infraestructura crítica.',
+      'Muestra las 3 zonas y explica la arquitectura híbrida (Edge en México + nube en EE. UU. y UE), destacando el rol dual de operadores (Municipio vs. privados).',
     ],
   },
   {
@@ -480,14 +451,12 @@ export const TOUR: TourStep[] = [
     index: '01',
     label: 'Seguridad',
     title: 'Seguridad urbana predictiva',
-    caption: 'Zona B + Nube EE. UU. · Biometría, drones y revisión humana.',
+    caption: 'Zona B + Nube EE. UU.',
     view: ZONE_BY_ID.b.camera,
     selection: { type: 'zone', zone: 'b', layer: 'risk' },
     layer: 'risk',
     notes: [
-      'Explica el choque entre el Art. 16° CPEUM (biometría y drones) y cómo se legaliza mediante EIPD (LGPDPPSO), Art. 26 (revisión humana antes de sancionar) y T-MEC Cap. 19 + CCPA.',
-      'Destaca el Secreto Industrial sobre los pesos de la IA: la transparencia tiene un límite legítimo.',
-      'Abre la capa roja para mostrar el riesgo y la capa verde para mostrar la respuesta jurídica.',
+      'Explica el choque entre el Art. 16° CPEUM (biometría/drones) y cómo se legaliza mediante EIPD (LGPDPPSO), Art. 26 (revisión humana) y T-MEC Cap. 19 + CCPA. Destaca el Secreto Industrial sobre los pesos de la IA.',
     ],
   },
   {
@@ -495,14 +464,12 @@ export const TOUR: TourStep[] = [
     index: '02',
     label: 'Energía y agua',
     title: 'Sostenibilidad y energía',
-    caption: 'Zona C + Nube UE · El domicilio inferido desde la telemetría.',
+    caption: 'Zona C + Nube UE.',
     view: ZONE_BY_ID.c.camera,
     selection: { type: 'zone', zone: 'c', layer: 'legal' },
     layer: 'legal',
     notes: [
-      'Explica cómo el consumo domiciliario revela hábitos íntimos y puede inferir estado de salud.',
-      'Muestra cómo el GDPR protege los datos al viajar a Europa: Art. 25 (seudonimización), Art. 35 (DPIA) y Arts. 44–49 con SCCs.',
-      'Recalca que México no tiene decisión de adecuación: la transferencia se sostiene en cláusulas contractuales tipo.',
+      'Explica cómo el consumo domiciliario revela hábitos íntimos y cómo el GDPR (Arts. 25 y 46, SCCs) protege los datos al viajar a Europa.',
     ],
   },
   {
@@ -510,28 +477,24 @@ export const TOUR: TourStep[] = [
     index: '03',
     label: 'Movilidad',
     title: 'Movilidad y conectividad',
-    caption: 'Zona A · Del semáforo al dato abierto y a la nube.',
+    caption: 'Zona A.',
     view: ZONE_BY_ID.a.camera,
     selection: { type: 'zone', zone: 'a', layer: 'infra' },
     layer: 'infra',
     notes: [
-      'Cierra explicando el Art. 6° CPEUM: acceso universal a telecomunicaciones y datos abiertos anonimizados.',
-      'Explica la titularidad de obra por encargo bajo la LFDA y la protección del software semafórico.',
-      'Señala el riesgo de rastreo: MAC, placas y GPS pueden reconstruir el recorrido de una persona.',
+      'Cierra explicando el Art. 6° CPEUM (acceso universal a telecomunicaciones y datos abiertos anonimizados) y la titularidad de obra por encargo bajo la LFDA.',
     ],
   },
   {
     id: 'closing',
     index: '04',
-    label: 'Cierre',
-    title: 'La ciudad se habita con derechos',
-    caption: 'Ficha del proyecto visible · Docente e integrantes.',
-    view: { pos: [0, 58, 92], target: [0, 6, 0] },
+    label: 'Recordatorio final',
+    title: 'Ficha del proyecto',
+    caption: 'Título, docente e integrantes.',
+    view: { pos: [0, 142, 258], target: [0, 4, -6] },
     selection: null,
     notes: [
-      'Recuerda la ficha visible: título del proyecto, docente Dr. Ricardo Ching Wesman e integrantes del equipo.',
-      'Cierra con la tesis: no hay ciudad inteligente sin derechos exigibles.',
-      'Invita a explorar el lienzo: cada zona y cada capa conservan la evidencia normativa.',
+      'Recordatorio final: la ficha visible debe mostrar el título del proyecto, el nombre del docente y los nombres completos de todos los integrantes.',
     ],
   },
 ]
