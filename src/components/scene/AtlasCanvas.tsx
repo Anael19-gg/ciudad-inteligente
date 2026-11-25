@@ -221,7 +221,7 @@ export function AtlasCanvas({
   docLayers: Record<LayerId, boolean>
 }) {
   return (
-    <div className="canvas-host" aria-label="Modelo 3D interactivo de la ciudad inteligente">
+    <div className="canvas-host" aria-label="Modelo 3D interactivo de ControlCity">
       <Canvas
         camera={{ position: [0, 300, 560], fov: 36, near: 0.8, far: 4000 }}
         dpr={[1, 1.5]}

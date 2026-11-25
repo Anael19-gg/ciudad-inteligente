@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Ciudad Inteligente — atlas 3D interactivo de arquitectura de datos, territorio y derecho.",
+  "description": "ControlCity — atlas 3D interactivo de arquitectura de datos, territorio y derecho.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

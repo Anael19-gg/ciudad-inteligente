@@ -102,7 +102,7 @@ export const LAYER_BY_ID = Object.fromEntries(LAYERS.map((l) => [l.id, l])) as R
 >
 
 export const PROJECT = {
-  title: 'Ciudad Inteligente',
+  title: 'ControlCity',
   subtitle: 'Arquitectura de datos, territorio y derecho',
   university: 'Universidad Autónoma de Baja California',
   faculty: 'Facultad de Ciencias Administrativas',

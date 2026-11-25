@@ -1,4 +1,4 @@
-# Ciudad Inteligente
+# ControlCity
 
 **Universidad Autónoma de Baja California** · Facultad de Ciencias Administrativas  
 Inteligencia de Negocios · **Marco Legal de TI** · Actividad **Meta 4.2** · Grupo **261**  

@@ -43,8 +43,8 @@ export function Intro({
         <div className="cover__intro">
           <span className="cover__eyebrow">Recorrido interactivo</span>
           <h1 className="cover__title">
-            Ciudad
-            <span>Inteligente</span>
+            Control
+            <span>City</span>
           </h1>
           <p className="cover__subtitle">{PROJECT.subtitle}</p>
           <p className="cover__lede">

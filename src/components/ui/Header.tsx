@@ -59,7 +59,7 @@ export function Header({ selection, onSelect, onHome, onShowIntro, day, onToggle
         </span>
         <span className="brand__text">
           <span className="brand__title">
-            Ciudad <em>Inteligente</em>
+            Control<em>City</em>
           </span>
           <span className="brand__sub">
             {PROJECT.subject} · {PROJECT.activity}

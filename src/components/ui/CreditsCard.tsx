@@ -45,7 +45,7 @@ export function CreditsCard() {
             </div>
 
             <h2 className="credits__title">
-              Ciudad <span>Inteligente</span>
+              Control<span>City</span>
             </h2>
             <p className="credits__subtitle">{PROJECT.subtitle}</p>
 
